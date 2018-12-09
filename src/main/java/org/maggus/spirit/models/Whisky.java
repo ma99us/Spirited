@@ -18,15 +18,18 @@ public class Whisky {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private Boolean inactive;
+    private Boolean inactive;       // if 'true' then it should be excluded from all queries
     @CacheIndex
     private String name;
     private String country;
-    private String region;
-    private Integer unitVolumeMl;
-    private BigDecimal unitPrice;
-    private String thumbnailUrl;
-    private String description;
+    private String region;          // region within Country if available
+    private Integer unitVolumeMl;   // bottle volume in milliliters
+    private BigDecimal unitPrice;   // decimal price in dollars CAD
+    private String thumbnailUrl;    // url or path to small imabge of the bottle
+    private String description;     // poetic description of the whisky flavour
+    private String type;            // should be one of the items in WHISKY_TYPES bellow
+
+    public static final String[] WHISKY_TYPES = {"Single malt", "Blended", "Flavoured", "Bourbon", "Rye"};
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         this.name = name;

@@ -53,6 +53,7 @@ angular.module('myApp.view2', ['ngRoute'])
                 pageNumber: pageNumber || $scope.pageNumber,
                 sortBy: sortBy || $scope.sortBy
             };
+            var ts0 = new Date().getTime();
             $http.get('api/whisky', {params: params}).then(function (response) {
                 if ($scope.validateResponse(response)) {
                     $scope.whisky = response.data.data;
@@ -60,6 +61,7 @@ angular.module('myApp.view2', ['ngRoute'])
                     $scope.pageNumber = response.data.metaData.pageNumber;
                     $scope.sortBy = response.data.metaData.sortBy;
                     $scope.totalResults = response.data.metaData.totalResults;
+                    $scope.lastQueryTs = new Date().getTime() - ts0;
                 }
             });
         };
@@ -153,14 +155,39 @@ angular.module('myApp.view2', ['ngRoute'])
             }
         };
     })
-    .directive('whisky', function () {
+    .directive('whiskyRow', function () {
+        return {
+            restrict: 'E',
+            scope: {
+                whisky: '<',
+                onClick: '&',
+                selWhisky: '<'
+            },
+            templateUrl: 'view2/whisky-row.html',
+            controller: ['$scope', function ($scope) {
+                $scope.$watch('selWhisky', function (newValue, oldValue) {
+                    $scope.isSelected = $scope.selWhisky && ($scope.whisky.id === $scope.selWhisky.id);
+                    if($scope.isSelected){
+                        $scope.rowStyle={'background-color':'CornFlowerBlue'};
+                    }
+                    else{
+                        $scope.rowStyle={}
+                    }
+                }, true);
+            }],
+            link: function (scope, elem, attrs) {
+
+            }
+        };
+    })
+    .directive('whiskyDetails', function () {
         return {
             restrict: 'E',
             scope: {
                 selWhisky: '<',
                 editable: '<',
             },
-            templateUrl: 'view2/whisky.html',
+            templateUrl: 'view2/whisky-details.html',
             controller: ['$scope', function ($scope) {
                 $scope.$watch('selWhisky', function (newValue, oldValue) {
                     $scope.init();
