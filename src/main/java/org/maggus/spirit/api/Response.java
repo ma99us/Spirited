@@ -12,6 +12,7 @@ public class Response {
     private String type;
     private String message;
     private Object data;
+    private Object metaData;
 
     public Response(Object data) {
         this.status = javax.ws.rs.core.Response.Status.OK.getStatusCode();

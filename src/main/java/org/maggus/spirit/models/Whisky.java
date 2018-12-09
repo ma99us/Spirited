@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -22,12 +23,14 @@ public class Whisky {
     private String name;
     private String country;
     private String region;
-    private String unitVolume;      //TODO: convert to number?
-    private Integer unitPrice;
+    private Integer unitVolumeMl;
+    private BigDecimal unitPrice;
+    private String thumbnailUrl;
+    private String description;
 
-    public Whisky(String name, String volume, Integer price) {
+    public Whisky(String name, Integer volumeMl, BigDecimal price) {
         this.name = name;
-        this.unitVolume = volume;
+        this.unitVolumeMl = volumeMl;
         this.unitPrice = price;
     }
 }

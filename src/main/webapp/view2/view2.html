@@ -9,6 +9,10 @@
     </li>
 </ul>
 
+<p><pagination results-per-page="resultsPerPage" page-number="pageNumber" total-results="totalResults" callback="onPageChange(page)"></pagination>
+    <a href="" ng-click="toggleResultsPerPage()">resultsPerPage={{resultsPerPage}}</a>,
+    <a href="" ng-click="toggleSortBy()">sortBy={{sortBy}}</a>, totalResults={{totalResults}} </p>
+
 <p><label>Add new name</label><input id="name" type="text" dl-enter-key="addTitle(newWhisky)" ng-model="newWhisky"/> <button ng-click="addTitle(newWhisky)">Add</button><button style="float: right;" ng-click="clearAllWhisky()">Clear all</button></p>
 
 <h3>Add/Modify</h3>

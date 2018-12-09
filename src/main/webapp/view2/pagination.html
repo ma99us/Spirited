@@ -1,0 +1,5 @@
+<span>
+    <button ng-disabled="pageNumber <= 1" ng-click="onPrevPage()"><</button>
+    {{pageNumber}}/{{lastPage}}
+    <button ng-disabled="pageNumber >= lastPage" ng-click="onNextPage()">></button>
+</span>

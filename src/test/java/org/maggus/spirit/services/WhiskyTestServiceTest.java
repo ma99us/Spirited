@@ -12,7 +12,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class WhiskyServiceTest {
+public class WhiskyTestServiceTest {
 
     @Test
     public void testPersistence() throws Exception {
@@ -23,10 +23,10 @@ public class WhiskyServiceTest {
 //        p.put("spiritedDatabase.JdbcUrl", "jdbc:mysql:localhost/spirited");
 //        final Context context = EJBContainer.createEJBContainer(p).getContext();
 //        assertNotNull(context);
-//        WhiskyService whiskyService = (WhiskyService) context.lookup("java:global/jpa-eclipselink/WhiskyService");
+//        WhiskyTestService whiskyService = (WhiskyTestService) context.lookup("java:global/jpa-eclipselink/WhiskyTestService");
 //        assertNotNull(whiskyService);
 
-//        WhiskyService whiskyService = new WhiskyService("spirited-test");
+//        WhiskyTestService whiskyService = new WhiskyTestService("spirited-test");
 //        int sizeBefore = whiskyService.getAllWhisky().size();
 //
 //        whiskyService.insertWhisky(new Whisky("Glenlivet Founders Reserve", "330ml", 5500, true));
@@ -40,6 +40,6 @@ public class WhiskyServiceTest {
 //            whiskyService.deleteWhisky(whisky);
 //        }
 //
-//        assertEquals("WhiskyService.getAllWhisky()", 0, whiskyService.getAllWhisky().size());
+//        assertEquals("WhiskyTestService.getAllWhisky()", 0, whiskyService.getAllWhisky().size());
     }
 }

@@ -5,10 +5,10 @@
         <p><label>Country:</label><input ng-readonly="!editable" id="country" type="text" dl-enter-key="submit(whisky)"
                                      ng-model="whisky.country"/></p>
         <p><label>Region:</label><input ng-readonly="!editable" id="region" type="text" dl-enter-key="submit(whisky)" ng-model="whisky.region"/></p>
-        <p><label>Price:</label><input ng-readonly="!editable" id="unitPrice" type="number" dl-enter-key="submit(whisky)"
+        <p><label>Price:</label><input ng-readonly="!editable" id="unitPrice" type="number" min="0" step=".01" dl-enter-key="submit(whisky)"
                                         ng-model="whisky.unitPrice"/></p>
-        <p><label>Volume:</label><input ng-readonly="!editable" id="unitVolume" type="text" dl-enter-key="submit(whisky)"
-                                       ng-model="whisky.unitVolume"/></p>
+        <p><label>Volume:</label><input ng-readonly="!editable" id="unitVolumeMl" type="number" dl-enter-key="submit(whisky)"
+                                       ng-model="whisky.unitVolumeMl"/></p>
         <p><button ng-if="updatable && editable" ng-click="submit(whisky)">Update</button>
         <button ng-if="!updatable && editable" ng-click="submit(whisky)">Add</button>
         <button ng-if="editable" ng-click="clear()">Clear</button></p>

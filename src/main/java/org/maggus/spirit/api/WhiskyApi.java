@@ -2,7 +2,7 @@ package org.maggus.spirit.api;
 
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Whisky;
-import org.maggus.spirit.services.WhiskyService;
+import org.maggus.spirit.services.WhiskyTestService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -14,65 +14,67 @@ import javax.ws.rs.core.MediaType;
 @Log
 public class WhiskyApi {
     @Inject
-    private WhiskyService whiskyService;
+    private WhiskyTestService whiskyTestService;
 
-    @Path("/list")
     @GET
-    public Response getAllWhisky() {
-        //TODO: @QueryParam("first") @DefaultValue("0") int first, @QueryParam("max") @DefaultValue("20") int max
+    public Response getAllWhisky(@QueryParam("resultsPerPage") @DefaultValue("100") int resultsPerPage,
+                                 @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
+                                 @QueryParam("sortBy") @DefaultValue("name") String sortBy) {
         try {
-            return Response.ok(whiskyService.getAllWhisky());
+            QueryMetadata metaData = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
+            Response resp = Response.ok(whiskyTestService.getAllWhisky(metaData));
+            resp.setMetaData(metaData);
+            return resp;
         } catch (Exception e) {
             return Response.fail(e);
         }
     }
 
-    @Path("/get/{id}")
+    @Path("/{id}")
     @GET
     public Response getWhisky(@PathParam("id") long id) {
         try {
-            return Response.ok(whiskyService.getWhiskyById(id));
+            return Response.ok(whiskyTestService.getWhiskyById(id));
         } catch (Exception e) {
             return Response.fail(e);
         }
     }
 
-    @Path("/create")
     @PUT
     public Response createWhisky(Whisky whisky) {
-        //TODO: @QueryParam("whisky")
         try {
-            if (whiskyService.getWhiskyById(whisky.getId()) != null) {
+            if (whiskyTestService.getWhiskyById(whisky.getId()) != null) {
                 throw new IllegalArgumentException("Such ID " + whisky.getId() + " already exists");
             }
-            whiskyService.insertWhisky(whisky);
-            return Response.ok(whiskyService.getWhiskyById(whisky.getId()));
+            whisky.setId(0);
+            whiskyTestService.insertWhisky(whisky);
+            return Response.ok(whiskyTestService.getWhiskyById(whisky.getId()));
         } catch (Exception e) {
             return Response.fail(e);
         }
     }
 
-    @Path("/update")
+    @Path("/{id}")
     @POST
-    public Response updateWhisky(Whisky whisky) {
-        // @PathParam("id") long id, @QueryParam("author") Whisky whisky
+    public Response updateWhisky(@PathParam("id") long id, Whisky whisky) {
         try {
-            if (whiskyService.getWhiskyById(whisky.getId()) == null) {
-                throw new IllegalArgumentException("No such ID " + whisky.getId() + " exists");
+            if (whiskyTestService.getWhiskyById(id) == null) {
+                throw new IllegalArgumentException("No such ID " + id + " exists");
             }
-            whisky = whiskyService.updateWhisky(whisky);
+            whisky.setId(id);
+            whisky = whiskyTestService.updateWhisky(whisky);
             return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
         }
     }
 
-    @Path("/delete/{id}")
+    @Path("/{id}")
     @DELETE
     public Response deleteWhisky(@PathParam("id") long id) {
         try {
-            Whisky whisky = whiskyService.getWhiskyById(id);
-            whiskyService.deleteWhisky(whisky);
+            Whisky whisky = whiskyTestService.getWhiskyById(id);
+            whiskyTestService.deleteWhisky(whisky);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);
