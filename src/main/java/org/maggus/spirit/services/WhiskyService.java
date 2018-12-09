@@ -21,7 +21,7 @@ public class WhiskyService {
     private EntityManager em;
 
 //    public WhiskyService() {
-//        this("spirited");
+//        this("spirited-test");
 //    }
 //
 //    public WhiskyService(String unitName) {
@@ -45,8 +45,13 @@ public class WhiskyService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void updateWhisky(Whisky whisky) throws Exception {
+    public void insertWhisky(Whisky whisky) throws Exception {
         em.persist(whisky);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Whisky updateWhisky(Whisky whisky) throws Exception {
+        return em.merge(whisky);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

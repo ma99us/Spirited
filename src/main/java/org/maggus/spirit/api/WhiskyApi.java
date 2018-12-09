@@ -45,7 +45,7 @@ public class WhiskyApi {
             if (whiskyService.getWhiskyById(whisky.getId()) != null) {
                 throw new IllegalArgumentException("Such ID " + whisky.getId() + " already exists");
             }
-            whiskyService.updateWhisky(whisky);
+            whiskyService.insertWhisky(whisky);
             return Response.ok(whiskyService.getWhiskyById(whisky.getId()));
         } catch (Exception e) {
             return Response.fail(e);
@@ -60,8 +60,8 @@ public class WhiskyApi {
             if (whiskyService.getWhiskyById(whisky.getId()) == null) {
                 throw new IllegalArgumentException("No such ID " + whisky.getId() + " exists");
             }
-            whiskyService.updateWhisky(whisky);
-            return Response.ok(whiskyService.getWhiskyById(whisky.getId()));
+            whisky = whiskyService.updateWhisky(whisky);
+            return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
         }

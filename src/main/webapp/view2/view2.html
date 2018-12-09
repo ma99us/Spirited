@@ -1,3 +1,17 @@
 <h1 style="text-align: center">Run API Tests</h1>
 
 <h2 style="text-align: center" ng-show="testing">Please wait...</h2>
+<button style="float: right;" ng-click="getAllWhisky()">Refresh</button>
+<ul>
+    <p ng-show="whisky.length == 0">--- no data ---</p>
+    <li ng-repeat="w in whisky">
+        <a href="" ng-click="selectWhisky(w)">{{w}}</a> - <button ng-click="delWhisky(w)">X</button>
+    </li>
+</ul>
+
+<p><label>Add new name</label><input id="name" type="text" dl-enter-key="addTitle(newWhisky)" ng-model="newWhisky"/> <button ng-click="addTitle(newWhisky)">Add</button><button style="float: right;" ng-click="clearAllWhisky()">Clear all</button></p>
+
+<h3>Add/Modify</h3>
+<whisky sel-whisky="selWhisky" editable="true"></whisky>
+
+<p style="color:orangered; font-weight:bold;">{{message}}</p>
