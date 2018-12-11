@@ -28,8 +28,8 @@ public class Whisky {
     private String thumbnailUrl;    // url or path to small imabge of the bottle
     private String description;     // poetic description of the whisky flavour
     private String type;            // should be one of the items in WHISKY_TYPES bellow
-
-    public static final String[] WHISKY_TYPES = {"Single malt", "Blended", "Flavoured", "Bourbon", "Rye"};
+    private String anblUrl;         // ANBL site product page url
+    private Long cacheLastUpdatedMs;   // timestamp of last update from ANBL
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         this.name = name;

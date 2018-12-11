@@ -47,6 +47,19 @@ angular.module('myApp.view2', ['ngRoute'])
 
         ////// API calls /////
 
+        $scope.rebuildAll = function(){
+            $scope.busy = true;
+            var ts0 = new Date().getTime();
+            $http.get('api/whisky/rebuild', {params: {}}).then(function (response) {
+                if ($scope.validateResponse(response)) {
+                    //console.log(response.data.data);
+                    $scope.getAllWhisky();
+                }
+                $scope.busy = false;
+                $scope.lastRebuildTs = ((new Date().getTime() - ts0)/1000).toFixed(1);
+            });
+        };
+
         $scope.getAllWhisky = function (resultsPerPage, pageNumber, sortBy) {
             let params = {
                 resultsPerPage: resultsPerPage || $scope.resultsPerPage,
@@ -205,6 +218,12 @@ angular.module('myApp.view2', ['ngRoute'])
                     $scope.updatable = $scope.editable && $scope.whisky && $scope.whisky.id;
                 };
 
+                $scope.onEnter = function(whisky){
+                    if ($scope.updatable){
+                        $scope.$parent.updateWhisky(whisky);
+                    }
+                }
+
                 $scope.submit = function (whisky) {
                     if ($scope.updatable) {
                         $scope.$parent.updateWhisky(whisky);
@@ -241,11 +260,13 @@ angular.module('myApp.view2', ['ngRoute'])
                     $scope.init();
                 }, true);
 
-                $scope.onPrevPage = function () {
-                    $scope.callback({page: $scope.pageNumber - 1});
+                $scope.onPrevPage = function (first) {
+                    let page = first ? 1 : $scope.pageNumber - 1;
+                    $scope.callback({page: page});
                 };
-                $scope.onNextPage = function () {
-                    $scope.callback({page: $scope.pageNumber + 1});
+                $scope.onNextPage = function (last) {
+                    let page = last ? $scope.lastPage : $scope.pageNumber + 1;
+                    $scope.callback({page: page});
                 };
 
                 $scope.init = function () {

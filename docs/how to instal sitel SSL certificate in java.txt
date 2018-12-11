@@ -1,0 +1,14 @@
+ If you can access the HTTPS URL in your browser then it is possible to update Java to recognize the root CA.
+
+• In your browser, go to the HTTPS URL that Java could not access. Click on the HTTPS certificate chain (there is lock icon in the Internet Explorer), click on the lock to view the certificate.
+
+• Go to “Details” of the certificate and “Copy to file”. Copy it in Base64 (.cer) format. It will be saved on your Desktop.
+
+• Install the certificate ignoring all the alerts.
+
+* Check existing certificates:
+ keytool -list -keystore C:\Java\jdk1.8.0\jre\lib\security\cacerts
+  
+* Copy *.cer file into  jre ...\security\ directory, then install it into keystore:
+ keytool -import -noprompt -trustcacerts -alias anbl -file anbl.cer -keystore cacerts -storepass changeit
+ 

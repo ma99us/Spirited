@@ -8,12 +8,11 @@ import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.TypedQuery;
+import javax.inject.Inject;
+import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.logging.Level;
 
 @Stateful
 @Log
@@ -77,6 +76,13 @@ public class WhiskyTestService {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteWhisky(Whisky whisky) throws Exception {
         em.remove(whisky);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteAllWhisky() throws Exception {
+        log.warning("! Clearing the whole DB Whisky table!");
+        Query q = em.createQuery("DELETE FROM Whisky");
+        q.executeUpdate();
     }
 
     public static String getSafeOrderByClause(Class clazz, String sortBy) {

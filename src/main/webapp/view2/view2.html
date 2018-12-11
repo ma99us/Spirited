@@ -1,6 +1,8 @@
 <h1 style="text-align: center">Run API Tests</h1>
+<h3 ng-show="busy" style="text-align: center">Please wait...</h3>
 
-<p align="right"><span ng-show="lastQueryTs">done in {{lastQueryTs}}ms </span><button ng-click="getAllWhisky()">Refresh</button></p>
+<p align="right"><span ng-show="lastQueryTs">Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
+    <span ng-show="lastRebuildTs"> Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAll()">REBUILD ALL DATA!</button></p>
 <p>
 <ul>
     <p ng-show="whisky.length == 0">--- no data ---</p>
@@ -14,7 +16,7 @@
     <a href="" ng-click="toggleResultsPerPage()">resultsPerPage={{resultsPerPage}}</a>,
     <a href="" ng-click="toggleSortBy()">sortBy={{sortBy}}</a>, totalResults={{totalResults}} </p>
 
-<p><label>Add new name</label><input id="name" type="text" dl-enter-key="addTitle(newWhisky)" ng-model="newWhisky"/> <button ng-click="addTitle(newWhisky)">Add</button><button style="float: right;" ng-click="clearAllWhisky()">Clear all</button></p>
+<!--<p><label>Add new name</label><input id="name" type="text" dl-enter-key="addTitle(newWhisky)" ng-model="newWhisky"/> <button ng-click="addTitle(newWhisky)">Add</button><button style="float: right;" ng-click="clearAllWhisky()">CLEAR ALL DATA!</button></p>-->
 
 <h3>Add/Modify</h3>
 <whisky-details sel-whisky="selWhisky" editable="true"></whisky-details>
