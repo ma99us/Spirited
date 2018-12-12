@@ -1,7 +1,7 @@
 package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
-import org.maggus.spirit.models.CacheStatus;
+import org.maggus.spirit.models.WhiskyCategory;
 import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.Stateful;
@@ -19,6 +19,8 @@ import java.util.logging.Level;
 @Log
 public class CacheService {
 
+    private final long CACHE_TIMEOUT = 60 * 60 * 1000;  // invalidate cache after that time
+
     @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
@@ -28,33 +30,33 @@ public class CacheService {
     @Inject
     private WhiskyTestService whiskyService;
 
-    public CacheStatus getCacheStatus(String url) throws Exception {
-        TypedQuery<CacheStatus> q = em.createQuery("select c from CacheStatus c where c.externalUrl = :URL", CacheStatus.class);
+    public WhiskyCategory getCacheStatus(String url) throws Exception {
+        TypedQuery<WhiskyCategory> q = em.createQuery("select c from WhiskyCategory c where c.cacheExternalUrl = :URL", WhiskyCategory.class);
         q.setParameter("URL", url);
-        return q.getSingleResult();
+        List<WhiskyCategory> res = q.getResultList();
+        return !res.isEmpty() ? res.get(0) : null;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void insertCacheStatus(CacheStatus cs) throws Exception {
+    public void insertCacheStatus(WhiskyCategory cs) throws Exception {
         em.persist(cs);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public CacheStatus updateCacheStatus(CacheStatus cs) throws Exception {
+    public WhiskyCategory updateCacheStatus(WhiskyCategory cs) throws Exception {
         return em.merge(cs);
     }
 
-    private void updateCacheTs(String url, Long startedMs){
+    private void updateCacheTs(String tag, String url, Long startedMs) {
         try {
             long now = System.currentTimeMillis();
             Long spentMs = startedMs != null ? (now - startedMs) : null;
-            CacheStatus cs = getCacheStatus(url);
-            if(cs == null){
-                insertCacheStatus(new CacheStatus(url, now, spentMs));
-            }
-            else{
-                cs.setLastUpdatedMs(now);
-                cs.setSpentMs(spentMs);
+            WhiskyCategory cs = getCacheStatus(url);
+            if (cs == null) {
+                insertCacheStatus(new WhiskyCategory(tag, url, now, spentMs));
+            } else {
+                cs.setCacheLastUpdatedMs(now);
+                cs.setCacheSpentMs(spentMs);
                 updateCacheStatus(cs);
             }
 
@@ -63,24 +65,57 @@ public class CacheService {
         }
     }
 
-    public void rebuildProductsCategoriesCache() {
+    public void rebuildProductsCategoriesCache(boolean full) {
         try {
             long t0 = System.currentTimeMillis();
             List<Whisky> whiskies = anblParser.loadProductsCategories();
+            updateCacheTs(AnblParser.CacheUrls.BASE_URL.name(), AnblParser.CacheUrls.BASE_URL.getUrl(), t0);
             if (whiskies.size() > 0) {
+//                if(full){
+//                    for (Whisky w : whiskies) {
+//                        rebuildProductCache(w);   //FIXME this is too slow
+//                    }
+//                }
+
                 whiskyService.deleteAllWhisky();
-                log.info("adding " + whiskies.size() + " new products");
+                log.info("adding " + whiskies.size() + " new products into DB");
                 for (Whisky w : whiskies) {
                     whiskyService.insertWhisky(w);
                 }
                 log.info("Done adding products");
-            }
-            else{
+            } else {
                 log.warning("! No products to cache!?");
             }
-            updateCacheTs(AnblParser.BASE_URL, t0);
         } catch (Exception ex) {
-            log.log(Level.SEVERE, "Failed to cache ANBL data", ex);
+            log.log(Level.SEVERE, "Failed to load/cache ANBL Products Categories data", ex);
+        }
+    }
+
+    public void rebuildProductCache(Whisky whisky) {
+        try{
+            if(whisky.getCacheExternalUrl() == null){
+                throw new NullPointerException("cacheExternalUrl can not be null");
+            }
+            long t0 = System.currentTimeMillis();
+            anblParser.loadProduct(whisky);
+            long now = System.currentTimeMillis();
+            whisky.setCacheLastUpdatedMs(now);
+            whisky.setCacheSpentMs(now - t0);
+        }
+        catch(Exception ex){
+            log.log(Level.SEVERE, "Failed to load ANBL Product data", ex);
+        }
+    }
+
+    public boolean validateCache(Whisky whisky, boolean reCache){
+        if(whisky == null || whisky.getCacheLastUpdatedMs() == null || whisky.getCacheLastUpdatedMs() < System.currentTimeMillis() - CACHE_TIMEOUT){
+            if(whisky != null && reCache){
+                rebuildProductCache(whisky);
+            }
+            return false;
+        }
+        else{
+            return true;
         }
     }
 }

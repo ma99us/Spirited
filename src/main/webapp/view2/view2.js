@@ -8,11 +8,16 @@ angular.module('myApp.view2', ['ngRoute'])
             controller: 'View2Ctrl'
         });
     }])
-    .controller('View2Ctrl', ['$scope', '$http', '$window', function ($scope, $http, $window) {
+    .controller('View2Ctrl', ['$scope', '$http', '$window', '$q', function ($scope, $http, $window, $q) {
         $scope.whisky = [];
 
         $scope.selectWhisky = function (whisky) {
             $scope.selWhisky = whisky;
+            if($scope.selWhisky){
+                $scope.getWhisky($scope.selWhisky.id).then(function(data){
+                    $scope.selWhisky = data;
+                });
+            }
         };
 
         $scope.onPageChange = function (page) {
@@ -80,11 +85,14 @@ angular.module('myApp.view2', ['ngRoute'])
         };
 
         $scope.getWhisky = function (id) {
+            var deferred = $q.defer();
             $http.get('api/whisky/' + id, {params: {}}).then(function (response) {
                 if ($scope.validateResponse(response)) {
-                    console.log(response.data.data);
+                    //console.log(response.data.data);
+                    deferred.resolve(response.data.data);
                 }
             });
+            return deferred.promise;
         };
 
         $scope.addTitle = function (str) {

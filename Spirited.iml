@@ -9,6 +9,7 @@
           <factory-entry name="NewPersistenceUnit" />
           <factory-entry name="spirited" />
           <factory-entry name="spirited-test" />
+          <factory-entry name="spirited-test-local" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />
       </configuration>

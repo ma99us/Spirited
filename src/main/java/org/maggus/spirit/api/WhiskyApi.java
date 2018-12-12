@@ -24,7 +24,7 @@ public class WhiskyApi {
     @GET
     public Response rebuildAllWhiskyData() {
         try {
-            cacheService.rebuildProductsCategoriesCache();
+            cacheService.rebuildProductsCategoriesCache(true);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);
@@ -49,7 +49,9 @@ public class WhiskyApi {
     @GET
     public Response getWhisky(@PathParam("id") long id) {
         try {
-            return Response.ok(whiskyService.getWhiskyById(id));
+            Whisky whisky = whiskyService.getWhiskyById(id);
+            cacheService.validateCache(whisky, true);
+            return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
         }

@@ -11,6 +11,7 @@ import org.maggus.spirit.models.Whisky;
 import javax.ejb.Stateless;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -22,14 +23,26 @@ import java.util.regex.Pattern;
 @Log
 public class AnblParser {
 
-    public static final String BASE_URL = "http://www.anbl.com";
-    public static final String SCOTCH_SINGLE_MALTS = BASE_URL + "/scotch-single-malts-1";
-    public static final String SCOTCH_BLENDS = BASE_URL + "/scotch-whisky-blends-1";
-    public static final String SCOTCH_SM_ISLA = BASE_URL + "/islay";
-    public static final String SCOTCH_SM_HIGHLAND = BASE_URL + "/highland";
-    public static final String SCOTCH_SM_SPEYSIDE = BASE_URL + "/speyside-1";
-    public static final String SCOTCH_SM_ISLANDS = BASE_URL + "/islands-1";
-    public static final String SCOTCH_SM_LOWLAND = BASE_URL + "/lowland";
+    public enum CacheUrls {
+        BASE_URL("http://www.anbl.com"),
+        SCOTCH_SINGLE_MALTS(BASE_URL.getUrl() + "/scotch-single-malts-1"),
+        SCOTCH_BLENDS(BASE_URL.getUrl() + "/scotch-whisky-blends-1"),
+        SCOTCH_SM_ISLA(BASE_URL.getUrl() + "/islay"),
+        SCOTCH_SM_HIGHLAND(BASE_URL.getUrl() + "/highland"),
+        SCOTCH_SM_SPEYSIDE(BASE_URL.getUrl() + "/speyside-1"),
+        SCOTCH_SM_ISLANDS(BASE_URL.getUrl() + "/islands-1"),
+        SCOTCH_SM_LOWLAND(BASE_URL.getUrl() + "/lowland");
+
+        private final String url;
+
+        CacheUrls(String url) {
+            this.url = url;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
 
     private final Pattern numbers = Pattern.compile("(\\d+\\.\\d+|\\d+)");  // integer and decimal numbers
 
@@ -41,7 +54,7 @@ public class AnblParser {
         long t0 = System.currentTimeMillis();
 
         // load Blended
-        List<Whisky> whiskies = loadProductPage(SCOTCH_BLENDS);
+        List<Whisky> whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_BLENDS.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.BLENDED.toString());
@@ -49,7 +62,7 @@ public class AnblParser {
         allWhiskies.addAll(whiskies);
 
         // load Isla
-        whiskies = loadProductPage(SCOTCH_SM_ISLA);
+        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_ISLA.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.S_M.toString());
@@ -58,7 +71,7 @@ public class AnblParser {
         allWhiskies.addAll(whiskies);
 
         // load Highland
-        whiskies = loadProductPage(SCOTCH_SM_HIGHLAND);
+        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_HIGHLAND.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.S_M.toString());
@@ -67,7 +80,7 @@ public class AnblParser {
         allWhiskies.addAll(whiskies);
 
         // load Speyside
-        whiskies = loadProductPage(SCOTCH_SM_SPEYSIDE);
+        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_SPEYSIDE.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.S_M.toString());
@@ -76,7 +89,7 @@ public class AnblParser {
         allWhiskies.addAll(whiskies);
 
         // load Islands
-        whiskies = loadProductPage(SCOTCH_SM_ISLANDS);
+        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_ISLANDS.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.S_M.toString());
@@ -85,7 +98,7 @@ public class AnblParser {
         allWhiskies.addAll(whiskies);
 
         // load Lowland
-        whiskies = loadProductPage(SCOTCH_SM_LOWLAND);
+        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_LOWLAND.getUrl());
         for (Whisky w : whiskies) {
             w.setCountry(Locators.Country.UK.toString());
             w.setType(Locators.WhiskyType.S_M.toString());
@@ -100,8 +113,9 @@ public class AnblParser {
         return allWhiskies;
     }
 
-    public List<Whisky> loadProductPage(String url) {
+    public List<Whisky> loadProductCategoryPage(String url) {
         try {
+            log.info("** Loading " + url);
             Document doc = Jsoup.connect(url)
                     .cookie("ProductListing_SortBy", "Value=title")
                     .cookie("ProductListing_DisplayMode", "Value=list")
@@ -115,7 +129,7 @@ public class AnblParser {
                 @Override
                 public void accept(Element element) {
                     try {
-                        allWhisky.add(parseProduct(element));
+                        allWhisky.add(parseBasicProduct(element));
                     } catch (Exception ex) {
                         log.log(Level.WARNING, "Failed to parse Product element: " + element, ex);
                     }
@@ -129,7 +143,30 @@ public class AnblParser {
         }
     }
 
-    private Whisky parseProduct(Element el) throws Exception {
+    public void loadProduct(Whisky whisky) {
+        try{
+            log.info("** Loading " + whisky.getCacheExternalUrl());
+            Document doc = Jsoup.connect(whisky.getCacheExternalUrl()).get();
+            String title = doc.title();
+            log.info("* Parsing product page \"" + title + "\"");
+            String prodCode = getNumberStr(doc.select("p.product-details-code").first().text());
+            Double alcoholContent = Double.parseDouble(getNumberStr(doc.select("div.informationAttributesSection span.attribute-value").first().text()));
+            String description = doc.select("div.span6 > p").first().text();
+            Elements warehouses = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
+
+            //TODO: parse quantity and locations
+
+            whisky.setAnblProdCode(prodCode);
+            whisky.setAlcoholContent(alcoholContent);
+            whisky.setDescription(description);
+            log.info("* Parsing product page \"" + title + "\" Done.");
+        }
+        catch(Exception ex){
+            log.log(Level.SEVERE, "Failed to parse ANBL Product page: " + whisky.getCacheExternalUrl(), ex);
+        }
+    }
+
+    private Whisky parseBasicProduct(Element el) throws Exception {
         String thumbnailUrl = el.select("li.product-photo > img").first().attr("src");
         String fullName = el.select("li.product-title > a").first().attr("title");
         String name = fixName(fullName);
@@ -138,8 +175,8 @@ public class AnblParser {
         BigDecimal price = fixPrice(el.select("span.price").first().text());
         Whisky whisky = new Whisky(name, volume, price);
         whisky.setThumbnailUrl(thumbnailUrl);
-        whisky.setAnblUrl(detailsUrl);
-        log.info("* " + whisky.toString());
+        whisky.setCacheExternalUrl(detailsUrl);
+        //log.info("* " + whisky.toString());
         return whisky;
     }
 
@@ -175,7 +212,7 @@ public class AnblParser {
 
     private String fixDetailsUrl(String url) throws Exception {
         if (!url.startsWith("http")) {
-            String prefix = BASE_URL;
+            String prefix = CacheUrls.BASE_URL.getUrl();
             if (!url.startsWith("/")) {
                 prefix += "/";
             }

@@ -65,6 +65,4 @@ public class Locators {
             return type;
         }
     }
-
-    ;
 }

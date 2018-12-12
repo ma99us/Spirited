@@ -1,5 +1,6 @@
 <h1 style="text-align: center">Run API Tests</h1>
 <h3 ng-show="busy" style="text-align: center">Please wait...</h3>
+<p style="color:orangered; font-weight:bold;">{{message}}</p>
 
 <p align="right"><span ng-show="lastQueryTs">Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
     <span ng-show="lastRebuildTs"> Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAll()">REBUILD ALL DATA!</button></p>
@@ -21,4 +22,12 @@
 <h3>Add/Modify</h3>
 <whisky-details sel-whisky="selWhisky" editable="true"></whisky-details>
 
-<p style="color:orangered; font-weight:bold;">{{message}}</p>
+<div>
+    <h2>API Endpoints usage:</h2>
+    <p>DELETE http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response deleteWhisky(long) - parameters: DB 'Id'</p>
+    <p>GET http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response getAllWhisky(int, int, String) - parameters: 'Results Per Page', 'Page Number', 'Sort By'</p>
+    <p>GET http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/rebuild</b> ->      Response rebuildAllWhiskyData() - Clears and re-caches all data from ANBL! Longer operation.</p>
+    <p>GET http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response getWhisky(long) - parameters: DB 'Id'</p>
+    <p>POST http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response updateWhisky(long, Whisky) - parameters: DB 'Id', populated 'Whisky' object</p>
+    <p>PUT http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response createWhisky(Whisky) - parameters: populated 'Whisky' object</p>
+</div>

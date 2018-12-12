@@ -95,7 +95,7 @@ public class WhiskyTestService {
                     dirStr = "DESC";
                 }
                 // check that field name is valid
-                if (clazz.getDeclaredField(sortBy) == null) {
+                if (!findClassField(clazz, sortBy)) {
                     throw new NoSuchFieldException(sortBy); // paranoia
                 }
                 String ent = clazz.getSimpleName().substring(0, 1).toLowerCase();
@@ -107,5 +107,19 @@ public class WhiskyTestService {
             log.warning("Can not order; no such field: \"" + sortBy + "\" in entity " + clazz.getSimpleName());
             return "";
         }
+    }
+
+    private static boolean findClassField(Class clazz, String field) {
+        if (clazz == null) {
+            return false;
+        }
+        try {
+            if (clazz.getDeclaredField(field) != null) {
+                return true;
+            }
+        } catch (NoSuchFieldException e) {
+            // ignore
+        }
+        return findClassField(clazz.getSuperclass(), field);
     }
 }

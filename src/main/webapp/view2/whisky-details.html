@@ -17,10 +17,12 @@
                                         ng-model="whisky.unitPrice"/>CAD</p>
         <p><label>Volume:</label><input ng-readonly="!editable" id="unitVolumeMl" type="number" dl-enter-key="onEnter(whisky)"
                                        ng-model="whisky.unitVolumeMl"/>ml</p>
+        <p><label>Alcohol Content:</label><input ng-readonly="!editable" id="alcoholContent" type="number" min="0" step=".01" dl-enter-key="onEnter(whisky)"
+                                        ng-model="whisky.alcoholContent"/>%</p>
         <p><label>Description:</label><textarea ng-readonly="!editable" id="description" dl-enter-key="onEnter(whisky)"
-                                                ng-model="whisky.description"></textarea></p>
+                                                ng-model="whisky.description" rows="5" cols="50"></textarea></p>
         <p><label>Thumbnail URL:</label><input ng-readonly="!editable" size="50" id="thumbnailUrl" type="url" dl-enter-key="onEnter(whisky)" ng-model="whisky.thumbnailUrl"/></p>
-        <p ng-if="whisky.anblUrl">More details: <a id="anblUrl" href="{{whisky.anblUrl}}" target="_blank">Go to ANBL product page</a></p>
+        <p ng-if="whisky.cacheExternalUrl">More details: <a id="anblUrl" href="{{whisky.cacheExternalUrl}}" target="_blank">Go to ANBL product page</a> <span ng-show="whisky.anblProdCode"> - Product Code: {{whisky.anblProdCode}}</span></p>
 
         <p><button ng-if="updatable && editable" ng-click="submit(whisky)">Update</button>
         <button ng-if="!updatable && editable" ng-click="submit(whisky)">Add</button>
