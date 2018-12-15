@@ -74,7 +74,7 @@ public class WhiskyTestService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Whisky persistWhisky(Whisky whisky) throws Exception {
+    public synchronized Whisky persistWhisky(Whisky whisky) throws Exception {
         if (whisky.getId() > 0) {
             return em.merge(whisky);
         } else {
@@ -84,7 +84,7 @@ public class WhiskyTestService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteWhisky(Whisky whisky) throws Exception {
+    public synchronized void deleteWhisky(Whisky whisky) throws Exception {
         em.remove(whisky);
     }
 

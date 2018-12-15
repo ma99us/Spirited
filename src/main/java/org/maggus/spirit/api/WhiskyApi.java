@@ -22,9 +22,9 @@ public class WhiskyApi {
 
     @Path("/rebuild")
     @GET
-    public Response rebuildAllWhiskyData() {
+    public Response rebuildAllWhiskyData(@QueryParam("full") @DefaultValue("false") boolean full) {
         try {
-            cacheService.rebuildProductsCategoriesCache(false);
+            cacheService.rebuildProductsCategoriesCache(full);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);
@@ -50,7 +50,7 @@ public class WhiskyApi {
     public Response getWhisky(@PathParam("id") long id) {
         try {
             Whisky whisky = whiskyService.getWhiskyById(id);
-            cacheService.validateCache(whisky, true);
+            cacheService.validateCache(whisky, CacheService.CacheOperation.CACHE_IF_NEEDED);
             return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);

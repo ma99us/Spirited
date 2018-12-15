@@ -55,7 +55,7 @@ angular.module('myApp.view2', ['ngRoute'])
         $scope.rebuildAll = function(){
             $scope.busy = true;
             var ts0 = new Date().getTime();
-            $http.get('api/whisky/rebuild', {params: {}}).then(function (response) {
+            $http.get('api/whisky/rebuild', {params: {full: true}}).then(function (response) {
                 if ($scope.validateResponse(response)) {
                     //console.log(response.data.data);
                     $scope.getAllWhisky();

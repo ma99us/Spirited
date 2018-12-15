@@ -53,7 +53,7 @@ public class AnblParser {
         //TODO: figure out better way to configure this
         List<Whisky> allWhiskies = new ArrayList<Whisky>();
 
-        log.info("*** Loading all ANBL products");
+        log.info("*** Loading all ANBL products categories");
         long t0 = System.currentTimeMillis();
 
         // load Blended
@@ -111,7 +111,7 @@ public class AnblParser {
 
         //TODO: load more stuff here
         long dt = System.currentTimeMillis() - t0;
-        log.info("*** Done loading all ANBL products. Done in " + dt / 1000 + " seconds");
+        log.info("*** Done loading all ANBL product categories. Done in " + dt / 1000 + " seconds");
 
         return allWhiskies;
     }
@@ -148,26 +148,26 @@ public class AnblParser {
 
     public void loadProduct(Whisky whisky) {
         try{
-            log.info("** Loading " + whisky.getCacheExternalUrl());
+            //log.info("** Loading " + whisky.getCacheExternalUrl());
             Document doc = Jsoup.connect(whisky.getCacheExternalUrl()).get();
             String title = doc.title();
             log.info("* Parsing product page \"" + title + "\"");
-            String prodCode = getNumberStr(doc.select("p.product-details-code").first().text());
-            Double alcoholContent = Double.parseDouble(getNumberStr(doc.select("div.informationAttributesSection span.attribute-value").first().text()));
-            String description = doc.select("div.span6 > p").first().text();
+            String prodCode = getNumberStr(getSafeFirstElementText(doc.select("p.product-details-code")));
+            Double alcoholContent = Double.parseDouble(getNumberStr(getSafeFirstElementText(doc.select("div.informationAttributesSection span.attribute-value"))));
+            String description = getSafeFirstElementText(doc.select("div.span6 > p"));
             Elements whRows = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
             whisky.getQuantities().clear(); // just clear all old quantities and start fresh
             for(Element el : whRows){
-                String store = el.select("td.warehouseName > span").first().text();
-                String address = el.select("td.warehouseAddress > span").first().text();
-                String city = el.select("td.warehouseCity > span").first().text();
-                Integer qty = Integer.parseInt(el.select("td.warehouseQty > span").first().text());
+                String store = getSafeFirstElementText(el.select("td.warehouseName > span"));
+                String address = getSafeFirstElementText(el.select("td.warehouseAddress > span"));
+                String city = getSafeFirstElementText(el.select("td.warehouseCity > span"));
+                Integer qty = Integer.parseInt(getSafeFirstElementText(el.select("td.warehouseQty > span")));
                 whisky.setStoreQuantity(new Warehouse(store, address, city), qty);
             }
             whisky.setAnblProdCode(prodCode);
             whisky.setAlcoholContent(alcoholContent);
             whisky.setDescription(description);
-            log.info("* Parsing product page \"" + title + "\" Done.");
+            //log.info("* Parsing product page \"" + title + "\" Done.");
         }
         catch(Exception ex){
             log.log(Level.SEVERE, "Failed to parse ANBL Product page: " + whisky.getCacheExternalUrl(), ex);
@@ -186,6 +186,15 @@ public class AnblParser {
         whisky.setCacheExternalUrl(detailsUrl);
         //log.info("* " + whisky.toString());
         return whisky;
+    }
+
+    private String getSafeFirstElementText(Elements els){
+        try{
+            return els.first().text();
+        }
+        catch(NullPointerException ex){
+            return "";
+        }
     }
 
     private String fixName(String fullName) throws Exception {
@@ -211,6 +220,9 @@ public class AnblParser {
 
     private String getNumberStr(String str) {
         String digits = "";
+        if(str == null){
+            return digits;
+        }
         Matcher matcher = numbers.matcher(str);
         while (matcher.find()) {
             digits += matcher.group(1);
@@ -219,7 +231,7 @@ public class AnblParser {
     }
 
     private String fixDetailsUrl(String url) throws Exception {
-        if (!url.startsWith("http")) {
+        if (url != null && !url.startsWith("http")) {
             String prefix = CacheUrls.BASE_URL.getUrl();
             if (!url.startsWith("/")) {
                 prefix += "/";

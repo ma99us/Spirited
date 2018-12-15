@@ -36,7 +36,7 @@ public class WarehouseService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Warehouse persistWarehouse(Warehouse warehouse) throws Exception {
+    public synchronized Warehouse persistWarehouse(Warehouse warehouse) throws Exception {
         if (warehouse.getId() > 0) {
             return em.merge(warehouse);
         } else {
@@ -46,7 +46,7 @@ public class WarehouseService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteWarehouse(Warehouse warehouse) throws Exception {
+    public synchronized void deleteWarehouse(Warehouse warehouse) throws Exception {
         em.remove(warehouse);
     }
 

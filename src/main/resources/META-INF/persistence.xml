@@ -10,6 +10,7 @@
         <properties>
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="spirited-test"> <!-- INTEGRATION TESTS DATA -->
@@ -19,6 +20,7 @@
         <properties>
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="spirited-test-local" transaction-type="RESOURCE_LOCAL"> <!-- UNIT TESTS DATA -->
@@ -30,6 +32,7 @@
             <property name="javax.persistence.jdbc.password" value="qwe" />
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
         </properties>
     </persistence-unit>
 </persistence>
