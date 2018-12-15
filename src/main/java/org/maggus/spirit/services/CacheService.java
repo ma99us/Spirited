@@ -1,8 +1,9 @@
 package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
-import org.maggus.spirit.models.WhiskyCategory;
+import org.maggus.spirit.models.Warehouse;
 import org.maggus.spirit.models.Whisky;
+import org.maggus.spirit.models.WhiskyCategory;
 
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
@@ -13,13 +14,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 @Stateful
 @Log
 public class CacheService {
 
-    private final long CACHE_TIMEOUT = 60 * 60 * 1000;  // invalidate cache after that time
+    private final long CACHE_TIMEOUT = 1 * 60 * 60 * 1000;  // invalidate cache after that time
 
     @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
@@ -29,6 +31,9 @@ public class CacheService {
 
     @Inject
     private WhiskyTestService whiskyService;
+
+    @Inject
+    private WarehouseService warehouseService;
 
     public WhiskyCategory getCacheStatus(String url) throws Exception {
         TypedQuery<WhiskyCategory> q = em.createQuery("select c from WhiskyCategory c where c.cacheExternalUrl = :URL", WhiskyCategory.class);
@@ -65,56 +70,59 @@ public class CacheService {
         }
     }
 
-    public void rebuildProductsCategoriesCache(boolean full) {
-        try {
-            long t0 = System.currentTimeMillis();
-            List<Whisky> whiskies = anblParser.loadProductsCategories();
-            updateCacheTs(AnblParser.CacheUrls.BASE_URL.name(), AnblParser.CacheUrls.BASE_URL.getUrl(), t0);
-            if (whiskies.size() > 0) {
-//                if(full){
-//                    for (Whisky w : whiskies) {
-//                        rebuildProductCache(w);   //FIXME this is too slow
-//                    }
-//                }
-
-                whiskyService.deleteAllWhisky();
-                log.info("adding " + whiskies.size() + " new products into DB");
-                for (Whisky w : whiskies) {
-                    whiskyService.insertWhisky(w);
+    public void rebuildProductsCategoriesCache(boolean full) throws Exception {
+        long t0 = System.currentTimeMillis();
+        List<Whisky> whiskies = anblParser.loadProductsCategories();
+        updateCacheTs(AnblParser.CacheUrls.BASE_URL.name(), AnblParser.CacheUrls.BASE_URL.getUrl(), t0);
+        if (whiskies.size() > 0) {
+            // delete it ALL!
+            whiskyService.deleteAllWhisky();
+            warehouseService.deleteAllWarehouses();
+            log.info("adding " + whiskies.size() + " new products into DB");
+            for (Whisky w : whiskies) {
+                whiskyService.persistWhisky(w);
+                if (full) {
+                    rebuildProductCache(w);   //FIXME this is too slow
                 }
-                log.info("Done adding products");
-            } else {
-                log.warning("! No products to cache!?");
             }
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, "Failed to load/cache ANBL Products Categories data", ex);
+            log.info("Done adding products");
+        } else {
+            log.warning("! No products to cache!?");
         }
     }
 
-    public void rebuildProductCache(Whisky whisky) {
-        try{
-            if(whisky.getCacheExternalUrl() == null){
-                throw new NullPointerException("cacheExternalUrl can not be null");
+    public void rebuildProductCache(Whisky whisky) throws Exception {
+        if (whisky.getCacheExternalUrl() == null) {
+            throw new NullPointerException("cacheExternalUrl can not be null");
+        }
+        long t0 = System.currentTimeMillis();
+        anblParser.loadProduct(whisky);
+        long now = System.currentTimeMillis();
+        whisky.setCacheLastUpdatedMs(now);
+        whisky.setCacheSpentMs(now - t0);
+        // re-map to existing warehouses, and persist new once
+        for (Map.Entry<Warehouse, Integer> entry : whisky.getQuantities().entrySet()) {
+            Warehouse wh = entry.getKey();
+            Warehouse existingWh = warehouseService.getWarehouseByName(wh.getName());
+            if (existingWh != null) {
+                wh.setId(existingWh.getId());
+                log.info("= old Warehouse: " + wh);
             }
-            long t0 = System.currentTimeMillis();
-            anblParser.loadProduct(whisky);
-            long now = System.currentTimeMillis();
-            whisky.setCacheLastUpdatedMs(now);
-            whisky.setCacheSpentMs(now - t0);
+            if (wh.getId() <= 0) {
+                log.info("+ new Warehouse: " + wh);
+                warehouseService.persistWarehouse(wh);
+            }
         }
-        catch(Exception ex){
-            log.log(Level.SEVERE, "Failed to load ANBL Product data", ex);
-        }
+        whiskyService.persistWhisky(whisky);
     }
 
-    public boolean validateCache(Whisky whisky, boolean reCache){
-        if(whisky == null || whisky.getCacheLastUpdatedMs() == null || whisky.getCacheLastUpdatedMs() < System.currentTimeMillis() - CACHE_TIMEOUT){
-            if(whisky != null && reCache){
+    public boolean validateCache(Whisky whisky, boolean reCache) throws Exception {
+        if (whisky == null || whisky.getCacheLastUpdatedMs() == null || whisky.getCacheLastUpdatedMs() < System.currentTimeMillis() - CACHE_TIMEOUT) {
+            if (whisky != null && reCache) {
                 rebuildProductCache(whisky);
             }
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }

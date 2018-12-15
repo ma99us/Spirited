@@ -30,7 +30,7 @@ public class Locators {
         US_KE("Kentucky"),
         US_TE("Tennessee"),
 
-        UK_CA("Campbeltown"),
+        UK_CAMP("Campbeltown"),
         UK_HIGH("Highland"),
         UK_ISLANDS("Islands"),
         UK_ISLA("Isla"),

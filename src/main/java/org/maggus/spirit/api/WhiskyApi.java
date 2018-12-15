@@ -24,7 +24,7 @@ public class WhiskyApi {
     @GET
     public Response rebuildAllWhiskyData() {
         try {
-            cacheService.rebuildProductsCategoriesCache(true);
+            cacheService.rebuildProductsCategoriesCache(false);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);
@@ -64,8 +64,8 @@ public class WhiskyApi {
                 throw new IllegalArgumentException("Such ID " + whisky.getId() + " already exists");
             }
             whisky.setId(0);
-            whiskyService.insertWhisky(whisky);
-            return Response.ok(whiskyService.getWhiskyById(whisky.getId()));
+            whisky = whiskyService.persistWhisky(whisky);
+            return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
         }
@@ -79,7 +79,7 @@ public class WhiskyApi {
                 throw new IllegalArgumentException("No such ID " + id + " exists");
             }
             whisky.setId(id);
-            whisky = whiskyService.updateWhisky(whisky);
+            whisky = whiskyService.persistWhisky(whisky);
             return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);

@@ -85,12 +85,13 @@ angular.module('myApp.view2', ['ngRoute'])
         };
 
         $scope.getWhisky = function (id) {
+            $scope.busyW = true;
             var deferred = $q.defer();
             $http.get('api/whisky/' + id, {params: {}}).then(function (response) {
                 if ($scope.validateResponse(response)) {
-                    //console.log(response.data.data);
                     deferred.resolve(response.data.data);
                 }
+                $scope.busyW = false;
             });
             return deferred.promise;
         };
@@ -222,7 +223,7 @@ angular.module('myApp.view2', ['ngRoute'])
                 };
 
                 $scope.init = function () {
-                    $scope.whisky = angular.copy($scope.selWhisky);   //FIXME: got to be a better way to disable two-way binding, but I am too tired
+                    $scope.whisky = $scope.fixWarehouseQuantities(angular.copy($scope.selWhisky));   //FIXME: got to be a better way to disable two-way binding, but I am too tired
                     $scope.updatable = $scope.editable && $scope.whisky && $scope.whisky.id;
                 };
 
@@ -240,6 +241,24 @@ angular.module('myApp.view2', ['ngRoute'])
                         $scope.$parent.addWhisky(whisky);
                     }
                 };
+
+                $scope.fixWarehouseQuantities = function (whisky) {
+                    if(!whisky || !whisky.quantities){
+                        return whisky;
+                    }
+                    var qtyArr = Object.entries(whisky.quantities).map(function (entry) {
+                        let wh = angular.fromJson(entry[0]);
+                        return {
+                            store: wh.store,
+                            address: wh.address,
+                            city: wh.city,
+                            qty: entry[1]
+                        }
+                    });
+                    whisky.quantities = qtyArr;
+
+                    return whisky;
+                }
 
             }],
             link: function (scope, elem, attrs) {

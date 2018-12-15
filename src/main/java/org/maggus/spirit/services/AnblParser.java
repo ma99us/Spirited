@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.maggus.spirit.models.Locators;
+import org.maggus.spirit.models.Warehouse;
 import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.Stateless;
@@ -14,10 +15,12 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Stateless
 @Log
@@ -152,10 +155,15 @@ public class AnblParser {
             String prodCode = getNumberStr(doc.select("p.product-details-code").first().text());
             Double alcoholContent = Double.parseDouble(getNumberStr(doc.select("div.informationAttributesSection span.attribute-value").first().text()));
             String description = doc.select("div.span6 > p").first().text();
-            Elements warehouses = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
-
-            //TODO: parse quantity and locations
-
+            Elements whRows = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
+            whisky.getQuantities().clear(); // just clear all old quantities and start fresh
+            for(Element el : whRows){
+                String store = el.select("td.warehouseName > span").first().text();
+                String address = el.select("td.warehouseAddress > span").first().text();
+                String city = el.select("td.warehouseCity > span").first().text();
+                Integer qty = Integer.parseInt(el.select("td.warehouseQty > span").first().text());
+                whisky.setStoreQuantity(new Warehouse(store, address, city), qty);
+            }
             whisky.setAnblProdCode(prodCode);
             whisky.setAlcoholContent(alcoholContent);
             whisky.setDescription(description);

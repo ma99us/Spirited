@@ -63,14 +63,24 @@ public class WhiskyTestService {
         return em.find(Whisky.class, id);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void insertWhisky(Whisky whisky) throws Exception {
-        em.persist(whisky);
+    public Whisky getWhiskyByName(String name) throws Exception {
+        TypedQuery<Whisky> q = em.createQuery("select w from Whisky w where w.name=:name", Whisky.class);
+        q.setParameter("name", name);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Whisky updateWhisky(Whisky whisky) throws Exception {
-        return em.merge(whisky);
+    public Whisky persistWhisky(Whisky whisky) throws Exception {
+        if (whisky.getId() > 0) {
+            return em.merge(whisky);
+        } else {
+            em.persist(whisky);
+            return whisky;
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -83,6 +93,11 @@ public class WhiskyTestService {
         log.warning("! Clearing the whole DB Whisky table!");
         Query q = em.createQuery("DELETE FROM Whisky");
         q.executeUpdate();
+
+//        // delete all quantities
+//        log.warning("! Clearing the Whisky Quantities table!");
+//        q = em.createQuery("DELETE FROM whisky_quantities");
+//        q.executeUpdate();
     }
 
     public static String getSafeOrderByClause(Class clazz, String sortBy) {
