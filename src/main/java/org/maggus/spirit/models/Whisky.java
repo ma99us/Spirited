@@ -2,35 +2,38 @@ package org.maggus.spirit.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.eclipse.persistence.annotations.CacheIndex;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Data
 @NoArgsConstructor
 public class Whisky extends CacheItem {
 
-    // basic info
+    @Id
+    @GeneratedValue(generator="WhiskyGen", strategy = GenerationType.AUTO)
+    private long id;
     private Boolean inactive;       // if 'true' then it should be excluded from all queries
-    private String country;
+    //// basic info
+    @CacheIndex
+    private String name;
+    private String country;         // country of origin
     private String region;          // region within Country if available
     private Integer unitVolumeMl;   // bottle volume in milliliters
     private BigDecimal unitPrice;   // decimal price in dollars CAD
     private String thumbnailUrl;    // url or path to small imabge of the bottle
     private String type;            // should be one of the items in WHISKY_TYPES enum
-    // detailed info
-    private String anblProdCode;    // ANBL Product Code
+    //// detailed info
+    private String productCode;    // ANBL Product Code
     private Double alcoholContent;  // Alcohol content, like 40.0%
-    //@Column(name="DESCRIPTION", length = 512)
     @Column(columnDefinition = "text")
     private String description;     // poetic description of the whisky flavour
-    //@ManyToMany(cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "whisky", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @ElementCollection
-    private Map<Warehouse, Integer> quantities = new HashMap<Warehouse, Integer>();
+    private Set<WarehouseQuantity> quantities = new HashSet<>();
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         super();
@@ -39,9 +42,8 @@ public class Whisky extends CacheItem {
         setUnitPrice(price);
     }
 
-    public void setStoreQuantity(final Warehouse warehouse, int qty){
-        //Warehouse wh = quantities.keySet().stream().filter(w -> w.getName().equals(warehouse.getName())).findAny().orElse(warehouse);
-        quantities.put(warehouse, qty);
+    public void setStoreQuantity(WarehouseQuantity wq){
+        quantities.add(wq);
     }
 
     @Override
@@ -49,21 +51,40 @@ public class Whisky extends CacheItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Whisky whisky = (Whisky) o;
-        return Objects.equals(getName(), whisky.getName()) &&
+        return Objects.equals(getProductCode(), whisky.getProductCode()) ||
+                (Objects.equals(getName(), whisky.getName()) &&
                 Objects.equals(getCountry(), whisky.getCountry()) &&
-                Objects.equals(getUnitVolumeMl(), whisky.getUnitVolumeMl());
+                Objects.equals(getUnitVolumeMl(), whisky.getUnitVolumeMl()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getCountry(), getUnitVolumeMl());
+        return Objects.hash(getProductCode(), getName(), getCountry(), getUnitVolumeMl());
     }
 
     @Override
     public String toString() {
-        return "Whisky{" + getName() +
+        return "Whisky{id=" + getId() +
+                ", " + getName() +
                 " " + getUnitVolumeMl() + "ml"+
                 " - " + getCountry() +
                 '}';
+    }
+
+    public void mergeFrom(Whisky w){
+        if(w == null){
+            return;
+        }
+        if(w.getName() != null) {setName(w.getName());};
+        if(w.getCountry() != null) {setCountry(w.getCountry());};
+        if(w.getRegion() != null) {setRegion(w.getRegion());};
+        if(w.getUnitVolumeMl() != null) {setUnitVolumeMl(w.getUnitVolumeMl());};
+        if(w.getUnitPrice() != null) {setUnitPrice(w.getUnitPrice());};
+        if(w.getThumbnailUrl() != null) {setThumbnailUrl(w.getThumbnailUrl());};
+        if(w.getType() != null) {setType(w.getType());};
+        if(w.getProductCode() != null) {setProductCode(w.getProductCode());};
+        if(w.getAlcoholContent() != null) {setAlcoholContent(w.getAlcoholContent());};
+        if(w.getDescription() != null) {setDescription(w.getDescription());};
+        if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
     }
 }

@@ -52,6 +52,15 @@ angular.module('myApp.view2', ['ngRoute'])
 
         ////// API calls /////
 
+        $scope.getCacheStatus = function(){
+            $http.get('api/status', {params: {}}).then(function (response) {
+                if ($scope.validateResponse(response)) {
+                    //console.log(response.data.data);
+                    $scope.cacheStatus = response.data.data;
+                }
+            });
+        };
+
         $scope.rebuildAll = function(){
             $scope.busy = true;
             var ts0 = new Date().getTime();
@@ -59,6 +68,7 @@ angular.module('myApp.view2', ['ngRoute'])
                 if ($scope.validateResponse(response)) {
                     //console.log(response.data.data);
                     $scope.getAllWhisky();
+                    $scope.getCacheStatus();
                 }
                 $scope.busy = false;
                 $scope.lastRebuildTs = ((new Date().getTime() - ts0)/1000).toFixed(1);
@@ -159,6 +169,7 @@ angular.module('myApp.view2', ['ngRoute'])
         };
 
         $scope.getAllWhisky(10);
+        $scope.getCacheStatus();
     }])
     .directive('dlEnterKey', function () {
         return {
@@ -223,7 +234,7 @@ angular.module('myApp.view2', ['ngRoute'])
                 };
 
                 $scope.init = function () {
-                    $scope.whisky = $scope.fixWarehouseQuantities(angular.copy($scope.selWhisky));   //FIXME: got to be a better way to disable two-way binding, but I am too tired
+                    $scope.whisky = angular.copy($scope.selWhisky);   //FIXME: got to be a better way to disable two-way binding, but I am too tired
                     $scope.updatable = $scope.editable && $scope.whisky && $scope.whisky.id;
                 };
 
@@ -241,25 +252,6 @@ angular.module('myApp.view2', ['ngRoute'])
                         $scope.$parent.addWhisky(whisky);
                     }
                 };
-
-                $scope.fixWarehouseQuantities = function (whisky) {
-                    if(!whisky || !whisky.quantities){
-                        return whisky;
-                    }
-                    var qtyArr = Object.entries(whisky.quantities).map(function (entry) {
-                        let wh = angular.fromJson(entry[0]);
-                        return {
-                            store: wh.store,
-                            address: wh.address,
-                            city: wh.city,
-                            qty: entry[1]
-                        }
-                    });
-                    whisky.quantities = qtyArr;
-
-                    return whisky;
-                }
-
             }],
             link: function (scope, elem, attrs) {
 

@@ -3,7 +3,6 @@ package org.maggus.spirit.api;
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.services.CacheService;
-import org.maggus.spirit.services.WhiskyTestService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -14,8 +13,6 @@ import javax.ws.rs.core.MediaType;
 @Consumes({MediaType.APPLICATION_JSON})
 @Log
 public class WhiskyApi {
-    @Inject
-    private WhiskyTestService whiskyService;
 
     @Inject
     private CacheService cacheService;
@@ -37,7 +34,7 @@ public class WhiskyApi {
                                  @QueryParam("sortBy") @DefaultValue("name") String sortBy) {
         try {
             QueryMetadata metaData = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
-            Response resp = Response.ok(whiskyService.getAllWhisky(metaData));
+            Response resp = Response.ok(cacheService.getWhiskyService().getAllWhisky(metaData));
             resp.setMetaData(metaData);
             return resp;
         } catch (Exception e) {
@@ -49,7 +46,7 @@ public class WhiskyApi {
     @GET
     public Response getWhisky(@PathParam("id") long id) {
         try {
-            Whisky whisky = whiskyService.getWhiskyById(id);
+            Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
             cacheService.validateCache(whisky, CacheService.CacheOperation.CACHE_IF_NEEDED);
             return Response.ok(whisky);
         } catch (Exception e) {
@@ -60,11 +57,11 @@ public class WhiskyApi {
     @PUT
     public Response createWhisky(Whisky whisky) {
         try {
-            if (whiskyService.getWhiskyById(whisky.getId()) != null) {
+            if (cacheService.getWhiskyService().getWhisky(whisky.getId()) != null) {
                 throw new IllegalArgumentException("Such ID " + whisky.getId() + " already exists");
             }
             whisky.setId(0);
-            whisky = whiskyService.persistWhisky(whisky);
+            whisky = cacheService.getWhiskyService().persistWhisky(whisky);
             return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
@@ -75,11 +72,11 @@ public class WhiskyApi {
     @POST
     public Response updateWhisky(@PathParam("id") long id, Whisky whisky) {
         try {
-            if (whiskyService.getWhiskyById(id) == null) {
+            if (cacheService.getWhiskyService().getWhisky(id) == null) {
                 throw new IllegalArgumentException("No such ID " + id + " exists");
             }
             whisky.setId(id);
-            whisky = whiskyService.persistWhisky(whisky);
+            whisky = cacheService.getWhiskyService().persistWhisky(whisky);
             return Response.ok(whisky);
         } catch (Exception e) {
             return Response.fail(e);
@@ -90,8 +87,8 @@ public class WhiskyApi {
     @DELETE
     public Response deleteWhisky(@PathParam("id") long id) {
         try {
-            Whisky whisky = whiskyService.getWhiskyById(id);
-            whiskyService.deleteWhisky(whisky);
+            Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
+            cacheService.getWhiskyService().deleteWhisky(whisky);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);

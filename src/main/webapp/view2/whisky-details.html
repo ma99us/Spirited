@@ -38,7 +38,7 @@
                 </p>
                 <p ng-if="whisky.cacheExternalUrl">More details: <a id="anblUrl" href="{{whisky.cacheExternalUrl}}"
                                                                     target="_blank">Go to ANBL product page</a> <span
-                        ng-show="whisky.anblProdCode"> - Product Code: {{whisky.anblProdCode}}</span></p>
+                        ng-show="whisky.productCode"> - Product Code: {{whisky.productCode}}</span></p>
 
                 <p>
                     <button ng-if="updatable && editable" ng-click="submit(whisky)">Update</button>
@@ -60,11 +60,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="warehouse in whisky.quantities | orderBy:'-qty'">
-                    <td style="border-top: 1px solid #cdd0d4;">{{warehouse.store}}</td>
-                    <td style="border-top: 1px solid #cdd0d4;">{{warehouse.address}}</td>
-                    <td style="border-top: 1px solid #cdd0d4;">{{warehouse.city}}</td>
-                    <td style="border-top: 1px solid #cdd0d4;" align="center">{{warehouse.qty}}</td>
+                <tr ng-repeat="wq in whisky.quantities | orderBy:'-quantity'">
+                    <td style="border-top: 1px solid #cdd0d4;">{{wq.name}}</td>
+                    <td style="border-top: 1px solid #cdd0d4;">{{wq.address}}</td>
+                    <td style="border-top: 1px solid #cdd0d4;">{{wq.city}}</td>
+                    <td style="border-top: 1px solid #cdd0d4;" align="center">{{wq.quantity}}</td>
                 </tr>
                 </tbody>
             </table>

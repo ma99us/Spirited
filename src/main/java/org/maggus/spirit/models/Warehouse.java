@@ -2,25 +2,32 @@ package org.maggus.spirit.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.eclipse.persistence.annotations.CacheIndex;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class Warehouse extends CacheItem{
+public class Warehouse {
 
+    @Id
+    @GeneratedValue(generator="WarehouseGen", strategy = GenerationType.AUTO)
+    private long id;
+    @CacheIndex
+    private String name;
     private String address;
     private String city;
+//    @OneToMany(mappedBy = "warehouse", fetch=FetchType.LAZY)
+//    private List<WarehouseQuantity> quantities = new ArrayList<>();
 
     public Warehouse(String store, String address, String city){
-        super();
         setName(store);
-        this.address = address;
-        this.city = city;
+        setAddress(address);
+        setCity(city);
     }
 
     @Override
@@ -36,10 +43,11 @@ public class Warehouse extends CacheItem{
         return Objects.hash(getName());
     }
 
-    public String toSimpleString() {
-        return "Warehouse{" + getName() +
-                " - " + getAddress() +
-                " - " + city +
+    public String toString() {
+        return "Warehouse{id=" + getId() +
+                "; " + getName() +
+                "; " + getAddress() +
+                "; " + city +
                 '}';
     }
 
@@ -48,13 +56,13 @@ public class Warehouse extends CacheItem{
      * which we need to serialize into json for the rest api response.
      * We have to make sure that toString() returns valid json object.
      */
-    @Override
-    public String toString() {
-        final JsonObjectBuilder builder = Json.createBuilderFactory(null).createObjectBuilder();
-        return builder.add("store", getName())
-                .add("address", getAddress())
-                .add("city", getCity())
-                .build().toString();
-    }
+//    @Override
+//    public String toString() {
+//        final JsonObjectBuilder builder = Json.createBuilderFactory(null).createObjectBuilder();
+//        return builder.add("store", getName())
+//                .add("address", getAddress())
+//                .add("city", getCity())
+//                .build().toString();
+//    }
 
 }

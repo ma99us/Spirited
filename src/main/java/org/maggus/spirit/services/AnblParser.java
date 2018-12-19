@@ -5,9 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.maggus.spirit.models.Locators;
-import org.maggus.spirit.models.Warehouse;
-import org.maggus.spirit.models.Whisky;
+import org.maggus.spirit.models.*;
 
 import javax.ejb.Stateless;
 import java.io.IOException;
@@ -49,76 +47,41 @@ public class AnblParser {
 
     private final Pattern numbers = Pattern.compile("(\\d+\\.\\d+|\\d+)");  // integer and decimal numbers
 
-    public List<Whisky> loadProductsCategories() {
-        //TODO: figure out better way to configure this
-        List<Whisky> allWhiskies = new ArrayList<Whisky>();
-
-        log.info("*** Loading all ANBL products categories");
-        long t0 = System.currentTimeMillis();
+    public List<WhiskyCategory> buildProductsCategories() {
+        List<WhiskyCategory> wcs = new ArrayList<>();
 
         // load Blended
-        List<Whisky> whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_BLENDS.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.BLENDED.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_BLENDS.name(), CacheUrls.SCOTCH_BLENDS.getUrl(),
+                Locators.Country.UK.toString(), null, Locators.WhiskyType.BLENDED.toString()));
 
         // load Isla
-        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_ISLA.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.S_M.toString());
-            w.setRegion(Locators.Region.UK_ISLA.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_ISLA.name(), CacheUrls.SCOTCH_SM_ISLA.getUrl(),
+                Locators.Country.UK.toString(), Locators.Region.UK_ISLA.toString(), Locators.WhiskyType.S_M.toString()));
 
         // load Highland
-        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_HIGHLAND.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.S_M.toString());
-            w.setRegion(Locators.Region.UK_HIGH.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_HIGHLAND.name(), CacheUrls.SCOTCH_SM_HIGHLAND.getUrl(),
+                Locators.Country.UK.toString(), Locators.Region.UK_HIGH.toString(), Locators.WhiskyType.S_M.toString()));
 
-        // load Speyside
-        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_SPEYSIDE.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.S_M.toString());
-            w.setRegion(Locators.Region.UK_SPEY.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        // load Highland
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_SPEYSIDE.name(), CacheUrls.SCOTCH_SM_SPEYSIDE.getUrl(),
+                Locators.Country.UK.toString(), Locators.Region.UK_SPEY.toString(), Locators.WhiskyType.S_M.toString()));
 
         // load Islands
-        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_ISLANDS.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.S_M.toString());
-            w.setRegion(Locators.Region.UK_ISLANDS.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_ISLANDS.name(), CacheUrls.SCOTCH_SM_ISLANDS.getUrl(),
+                Locators.Country.UK.toString(), Locators.Region.UK_ISLANDS.toString(), Locators.WhiskyType.S_M.toString()));
 
-        // load Lowland
-        whiskies = loadProductCategoryPage(CacheUrls.SCOTCH_SM_LOWLAND.getUrl());
-        for (Whisky w : whiskies) {
-            w.setCountry(Locators.Country.UK.toString());
-            w.setType(Locators.WhiskyType.S_M.toString());
-            w.setRegion(Locators.Region.UK_LOW.toString());
-        }
-        allWhiskies.addAll(whiskies);
+        // load Islands
+        wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_LOWLAND.name(), CacheUrls.SCOTCH_SM_LOWLAND.getUrl(),
+                Locators.Country.UK.toString(), Locators.Region.UK_LOW.toString(), Locators.WhiskyType.S_M.toString()));
 
         //TODO: load more stuff here
-        long dt = System.currentTimeMillis() - t0;
-        log.info("*** Done loading all ANBL product categories. Done in " + dt / 1000 + " seconds");
 
-        return allWhiskies;
+        return wcs;
     }
 
     public List<Whisky> loadProductCategoryPage(String url) {
         try {
-            log.info("** Loading " + url);
+            //log.info("** Loading " + url);
             Document doc = Jsoup.connect(url)
                     .cookie("ProductListing_SortBy", "Value=title")
                     .cookie("ProductListing_DisplayMode", "Value=list")
@@ -146,30 +109,29 @@ public class AnblParser {
         }
     }
 
-    public void loadProduct(Whisky whisky) {
-        try{
+    public void loadProductPage(Whisky whisky) {
+        try {
             //log.info("** Loading " + whisky.getCacheExternalUrl());
             Document doc = Jsoup.connect(whisky.getCacheExternalUrl()).get();
             String title = doc.title();
-            log.info("* Parsing product page \"" + title + "\"");
+            //log.info("* Parsing product page \"" + title + "\"");
             String prodCode = getNumberStr(getSafeFirstElementText(doc.select("p.product-details-code")));
             Double alcoholContent = Double.parseDouble(getNumberStr(getSafeFirstElementText(doc.select("div.informationAttributesSection span.attribute-value"))));
             String description = getSafeFirstElementText(doc.select("div.span6 > p"));
             Elements whRows = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
             whisky.getQuantities().clear(); // just clear all old quantities and start fresh
-            for(Element el : whRows){
+            for (Element el : whRows) {
                 String store = getSafeFirstElementText(el.select("td.warehouseName > span"));
                 String address = getSafeFirstElementText(el.select("td.warehouseAddress > span"));
                 String city = getSafeFirstElementText(el.select("td.warehouseCity > span"));
                 Integer qty = Integer.parseInt(getSafeFirstElementText(el.select("td.warehouseQty > span")));
-                whisky.setStoreQuantity(new Warehouse(store, address, city), qty);
+                whisky.setStoreQuantity(new WarehouseQuantity(store, address, city, qty));
             }
-            whisky.setAnblProdCode(prodCode);
+            whisky.setProductCode(prodCode);
             whisky.setAlcoholContent(alcoholContent);
             whisky.setDescription(description);
             //log.info("* Parsing product page \"" + title + "\" Done.");
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             log.log(Level.SEVERE, "Failed to parse ANBL Product page: " + whisky.getCacheExternalUrl(), ex);
         }
     }
@@ -188,11 +150,10 @@ public class AnblParser {
         return whisky;
     }
 
-    private String getSafeFirstElementText(Elements els){
-        try{
+    private String getSafeFirstElementText(Elements els) {
+        try {
             return els.first().text();
-        }
-        catch(NullPointerException ex){
+        } catch (NullPointerException ex) {
             return "";
         }
     }
@@ -220,7 +181,7 @@ public class AnblParser {
 
     private String getNumberStr(String str) {
         String digits = "";
-        if(str == null){
+        if (str == null) {
             return digits;
         }
         Matcher matcher = numbers.matcher(str);

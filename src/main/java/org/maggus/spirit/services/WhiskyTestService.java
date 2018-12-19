@@ -5,14 +5,12 @@ import org.maggus.spirit.api.QueryMetadata;
 import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.Stateful;
-import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.*;
-import java.lang.reflect.Field;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 @Stateful
 @Log
@@ -59,18 +57,41 @@ public class WhiskyTestService {
         return resultList;
     }
 
-    public Whisky getWhiskyById(long id) throws Exception {
+    public Whisky getWhisky(long id) throws Exception {
         return em.find(Whisky.class, id);
     }
 
-    public Whisky getWhiskyByName(String name) throws Exception {
-        TypedQuery<Whisky> q = em.createQuery("select w from Whisky w where w.name=:name", Whisky.class);
-        q.setParameter("name", name);
+    public Whisky findWhisky(String productCode) throws Exception {
         try {
+            if (productCode == null || productCode.isEmpty()) {
+                throw new NoResultException("productCode can not be null");
+            }
+            TypedQuery<Whisky> q = em.createQuery("select w from Whisky w where w.productCode=:productCode", Whisky.class);
+            q.setParameter("productCode", productCode);
             return q.getSingleResult();
         } catch (NoResultException ex) {
             return null;
+        } catch (NonUniqueResultException ex) {
+            log.warning("! multiple products with the same product code = \"" + productCode + "\". This should not happen!");
+            return null;
         }
+    }
+
+    public List<Whisky> findWhisky(String name, Integer volumeMl, String country) throws Exception {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Whisky> q = cb.createQuery(Whisky.class);
+        Root<Whisky> c = q.from(Whisky.class);
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(cb.equal(c.get("name"), name));
+        if (volumeMl != null) {
+            predicates.add(cb.equal(c.get("unitVolumeMl"), volumeMl));
+        }
+        if (country != null) {
+            predicates.add(cb.equal(c.get("country"), country));
+        }
+        q.select(c).where(predicates.toArray(new Predicate[]{}));
+        TypedQuery<Whisky> query = em.createQuery(q);
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -89,15 +110,23 @@ public class WhiskyTestService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteAllWhisky() throws Exception {
+    public synchronized void deleteAllWhisky() throws Exception {
         log.warning("! Clearing the whole DB Whisky table!");
         Query q = em.createQuery("DELETE FROM Whisky");
         q.executeUpdate();
+        em.flush();
+    }
 
-//        // delete all quantities
-//        log.warning("! Clearing the Whisky Quantities table!");
-//        q = em.createQuery("DELETE FROM whisky_quantities");
+    // delete all quantities tables
+    public void clearQuantities() {
+//        log.warning("! Clearing the Warehouse Quantities table!");
+//        Query q = em.createNativeQuery("delete from whisky_warehousequantity");
 //        q.executeUpdate();
+
+        Query q = em.createNativeQuery("delete from warehousequantity");
+        q.executeUpdate();
+
+        em.flush();
     }
 
     public static String getSafeOrderByClause(Class clazz, String sortBy) {

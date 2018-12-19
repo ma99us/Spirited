@@ -2,8 +2,10 @@
 <h3 ng-show="busy" style="text-align: center">Please wait...</h3>
 <p style="color:orangered; font-weight:bold;">{{message}}</p>
 
-<p align="right"><span ng-show="lastQueryTs">Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
-    <span ng-show="lastRebuildTs"> Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAll()">REBUILD ALL DATA!</button></p>
+<p align="right">
+    <span ng-show="cacheStatus"> Cache last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}} in {{(cacheStatus.cacheSpentMs/1000).toFixed(1)}} secs | </span>
+    <span ng-show="lastQueryTs"> Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
+    <span ng-show="lastRebuildTs"> | Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAll()">REBUILD ALL DATA!</button></p>
 <p>
 <ul>
     <p ng-show="whisky.length == 0">--- no data ---</p>

@@ -7,6 +7,7 @@ import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.*;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Stateful
@@ -51,9 +52,10 @@ public class WarehouseService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteAllWarehouses() throws Exception {
+    public synchronized void deleteAllWarehouses() throws Exception {
         log.warning("! Clearing the whole DB Warehouse table!");
         Query q = em.createQuery("DELETE FROM Warehouse");
         q.executeUpdate();
+        em.flush();
     }
 }

@@ -23,8 +23,8 @@ public class AnblParserTest {
         Whisky whisky = new Whisky();
         whisky.setCacheExternalUrl("https://www.anbl.com/aberfeldy-12-yo-750ml-14703");
         AnblParser parser = new AnblParser();
-        parser.loadProduct(whisky);
-        assertEquals("5000277003457", whisky.getAnblProdCode());
+        parser.loadProductPage(whisky);
+        assertEquals("5000277003457", whisky.getProductCode());
         assertTrue(whisky.getDescription() != null && whisky.getDescription().contains("Warm golden colour"));
         assertEquals(new Double(40.0), whisky.getAlcoholContent());
     }
