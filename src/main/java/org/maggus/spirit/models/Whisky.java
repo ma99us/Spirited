@@ -34,6 +34,8 @@ public class Whisky extends CacheItem {
     //@OneToMany(mappedBy = "whisky", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @ElementCollection
     private Set<WarehouseQuantity> quantities = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private FlavorProfile flavorProfile;
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         super();
@@ -86,5 +88,6 @@ public class Whisky extends CacheItem {
         if(w.getAlcoholContent() != null) {setAlcoholContent(w.getAlcoholContent());};
         if(w.getDescription() != null) {setDescription(w.getDescription());};
         if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
+        if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
     }
 }

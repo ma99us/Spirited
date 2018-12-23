@@ -1,29 +1,59 @@
 package org.maggus.spirit.services;
 
-import junit.framework.TestCase;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
-import java.util.List;
-import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertNotNull;
 
 public class WhiskyTestServiceTest {
 
+    private static EJBContainer c;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+//        Map<String, Object> p = new HashMap<String, Object>();
+//        p.put("java.naming.factory.initial ", "org.apache.openejb.client.LocalInitialContextFactory");
+//        //p.put(EJBContainer.MODULES, new File("/target/classes/META-INF"));
+//
+//        p.put("spiritedTestDatabase", "new://Resource?type=DataSource");
+//        p.put("spiritedTestDatabase.JdbcDriver", "com.mysql.cj.jdbc.Driver");
+//        p.put("spiritedTestDatabase.JdbcUrl", "jdbc:mysql://localhost/spirited_test");
+//        p.put("spiritedTestDatabase.UserName", "root");
+//        p.put("spiritedTestDatabase.Password", "qwe");
+//
+//        p.put("em", "new://TransactionManager?type=TransactionManager");
+//
+//        c = EJBContainer.createEJBContainer(p);
+//        System.out.println("Opening the container: " + c);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        if(c!=null){
+            c.close();
+            System.out.println("Closing the container");
+        }
+    }
+
     @Test
     public void testPersistence() throws Exception {
-///////////
-//        Properties p = new Properties();
-//        p.put("spiritedDatabase", "new://Resource?type=DataSource");
-//        p.put("spiritedDatabase.JdbcDriver", "com.mysql.jdbc.Driver");
-//        p.put("spiritedDatabase.JdbcUrl", "jdbc:mysql:localhost/spirited");
-//        final Context context = EJBContainer.createEJBContainer(p).getContext();
-//        assertNotNull(context);
-//        WhiskyTestService whiskyService = (WhiskyTestService) context.lookup("java:global/jpa-eclipselink/WhiskyTestService");
+
+//        Map<String, Object> p = new HashMap<String, Object>();
+//        p.put("spiritedTestDatabase", "new://Resource?type=DataSource");
+//        p.put("spiritedTestDatabase.JdbcDriver", "com.mysql.cj.jdbc.Driver");
+//        p.put("spiritedTestDatabase.JdbcUrl", "jdbc:mysql://localhost/spirited_test");
+        //final Context context = EJBContainer.createEJBContainer(p).getContext();
+//        assertNotNull(c);
+        //WhiskyTestService whiskyService = (WhiskyTestService) c.getContext().lookup("java:global/classes/MyBean");
+//        WhiskyTestService whiskyService = (WhiskyTestService) c.getContext().lookup("java:global/classes/WhiskyTestService");
 //        assertNotNull(whiskyService);
 
 //        WhiskyTestService whiskyService = new WhiskyTestService("spirited-test");

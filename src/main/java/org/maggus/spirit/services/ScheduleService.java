@@ -13,19 +13,32 @@ import java.util.logging.Level;
 @Log
 public class ScheduleService {
 
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd '  ' hh:mm:ss");
+
     @Inject
     private CacheService cacheService;
 
     @Schedule(hour = "23", minute = "59", second = "59")
-    //@Schedule(hour = "14", minute = "20", second = "0")
     public void reBuildTheWholeCache() {
         try {
-            final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd '  ' hh:mm:ss");
-            log.warning("=== Starting scheduled cache wipe/rebuild at " + sdf.format(new Date()) + " ===");
+            log.warning("=== Scheduled cache re-build at " + sdf.format(new Date()) + " ===");
             cacheService.rebuildProductsCategoriesCache(true);
-            log.warning("=== Done scheduled job at " + sdf.format(new Date()) + " ===");
+            log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Scheduled job failed!", e);
+            log.log(Level.SEVERE, "Scheduled reBuildTheWholeCache failed!", e);
         }
     }
+
+    @Schedule(hour = "1-23", minute = "*/30")
+    public void dbKeepAlive() {
+        try {
+            log.warning("=== Scheduled DB keep-alive at " + sdf.format(new Date()) + " ===");
+            cacheService.getWhiskyCategoryService().getWhiskyCategoryById(1);
+            log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
+            // we do not care about results
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Scheduled dbKeepAlive failed!", e);
+        }
+    }
+
 }
