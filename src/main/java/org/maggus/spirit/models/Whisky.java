@@ -77,6 +77,10 @@ public class Whisky extends CacheItem {
         if(w == null){
             return;
         }
+        if(w.getCacheExternalUrl() != null) {setCacheExternalUrl(w.getCacheExternalUrl());}
+        if(w.getCacheLastUpdatedMs() != null) {setCacheLastUpdatedMs(w.getCacheLastUpdatedMs());}
+        if(w.getCacheSpentMs() != null) {setCacheSpentMs(w.getCacheSpentMs());}
+        //
         if(w.getName() != null) {setName(w.getName());};
         if(w.getCountry() != null) {setCountry(w.getCountry());};
         if(w.getRegion() != null) {setRegion(w.getRegion());};
@@ -87,6 +91,7 @@ public class Whisky extends CacheItem {
         if(w.getProductCode() != null) {setProductCode(w.getProductCode());};
         if(w.getAlcoholContent() != null) {setAlcoholContent(w.getAlcoholContent());};
         if(w.getDescription() != null) {setDescription(w.getDescription());};
+        //
         if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
         if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
     }

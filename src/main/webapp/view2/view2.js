@@ -1,11 +1,34 @@
 'use strict';
 
-angular.module('myApp.view2', ['ngRoute'])
+angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
-    .config(['$routeProvider', function ($routeProvider) {
+    .config(['$routeProvider', 'ChartJsProvider', function ($routeProvider, ChartJsProvider) {
         $routeProvider.when('/view2', {
             templateUrl: 'view2/view2.html',
             controller: 'View2Ctrl'
+        });
+        ChartJsProvider.setOptions({
+            chartColors: ['#13b7c6', '#0c818e', '#1be0ea'],
+            showTooltips: true,
+            responsive: false
+        });
+        ChartJsProvider.setOptions('scales', {
+            xAxes: [{
+                ticks: {
+                    display: true,
+                    autoSkip: false
+                },
+                gridLines: {
+                    display: false,
+                }
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    max: 100,
+                    beginAtZero:true,
+                }
+            }]
         });
     }])
     .controller('View2Ctrl', ['$scope', '$http', '$window', '$q', function ($scope, $http, $window, $q) {
@@ -15,7 +38,9 @@ angular.module('myApp.view2', ['ngRoute'])
             $scope.selWhisky = whisky;
             if($scope.selWhisky){
                 $scope.getWhisky($scope.selWhisky.id).then(function(data){
-                    $scope.selWhisky = data;
+                    if($scope.selWhisky.id == data.id){
+                        $scope.selWhisky = data;
+                    }
                 });
             }
         };
@@ -230,12 +255,14 @@ angular.module('myApp.view2', ['ngRoute'])
                 }, true);
                 $scope.clear = function () {
                     $scope.whisky = {};
+                    $scope.selWhisky = null;
                     $scope.updatable = false;
                 };
 
                 $scope.init = function () {
                     $scope.whisky = angular.copy($scope.selWhisky);   //FIXME: got to be a better way to disable two-way binding, but I am too tired
                     $scope.updatable = $scope.editable && $scope.whisky && $scope.whisky.id;
+                    $scope.buildFPChart($scope.whisky);
                 };
 
                 $scope.onEnter = function(whisky){
@@ -252,6 +279,30 @@ angular.module('myApp.view2', ['ngRoute'])
                         $scope.$parent.addWhisky(whisky);
                     }
                 };
+
+                $scope.buildFPChart = function(whisky){
+                    const xLabels = ['smoky', 'peaty', 'spicy', 'herbal', 'oily', 'full_bodied', 'rich', 'sweet', 'briny', 'salty', 'vanilla', 'tart', 'fruity', 'floral'];
+                    //$scope.fpOptions = {scaleShowGridLines: false,};
+                    $scope.fpColors = [];
+                    $scope.fpLabels = [];
+                    $scope.fpData = [];
+                    $scope.fpOptions = {};
+                    if(whisky && whisky.flavorProfile){
+                        $scope.fpOptions = {title: {
+                                display: true,
+                                text: whisky.flavorProfile.flavors
+                            }};
+                        xLabels.forEach(function (lbl) {
+                            let label = lbl === 'full_bodied' ? 'FULL' : lbl.toUpperCase();
+                            $scope.fpLabels.push(label);
+                            let value = whisky.flavorProfile[lbl];
+                            $scope.fpData.push(value);
+                            let color = value >= 50 ? '#FFa7b6' : '#13b7c6';
+                            $scope.fpColors.push(color);
+                        })
+                    }
+                };
+
             }],
             link: function (scope, elem, attrs) {
 

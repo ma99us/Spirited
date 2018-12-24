@@ -37,7 +37,7 @@
                                                        dl-enter-key="onEnter(whisky)" ng-model="whisky.thumbnailUrl"/>
                 </p>
                 <p ng-if="whisky.cacheExternalUrl">More details: <a id="anblUrl" href="{{whisky.cacheExternalUrl}}"
-                                                                    target="_blank">Go to ANBL product page</a> <span
+                                                                    target="_blank">ANBL product page</a> <span
                         ng-show="whisky.productCode"> - Product Code: {{whisky.productCode}}</span></p>
 
                 <p>
@@ -46,6 +46,15 @@
                     <button ng-if="editable" ng-click="clear()">Clear</button>
                 </p>
             </form>
+
+            <canvas ng-if="whisky.flavorProfile" id="bar" class="chart chart-bar" width="450"
+                    chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
+            </canvas>
+
+            <p ng-if="whisky.flavorProfile.cacheExternalUrl">Flavor Profile from: <a id="distillerlUrl" href="{{whisky.flavorProfile.cacheExternalUrl}}"
+                                                                target="_blank">Distiller product page</a></p>
+
+
         </td>
         <td valign="top">
             <span style="text-align: center; font-weight:bold;" ng-if="$parent.busyW">Loading...</span>

@@ -159,9 +159,9 @@ public class CacheService {
             }
         }
         if (cacheW != null) {
-            cacheW.mergeFrom(whisky);
+            cacheW.mergeFrom(whisky);   // update existing whisky with new info
         } else {
-            cacheW = whisky;
+            cacheW = whisky;    // just use new whisky as is
         }
         // re-map Warehouses entities
         for (WarehouseQuantity wq : cacheW.getQuantities()) {
@@ -231,10 +231,10 @@ public class CacheService {
             name = name.replaceAll("\\s+YO", "");
             FlavorProfile fp = null;
             do {
-                fp = dstlrParser.searchSingleProduct(name, whisky.getType(), whisky.getCountry()); // find on a external site
+                fp = dstlrParser.searchSingleProduct(name, whisky.getType(), whisky.getCountry(), whisky.getRegion(), Locators.Age.parse(whisky.getName())); // find on a external site
                 String simName = simplifyWhiskyName(name);
                 if (simName.equals(name)) {
-                    break;  // can not simplify anymore
+                    break;  // search string can not be simplified anymore, we are done
                 } else {
                     name = simName;
                 }
@@ -245,7 +245,7 @@ public class CacheService {
             }
             dstlrParser.loadFlavorProfile(fp);
             if (fp.getFlavors() == null || fp.getFlavors().isEmpty()) {
-                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\"");
+                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\" => \"" + fp.getName() + "\"");
                 return false;
             }
             long now = System.currentTimeMillis();
@@ -270,9 +270,6 @@ public class CacheService {
                 // always use first word as is
                 fixed.add(tag);
             } else {
-//                if ("YO".equals(tag)) {
-//                    continue;
-//                }
                 String digits = tag.replaceAll("[^\\d]+", "");
                 if (digits.isEmpty()) {
                     lastNonDigitTagIdx = i;
@@ -282,7 +279,7 @@ public class CacheService {
                 }
             }
         }
-        // drop last word without any numbers in it
+        // finally drop last word without any numbers in it
         if (lastNonDigitTagIdx > 0 && lastNonDigitTagIdx < fixed.size()) {
             fixed.remove(lastNonDigitTagIdx);
         }

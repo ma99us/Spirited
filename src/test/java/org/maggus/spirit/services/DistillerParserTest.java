@@ -2,6 +2,7 @@ package org.maggus.spirit.services;
 
 import org.junit.Test;
 import org.maggus.spirit.models.FlavorProfile;
+import org.maggus.spirit.models.Locators;
 
 import java.util.List;
 
@@ -20,9 +21,23 @@ public class DistillerParserTest {
     @Test
     public void searchSingleProduct() {
         DistillerParser parser = new DistillerParser();
-        FlavorProfile fp = parser.searchSingleProduct("BALBLAIR 2005", null, null);
+        FlavorProfile fp = parser.searchSingleProduct("BALBLAIR 2005", null, null, null, null);
         assertNotNull(fp);
         assertTrue(fp.getName().toLowerCase().contains("BALBLAIR 2005".toLowerCase()));
+    }
+
+    @Test
+    public void searchSingleProductTricky() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Poit Dhubh Blended Malt 8 YO";
+        String type = "Blended";
+        String country = "United Kingdom";
+        String region = null;
+        Integer age = Locators.Age.parse(name);
+        name = name.replaceAll("\\s+YO", "");
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertTrue(fp.getName().toLowerCase().contains("POIT DHUBH BLENDED MALT 8 YEAR".toLowerCase()));
     }
 
     @Test

@@ -84,7 +84,7 @@ public class DistillerParser {
         }
     }
 
-    public FlavorProfile searchSingleProduct(String findName, String type, String country) {
+    public FlavorProfile searchSingleProduct(String findName, String type, String country, String region, Integer age) {
         URL url = null;
         try {
             url = new URL(BASE_URL + "/api/v1/spirits/search?term=" + fixSearchParameters(findName));
@@ -109,9 +109,14 @@ public class DistillerParser {
                 String itemFamily = item.getString("spirit_family_slug");
                 String itemType = item.getString("spirit_style_name");
                 String itemCountry = item.getString("country");
+                String itemRegion = item.getString("location").split(",",2)[0];
+                Integer itemAge = Locators.Age.parse(item.getString("name"));
                 if (Locators.Spirit.equals(itemFamily, "whisky")
                         && (type == null || Locators.WhiskyType.equals(type, itemType))
-                        && (country == null || Locators.Country.equals(country, itemCountry))) {
+                        && (country == null || Locators.Country.equals(country, itemCountry))
+                        && (region == null || Locators.Region.equals(region, itemRegion))
+                        && (age == null || age.equals(itemAge))
+                        ) {
                     found = item;
                     break;
                 }
