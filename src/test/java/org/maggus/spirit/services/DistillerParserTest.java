@@ -7,6 +7,7 @@ import org.maggus.spirit.models.Locators;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class DistillerParserTest {
 
@@ -23,21 +24,91 @@ public class DistillerParserTest {
         DistillerParser parser = new DistillerParser();
         FlavorProfile fp = parser.searchSingleProduct("BALBLAIR 2005", null, null, null, null);
         assertNotNull(fp);
-        assertTrue(fp.getName().toLowerCase().contains("BALBLAIR 2005".toLowerCase()));
+        assertEquals("BALBLAIR 2005 1ST RELEASE".toUpperCase(), fp.getName().toUpperCase());
     }
 
     @Test
-    public void searchSingleProductTricky() {
+    public void searchSingleProductBlendedMalt() {
         DistillerParser parser = new DistillerParser();
         String name = "Poit Dhubh Blended Malt 8 YO";
         String type = "Blended";
         String country = "United Kingdom";
         String region = null;
         Integer age = Locators.Age.parse(name);
-        name = name.replaceAll("\\s+YO", "");
+        name = parser.cleanupAnblWhiskyName(name);
         FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
         assertNotNull(fp);
-        assertTrue(fp.getName().toLowerCase().contains("POIT DHUBH BLENDED MALT 8 YEAR".toLowerCase()));
+        assertEquals("POIT DHUBH BLENDED MALT 8 YEAR".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
+    public void searchSingleProductWrongResultsOrder() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Dalmore 18 YO";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Highland";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("DALMORE 18 YEAR".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
+    public void searchSingleProductWrongRegion() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Glenfarclas 17 YO";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Speyside";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("GLENFARCLAS 17 YEAR".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
+    public void searchSingleProductJunkInName() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Tomatin Scotch Single Malt 12 YO";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Highland";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("TOMATIN 12 YEAR".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
+    public void searchSingleProductJunkInNameNotExact() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Glen Moray Single Malt Scotch 15 YO";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Speyside";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("GLEN MORAY 12 YEAR".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
+    public void searchSingleProductJunkInResultName() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Glendronach 12 YO";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Highland";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("GLENDRONACH ORIGINAL 12 YEAR".toUpperCase(), fp.getName().toUpperCase());
     }
 
     @Test
@@ -49,6 +120,5 @@ public class DistillerParserTest {
         assertEquals((long)fp.getSpicy(), 20L);
         assertEquals((long)fp.getFull_bodied(), 50L);
         assertEquals((long)fp.getVanilla(), 10L);
-
     }
 }

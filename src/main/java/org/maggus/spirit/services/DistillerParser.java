@@ -1,6 +1,9 @@
 package org.maggus.spirit.services;
 
+import javafx.collections.transformation.SortedList;
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,8 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 @Stateless
@@ -47,10 +49,10 @@ public class DistillerParser {
         return resp.toString();
     }
 
-    protected String fixSearchParameters(String findName) throws UnsupportedEncodingException {
+    protected String urlEncodeSearchParameters(String findName) throws UnsupportedEncodingException {
         List<String> fixTags = new ArrayList<>();
         String[] tags = findName.split("\\s+");
-        for(String tag : tags){
+        for (String tag : tags) {
             fixTags.add(URLEncoder.encode(tag, "UTF-8"));
         }
         return String.join("+", fixTags);
@@ -84,10 +86,22 @@ public class DistillerParser {
         }
     }
 
+    public String cleanupAnblWhiskyName(String name) {
+        name = name.replaceAll("\\s+YO", " Year");
+        name = name.replaceAll("(?i)\\s+Scotch\\s+", " ");
+        name = name.replaceAll("(?i)\\s+Single Malt\\s+", " ");
+        return name.trim();
+    }
+
+    private String cleanupDistillerWhiskyName(String name){
+        name = name.replaceAll("(?i)\\s+ORIGINAL\\s+", " ");
+        return name.trim();
+    }
+
     public FlavorProfile searchSingleProduct(String findName, String type, String country, String region, Integer age) {
         URL url = null;
         try {
-            url = new URL(BASE_URL + "/api/v1/spirits/search?term=" + fixSearchParameters(findName));
+            url = new URL(BASE_URL + "/api/v1/spirits/search?term=" + urlEncodeSearchParameters(findName));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             prepareConnection(conn);
             int responseCode = conn.getResponseCode();
@@ -102,33 +116,44 @@ public class DistillerParser {
                 //log.warning("No Such Product found: \"" + findName + "\"");
                 return null;
             }
-            // search for first whisky
-            JsonObject found = null;
+            // search for best matching whisky in result list
+            LevenshteinDistance ld = LevenshteinDistance.getDefaultInstance();
+            Map<Integer, FlavorProfile> candidates = new TreeMap<>();
             for (int i = 0; i < spirits.size(); i++) {
                 JsonObject item = spirits.getJsonObject(i);
+                String name = item.getString("name").trim();
                 String itemFamily = item.getString("spirit_family_slug");
                 String itemType = item.getString("spirit_style_name");
                 String itemCountry = item.getString("country");
-                String itemRegion = item.getString("location").split(",",2)[0];
-                Integer itemAge = Locators.Age.parse(item.getString("name"));
+                String itemRegion = item.getString("location").split(",", 2)[0];
+                Integer itemAge = Locators.Age.parse(name);
                 if (Locators.Spirit.equals(itemFamily, "whisky")
                         && (type == null || Locators.WhiskyType.equals(type, itemType))
                         && (country == null || Locators.Country.equals(country, itemCountry))
-                        && (region == null || Locators.Region.equals(region, itemRegion))
-                        && (age == null || age.equals(itemAge))
+                    //&& (region == null || Locators.Region.equals(region, itemRegion))
+                    //&& (age == null || age.equals(itemAge))
                         ) {
-                    found = item;
-                    break;
+                    String extUrl = BASE_URL + "/spirits/" + item.getString("slug");
+                    int likeness = ld.apply(cleanupDistillerWhiskyName(findName), cleanupDistillerWhiskyName(name));
+                    if (region != null && !Locators.Region.equals(region, itemRegion)) {
+                        likeness += 1;  // mismatch region is not a big deal
+                    }
+                    if (age != null && !age.equals(itemAge)) {
+                        likeness += 2;  // mismatch age is more important then region
+                    }
+                    if(candidates.containsKey(likeness)){
+                        likeness += 1;  // if same likeness already exists, it should maintain precedence
+                    }
+                    candidates.put(likeness, new FlavorProfile(name, extUrl));
                 }
             }
-            if (found == null) {
+            if (candidates.isEmpty()) {
                 //log.warning("No Such Product found: \"" + findName + "\"");
                 return null;
             }
-            String name = found.getString("name");
-            String extUrl = BASE_URL + "/spirits/" + found.getString("slug");
+            FlavorProfile found = candidates.values().iterator().next();    // get the one form the top
             //log.info("* Parsing external API response from " + url + ", searched: \"" + findName + "\" => found: \"" + name + "\"");
-            return new FlavorProfile(name, extUrl);
+            return found;
         } catch (Exception ex) {
             log.log(Level.SEVERE, "Failed to parse Product Search page: " + url, ex);
             return null;

@@ -227,8 +227,7 @@ public class CacheService {
             //log.info("= Matching Flavor Profile for Whisky: \"" + whisky.getName() + "\"");
             long t0 = System.currentTimeMillis();
             // fix ANBL whisky names to match Distiller
-            String name = whisky.getName();
-            name = name.replaceAll("\\s+YO", "");
+            String name = dstlrParser.cleanupAnblWhiskyName(whisky.getName());
             FlavorProfile fp = null;
             do {
                 fp = dstlrParser.searchSingleProduct(name, whisky.getType(), whisky.getCountry(), whisky.getRegion(), Locators.Age.parse(whisky.getName())); // find on a external site
@@ -240,7 +239,7 @@ public class CacheService {
                 }
             } while (fp == null);
             if (fp == null) {
-                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\"");
+                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
                 return false;
             }
             dstlrParser.loadFlavorProfile(fp);

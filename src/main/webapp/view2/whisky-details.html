@@ -36,8 +36,8 @@
                 <p><label>Thumbnail URL:</label><input ng-readonly="!editable" size="50" id="thumbnailUrl" type="url"
                                                        dl-enter-key="onEnter(whisky)" ng-model="whisky.thumbnailUrl"/>
                 </p>
-                <p ng-if="whisky.cacheExternalUrl">More details: <a id="anblUrl" href="{{whisky.cacheExternalUrl}}"
-                                                                    target="_blank">ANBL product page</a> <span
+                <p ng-if="whisky.cacheExternalUrl">Product Page: <a id="anblUrl" href="{{whisky.cacheExternalUrl}}"
+                                                                    target="_blank">ANBL web site</a> <span
                         ng-show="whisky.productCode"> - Product Code: {{whisky.productCode}}</span></p>
 
                 <p>
@@ -51,9 +51,8 @@
                     chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
             </canvas>
 
-            <p ng-if="whisky.flavorProfile.cacheExternalUrl">Flavor Profile from: <a id="distillerlUrl" href="{{whisky.flavorProfile.cacheExternalUrl}}"
-                                                                target="_blank">Distiller product page</a></p>
-
+            <p ng-if="whisky.flavorProfile.cacheExternalUrl">Matching Flavor Profile: <a id="distillerlUrl" href="{{whisky.flavorProfile.cacheExternalUrl}}"
+                                                                target="_blank">{{whisky.flavorProfile.name}}</a></p>
 
         </td>
         <td valign="top">
