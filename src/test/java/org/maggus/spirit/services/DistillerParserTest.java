@@ -120,5 +120,8 @@ public class DistillerParserTest {
         assertEquals((long)fp.getSpicy(), 20L);
         assertEquals((long)fp.getFull_bodied(), 50L);
         assertEquals((long)fp.getVanilla(), 10L);
+        //
+        assertEquals((long)fp.getScore(), 86L);
+        assertEquals(fp.getRating(), 3.66, 0.01);
     }
 }

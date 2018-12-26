@@ -13,7 +13,7 @@ public class ClientApiTest {
     private static final URI BASE_URI = URI.create("http://localhost:8080/Spirited");		// localhost
 
 //    @Module
-//    @Classes(value = {WhiskyApi.class, WhiskyTestService.class}) //This enables the CDI magic
+//    @Classes(value = {WhiskyApi.class, WhiskyService.class}) //This enables the CDI magic
 //    public WebApp app() {
 //        return new WebApp().contextRoot("test");
 //    }

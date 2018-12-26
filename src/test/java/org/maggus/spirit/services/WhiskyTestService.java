@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 
-public class WhiskyTestServiceTest {
+public class WhiskyTestService {
 
     private static EJBContainer c;
 
@@ -52,11 +52,11 @@ public class WhiskyTestServiceTest {
 //        p.put("spiritedTestDatabase.JdbcUrl", "jdbc:mysql://localhost/spirited_test");
         //final Context context = EJBContainer.createEJBContainer(p).getContext();
 //        assertNotNull(c);
-        //WhiskyTestService whiskyService = (WhiskyTestService) c.getContext().lookup("java:global/classes/MyBean");
-//        WhiskyTestService whiskyService = (WhiskyTestService) c.getContext().lookup("java:global/classes/WhiskyTestService");
+        //WhiskyService whiskyService = (WhiskyService) c.getContext().lookup("java:global/classes/MyBean");
+//        WhiskyService whiskyService = (WhiskyService) c.getContext().lookup("java:global/classes/WhiskyService");
 //        assertNotNull(whiskyService);
 
-//        WhiskyTestService whiskyService = new WhiskyTestService("spirited-test");
+//        WhiskyService whiskyService = new WhiskyService("spirited-test");
 //        int sizeBefore = whiskyService.getAllWhisky().size();
 //
 //        whiskyService.insertWhisky(new Whisky("Glenlivet Founders Reserve", "330ml", 5500, true));
@@ -70,6 +70,6 @@ public class WhiskyTestServiceTest {
 //            whiskyService.deleteWhisky(whisky);
 //        }
 //
-//        assertEquals("WhiskyTestService.getAllWhisky()", 0, whiskyService.getAllWhisky().size());
+//        assertEquals("WhiskyService.getAllWhisky()", 0, whiskyService.getAllWhisky().size());
     }
 }

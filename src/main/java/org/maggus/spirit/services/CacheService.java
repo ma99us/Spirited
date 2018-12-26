@@ -11,7 +11,6 @@ import javax.persistence.PersistenceContextType;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 @Stateful
 @Log
@@ -29,7 +28,7 @@ public class CacheService {
     private DistillerParser dstlrParser;
 
     @Inject
-    private WhiskyTestService whiskyService;
+    private WhiskyService whiskyService;
 
     @Inject
     private WarehouseService warehouseService;
@@ -105,7 +104,7 @@ public class CacheService {
             whiskyCategoryService.persistWhiskyCategory(rootCategory);
             log.info("+ persisted ROOT category" + rootCategory);
             em.flush();
-            log.info("Done caching all products in " + dt / 1000 + " seconds");
+            log.info("Done caching all products in " + (dt / 1000) + " seconds");
         } else {
             log.warning("! No products to cache!?");
         }
@@ -285,7 +284,7 @@ public class CacheService {
         return name = String.join(" ", fixed);
     }
 
-    public WhiskyTestService getWhiskyService() {
+    public WhiskyService getWhiskyService() {
         return whiskyService;
     }
 

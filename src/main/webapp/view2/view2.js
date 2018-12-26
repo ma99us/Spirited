@@ -34,6 +34,19 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
     .controller('View2Ctrl', ['$scope', '$http', '$window', '$q', function ($scope, $http, $window, $q) {
         $scope.whisky = [];
 
+        $scope.$watch('searchTxt', function (newValue, oldValue) {
+            if(newValue && newValue.length >=4 ){
+                // load all and filter
+                $scope.search = newValue;
+                $scope.getAllWhisky(1000, 1);
+            }
+            else{
+                // load current page only
+                $scope.search = undefined;
+                $scope.getAllWhisky(10, 1);
+            }
+        }, true);
+
         $scope.selectWhisky = function (whisky) {
             $scope.selWhisky = whisky;
             if($scope.selWhisky){
@@ -43,6 +56,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
                     }
                 });
             }
+            $scope.similarWhiskies = undefined;
         };
 
         $scope.onPageChange = function (page) {
@@ -78,7 +92,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
         ////// API calls /////
 
         $scope.getCacheStatus = function(){
-            $http.get('api/status', {params: {}}).then(function (response) {
+            $http.get('api/cache/status', {params: {}}).then(function (response) {
                 if ($scope.validateResponse(response)) {
                     //console.log(response.data.data);
                     $scope.cacheStatus = response.data.data;
@@ -86,10 +100,10 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             });
         };
 
-        $scope.rebuildAll = function(){
+        $scope.rebuildAllCache = function(){
             $scope.busy = true;
             var ts0 = new Date().getTime();
-            $http.get('api/whisky/rebuild', {params: {full: true}}).then(function (response) {
+            $http.get('api/cache/rebuild', {params: {full: true}}).then(function (response) {
                 if ($scope.validateResponse(response)) {
                     //console.log(response.data.data);
                     $scope.getAllWhisky();
@@ -98,6 +112,20 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
                 $scope.busy = false;
                 $scope.lastRebuildTs = ((new Date().getTime() - ts0)/1000).toFixed(1);
             });
+        };
+
+        $scope.getSimilarWhiskies = function(whisky){
+            $scope.busySimilarW = true;
+            var deferred = $q.defer();
+            $http.get('api/whisky/like/'+ whisky.id, {params: {}}).then(function (response) {
+                if ($scope.validateResponse(response)) {
+                    //console.log(response.data.data);
+                    $scope.similarWhiskies = response.data.data;
+                    deferred.resolve(response.data.data);
+                }
+                $scope.busySimilarW = false;
+            });
+            return deferred.promise;
         };
 
         $scope.getAllWhisky = function (resultsPerPage, pageNumber, sortBy) {
@@ -297,7 +325,13 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
                             $scope.fpLabels.push(label);
                             let value = whisky.flavorProfile[lbl];
                             $scope.fpData.push(value);
-                            let color = value >= 50 ? '#FFa7b6' : '#13b7c6';
+                            let color = '#13b7c6';
+                            if(value >= 80){
+                                value = '#FF5766';
+                            }
+                            else if(value >= 50){
+                                value = '#FFa7b6';
+                            }
                             $scope.fpColors.push(color);
                         })
                     }

@@ -4,6 +4,7 @@
 angular.module('myApp', [
     'ngRoute',
     'ngSanitize',
+    'angular.filter',
     'myApp.view1',
     'myApp.view2'
 ]).config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider) {

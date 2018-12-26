@@ -5,13 +5,16 @@
 <p align="right">
     <span ng-show="cacheStatus"> Cache last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}} in {{(cacheStatus.cacheSpentMs/1000).toFixed(1)}} secs | </span>
     <span ng-show="lastQueryTs"> Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
-    <span ng-show="lastRebuildTs"> | Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAll()">REBUILD ALL DATA!</button></p>
+    <span ng-show="lastRebuildTs"> | Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAllCache()">REBUILD ALL DATA!</button></p>
+
+<h3>Whisky list</h3>
 <p>
+    Fuzzy Search: <input type="text" ng-model="searchTxt" placeholder="search whisky" />
 <ul>
-    <p ng-show="whisky.length == 0">--- no data ---</p>
-    <li ng-repeat="w in whisky">
+    <li ng-repeat="w in filteredWhisky = (whisky | fuzzyBy: 'name': search)">
         <whisky-row whisky="w" sel-whisky="selWhisky" ng-click="selectWhisky(w)"></whisky-row> - <button ng-click="delWhisky(w)">X</button>
     </li>
+    <p ng-hide="filteredWhisky.length">--- no data ---</p>
 </ul>
 </p>
 
@@ -21,8 +24,21 @@
 
 <!--<p><label>Add new name</label><input id="name" type="text" dl-enter-key="addTitle(newWhisky)" ng-model="newWhisky"/> <button ng-click="addTitle(newWhisky)">Add</button><button style="float: right;" ng-click="clearAllWhisky()">CLEAR ALL DATA!</button></p>-->
 
-<h3>Add/Modify</h3>
+<h3>Modify selected whisky or Add a new one</h3>
 <whisky-details sel-whisky="selWhisky" editable="true"></whisky-details>
+
+<p style="padding-left: 3em">
+ <button ng-show="selWhisky" ng-disabled="busySimilarW" ng-click="getSimilarWhiskies(selWhisky)">Suggest Similar Whiskies</button>
+<ul>
+    <h3 ng-show="similarWhiskies && similarWhiskies.length > 0">Similar tasting whiskies:</h3>
+    <p ng-show="similarWhiskies.length == 0">Nothing tastes similar :-(</p>
+ <li ng-repeat="wd in similarWhiskies">
+     <whisky-row whisky="wd.candidate" sel-whisky="selWhisky" ng-click="selectWhisky(wd.candidate)"></whisky-row> - <b><i>{{wd.maxDiffFlavor}}</i></b>
+ </li>
+</ul>
+</p>
+
+<hr/>
 
 <div>
     <h2>API Endpoints usage:</h2>

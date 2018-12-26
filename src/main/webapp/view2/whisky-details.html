@@ -47,12 +47,23 @@
                 </p>
             </form>
 
-            <canvas ng-if="whisky.flavorProfile" id="bar" class="chart chart-bar" width="450"
-                    chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
-            </canvas>
+            <div ng-if="whisky.flavorProfile">
+                <canvas id="bar" class="chart chart-bar" width="450"
+                        chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
+                </canvas>
 
-            <p ng-if="whisky.flavorProfile.cacheExternalUrl">Matching Flavor Profile: <a id="distillerlUrl" href="{{whisky.flavorProfile.cacheExternalUrl}}"
-                                                                target="_blank">{{whisky.flavorProfile.name}}</a></p>
+                <p ng-if="whisky.flavorProfile.score || whisky.flavorProfile.rating">
+                    <span ng-show="whisky.flavorProfile.score"><label>Distiller Score:</label><input style="width: 5em"
+                            ng-readonly="!editable" id="score" type="number" min="0" step="1"
+                            dl-enter-key="onEnter(whisky)" ng-model="whisky.flavorProfile.score"/></span>
+                    <span ng-show="whisky.flavorProfile.rating"><label>Average Rating:</label><input style="width: 5em"
+                            ng-readonly="!editable" id="rating" type="number" min="0" step="0.01"
+                            dl-enter-key="onEnter(whisky)" ng-model="whisky.flavorProfile.rating"/></span>
+                </p>
+
+                <p>Matching Flavor Profile: <a id="distillerlUrl" href="{{whisky.flavorProfile.cacheExternalUrl}}"
+                                               target="_blank">{{whisky.flavorProfile.name}}</a></p>
+            </div>
 
         </td>
         <td valign="top">

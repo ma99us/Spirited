@@ -10,15 +10,16 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-@Path("/status")
+@Path("/cache")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Log
-public class StatusApi {
+public class CacheApi {
 
     @Inject
     private CacheService cacheService;
 
+    @Path("/status")
     @GET
     public Response getCacheStatus() {
         try {
@@ -29,4 +30,14 @@ public class StatusApi {
         }
     }
 
+    @Path("/rebuild")
+    @GET
+    public Response rebuildCache(@QueryParam("full") @DefaultValue("false") boolean full) {
+        try {
+            cacheService.rebuildProductsCategoriesCache(full);
+            return Response.ok();
+        } catch (Exception e) {
+            return Response.fail(e);
+        }
+    }
 }

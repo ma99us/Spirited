@@ -19,7 +19,7 @@ public class ScheduleService {
     private CacheService cacheService;
 
     @Schedule(hour = "23", minute = "59", second = "59")
-    public void reBuildTheWholeCache() {
+    public synchronized void reBuildTheWholeCache() {
         try {
             log.warning("=== Scheduled cache re-build at " + sdf.format(new Date()) + " ===");
             cacheService.rebuildProductsCategoriesCache(true);
@@ -30,7 +30,7 @@ public class ScheduleService {
     }
 
     @Schedule(hour = "1-23", minute = "*/30")
-    public void dbKeepAlive() {
+    public synchronized void dbKeepAlive() {
         try {
             log.warning("=== Scheduled DB keep-alive at " + sdf.format(new Date()) + " ===");
             cacheService.getWhiskyCategoryService().getWhiskyCategoryById(1);

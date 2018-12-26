@@ -1,8 +1,6 @@
 package org.maggus.spirit.services;
 
-import javafx.collections.transformation.SortedList;
 import lombok.extern.java.Log;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,12 +19,15 @@ import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 @Stateless
 @Log
-public class DistillerParser {
+public class DistillerParser extends AbstractParser {
 
     public static final String BASE_URL = "https://distiller.com";
 
@@ -167,13 +168,22 @@ public class DistillerParser {
                     .header("x-distiller-developer-token", "8e01b58d-6bc8-407e-b7fb-5b989b5b23e9")
                     .get();
             String title = doc.title();
+            // parse distiller score
+            Integer distScore = getSafeElementInteger(doc.select("li.stat.distiller-rating > div > span.expert-rating"));
+            fp.setScore(distScore);
+            // parse average rating
+            Integer ratingCount = getSafeElementInteger(doc.select("div.total-ratings > span"));
+            if(ratingCount != null && (int)ratingCount > 5){    // do not count ratings from too few reviews
+                Double avgRating = getSafeElementDouble(doc.select("div.average-rating > span"));
+                fp.setRating(avgRating);
+            }
             Elements div = doc.select("div.flavor-profile");
             if (div == null || div.isEmpty() || div.first() == null) {
                 //log.warning("Product \"" + fp.getName() + "\" does not have Flavor Profile");
                 return;
             }
             Element flProfDiv = div.first();
-            String flavors = flProfDiv.select("h3.flavors").first().text();
+            String flavors = getSafeElementText(flProfDiv.select("h3.flavors"));
             String flChartData = flProfDiv.select("canvas.js-flavor-profile-chart").first().attr("data-flavors");
             JsonReader jsonReader = Json.createReader(new StringReader(flChartData));
             JsonObject json = jsonReader.readObject();

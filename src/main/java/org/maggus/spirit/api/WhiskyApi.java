@@ -3,10 +3,12 @@ package org.maggus.spirit.api;
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.services.CacheService;
+import org.maggus.spirit.services.SuggestionsService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/whisky")
 @Produces({MediaType.APPLICATION_JSON})
@@ -17,12 +19,17 @@ public class WhiskyApi {
     @Inject
     private CacheService cacheService;
 
-    @Path("/rebuild")
+    @Inject
+    private SuggestionsService suggestionsService;
+
+    @Path("/like/{id}")
     @GET
-    public Response rebuildAllWhiskyData(@QueryParam("full") @DefaultValue("false") boolean full) {
+    public Response getSimilarWhisky(@PathParam("id") long id,
+                                     @QueryParam("results") @DefaultValue("10") int results) {
         try {
-            cacheService.rebuildProductsCategoriesCache(full);
-            return Response.ok();
+            Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
+            Response resp = Response.ok(suggestionsService.findSimilarWhiskies(whisky, results));
+            return resp;
         } catch (Exception e) {
             return Response.fail(e);
         }

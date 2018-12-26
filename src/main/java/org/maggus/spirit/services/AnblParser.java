@@ -5,24 +5,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.maggus.spirit.models.*;
+import org.maggus.spirit.models.Locators;
+import org.maggus.spirit.models.WarehouseQuantity;
+import org.maggus.spirit.models.Whisky;
+import org.maggus.spirit.models.WhiskyCategory;
 
 import javax.ejb.Stateless;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Stateless
 @Log
-public class AnblParser {
+public class AnblParser extends AbstractParser {
 
     public enum CacheUrls {
         BASE_URL("http://www.anbl.com"),
@@ -44,8 +42,6 @@ public class AnblParser {
             return url;
         }
     }
-
-    private final Pattern numbers = Pattern.compile("(\\d+\\.\\d+|\\d+)");  // integer and decimal numbers
 
     public List<WhiskyCategory> buildProductsCategories() {
         List<WhiskyCategory> wcs = new ArrayList<>();
@@ -115,16 +111,16 @@ public class AnblParser {
             Document doc = Jsoup.connect(whisky.getCacheExternalUrl()).get();
             String title = doc.title();
             //log.info("* Parsing product page \"" + title + "\"");
-            String prodCode = getNumberStr(getSafeFirstElementText(doc.select("p.product-details-code")));
-            Double alcoholContent = Double.parseDouble(getNumberStr(getSafeFirstElementText(doc.select("div.informationAttributesSection span.attribute-value"))));
-            String description = getSafeFirstElementText(doc.select("div.span6 > p"));
+            String prodCode = getNumberStr(getSafeElementText(doc.select("p.product-details-code")));
+            Double alcoholContent = getSafeElementDouble(doc.select("div.informationAttributesSection span.attribute-value"));
+            String description = getSafeElementText(doc.select("div.span6 > p"));
             Elements whRows = doc.select("div#ANBLSectionModalBody > table > tbody > tr");
             whisky.getQuantities().clear(); // just clear all old quantities and start fresh
             for (Element el : whRows) {
-                String store = getSafeFirstElementText(el.select("td.warehouseName > span"));
-                String address = getSafeFirstElementText(el.select("td.warehouseAddress > span"));
-                String city = getSafeFirstElementText(el.select("td.warehouseCity > span"));
-                Integer qty = Integer.parseInt(getSafeFirstElementText(el.select("td.warehouseQty > span")));
+                String store = getSafeElementText(el.select("td.warehouseName > span"));
+                String address = getSafeElementText(el.select("td.warehouseAddress > span"));
+                String city = getSafeElementText(el.select("td.warehouseCity > span"));
+                Integer qty = getSafeElementInteger(el.select("td.warehouseQty > span"));
                 whisky.setStoreQuantity(new WarehouseQuantity(store, address, city, qty));
             }
             whisky.setProductCode(prodCode);
@@ -150,14 +146,6 @@ public class AnblParser {
         return whisky;
     }
 
-    private String getSafeFirstElementText(Elements els) {
-        try {
-            return els.first().text();
-        } catch (NullPointerException ex) {
-            return "";
-        }
-    }
-
     private String fixName(String fullName) throws Exception {
         String[] tokens = fullName.split("\\s+");
         if (tokens.length > 1) {
@@ -177,18 +165,6 @@ public class AnblParser {
 
     private BigDecimal fixPrice(String priceStr) throws Exception {
         return new BigDecimal(getNumberStr(priceStr));
-    }
-
-    private String getNumberStr(String str) {
-        String digits = "";
-        if (str == null) {
-            return digits;
-        }
-        Matcher matcher = numbers.matcher(str);
-        while (matcher.find()) {
-            digits += matcher.group(1);
-        }
-        return digits;
     }
 
     private String fixDetailsUrl(String url) throws Exception {
