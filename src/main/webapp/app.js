@@ -6,7 +6,8 @@ angular.module('myApp', [
     'ngSanitize',
     'angular.filter',
     'myApp.view1',
-    'myApp.view2'
+    'myApp.view2',
+    'api'
 ]).config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider) {
     $locationProvider.hashPrefix('!');
 
@@ -19,6 +20,12 @@ angular.module('myApp', [
     ]);
 }])
     .controller('IndexCtrl', ['$scope', function ($scope) {
+
+        $scope.$on('$routeChangeSuccess', function (scope, next, current) {
+            let path = next.$$route.originalPath;
+            $scope.menuView1Style = "/view1" === path ? {'background-color':'CornFlowerBlue'} : {};
+            $scope.menuView2Style = "/view2" === path ? {'background-color':'CornFlowerBlue'} : {};
+        });
 
     }])
     .run(function (localstorage) {

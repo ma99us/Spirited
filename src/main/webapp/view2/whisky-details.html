@@ -52,6 +52,8 @@
                         chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
                 </canvas>
 
+                <p ng-if="whisky.flavorProfile.caskType"><label>Cask Type:</label> <input type="text" ng-readonly="!editable" dl-enter-key="onEnter(whisky)" ng-model="whisky.flavorProfile.caskType" size="40"/></p>
+
                 <p ng-if="whisky.flavorProfile.score || whisky.flavorProfile.rating">
                     <span ng-show="whisky.flavorProfile.score"><label>Distiller Score:</label><input style="width: 5em"
                             ng-readonly="!editable" id="score" type="number" min="0" step="1"
@@ -69,6 +71,7 @@
         <td valign="top">
             <span style="text-align: center; font-weight:bold;" ng-if="$parent.busyW">Loading...</span>
             <span style="text-align: center;" ng-if="whisky.quantities.length == 0 && !$parent.busyW">No quantity available</span>
+            <h3 style="text-align: center" ng-if="whisky.quantities.length > 0 && !$parent.busyW">Availability</h3>
             <table border="0" ng-if="whisky.quantities.length > 0 && !$parent.busyW">
                 <thead>
                 <tr>

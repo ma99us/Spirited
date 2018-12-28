@@ -76,8 +76,12 @@ public class AnblParser extends AbstractParser {
     }
 
     public List<Whisky> loadProductCategoryPage(String url) {
+        List<Whisky> allWhisky = new ArrayList<Whisky>();
         try {
             //log.info("** Loading " + url);
+            if (url == null) {
+                throw new NullPointerException("url can not be null");
+            }
             Document doc = Jsoup.connect(url)
                     .cookie("ProductListing_SortBy", "Value=title")
                     .cookie("ProductListing_DisplayMode", "Value=list")
@@ -86,7 +90,6 @@ public class AnblParser extends AbstractParser {
             String title = doc.title();
             Elements products = doc.select("div.ejs-productitem");
             log.info("** Parsing page \"" + title + "\", found " + products.size() + " products");
-            List<Whisky> allWhisky = new ArrayList<Whisky>();
             products.forEach(new Consumer<Element>() {
                 @Override
                 public void accept(Element element) {
@@ -99,15 +102,18 @@ public class AnblParser extends AbstractParser {
             });
             log.info("** Parsing done with " + allWhisky.size() + " results");
             return allWhisky;
-        } catch (IOException ex) {
-            log.log(Level.SEVERE, "Failed to parse ANBL page: " + url, ex);
-            return null;
+        } catch (Exception ex) {
+            log.log(Level.SEVERE, "Failed to parse ANBL Product Category page: " + url, ex);
+            return allWhisky;
         }
     }
 
-    public void loadProductPage(Whisky whisky) {
+    public boolean loadProductPage(Whisky whisky) {
         try {
             //log.info("** Loading " + whisky.getCacheExternalUrl());
+            if (whisky.getCacheExternalUrl() == null) {
+                throw new NullPointerException("cacheExternalUrl can not be null");
+            }
             Document doc = Jsoup.connect(whisky.getCacheExternalUrl()).get();
             String title = doc.title();
             //log.info("* Parsing product page \"" + title + "\"");
@@ -127,8 +133,10 @@ public class AnblParser extends AbstractParser {
             whisky.setAlcoholContent(alcoholContent);
             whisky.setDescription(description);
             //log.info("* Parsing product page \"" + title + "\" Done.");
+            return true;
         } catch (Exception ex) {
-            log.log(Level.SEVERE, "Failed to parse ANBL Product page: " + whisky.getCacheExternalUrl(), ex);
+            log.log(Level.SEVERE, "Failed to parse ANBL Product Details page: " + whisky.getCacheExternalUrl(), ex);
+            return false;
         }
     }
 

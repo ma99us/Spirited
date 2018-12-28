@@ -21,8 +21,9 @@ public class FlavorProfile extends CacheItem {
     @CacheIndex
     private String name;            // Whisky name
     private String flavors;         // flavor summary tags
-    private Integer score;
-    private Double rating;
+    private String caskType;        // cask type text description
+    private Integer score;          // Distiller score
+    private Double rating;          // user average score
     // chart data
     private Integer smoky;
     private Integer peaty;

@@ -31,7 +31,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             }]
         });
     }])
-    .controller('View2Ctrl', ['$scope', '$http', '$window', '$q', function ($scope, $http, $window, $q) {
+    .controller('View2Ctrl', ['$scope', '$api', '$window', '$q', function ($scope, $api, $window, $q) {
         $scope.whisky = [];
 
         $scope.$watch('searchTxt', function (newValue, oldValue) {
@@ -51,7 +51,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             $scope.selWhisky = whisky;
             if($scope.selWhisky){
                 $scope.getWhisky($scope.selWhisky.id).then(function(data){
-                    if($scope.selWhisky.id == data.id){
+                    if($scope.selWhisky.id === data.id){
                         $scope.selWhisky = data;
                     }
                 });
@@ -92,23 +92,24 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
         ////// API calls /////
 
         $scope.getCacheStatus = function(){
-            $http.get('api/cache/status', {params: {}}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    //console.log(response.data.data);
-                    $scope.cacheStatus = response.data.data;
-                }
+            $api.getCacheStatus().then(function (data) {
+                $scope.message = undefined;
+                $scope.cacheStatus = data.data;
+            }).catch(function (err) {
+                $scope.message = err;
             });
         };
 
         $scope.rebuildAllCache = function(){
             $scope.busy = true;
-            var ts0 = new Date().getTime();
-            $http.get('api/cache/rebuild', {params: {full: true}}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    //console.log(response.data.data);
-                    $scope.getAllWhisky();
-                    $scope.getCacheStatus();
-                }
+            let ts0 = new Date().getTime();
+            $api.rebuildAllCache().then(function (data) {
+                $scope.message = undefined;
+                $scope.getAllWhisky();
+                $scope.getCacheStatus();
+            }).catch(function (err) {
+                $scope.message = err;
+            }).finally(function(){
                 $scope.busy = false;
                 $scope.lastRebuildTs = ((new Date().getTime() - ts0)/1000).toFixed(1);
             });
@@ -116,109 +117,70 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
         $scope.getSimilarWhiskies = function(whisky){
             $scope.busySimilarW = true;
-            var deferred = $q.defer();
-            $http.get('api/whisky/like/'+ whisky.id, {params: {}}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    //console.log(response.data.data);
-                    $scope.similarWhiskies = response.data.data;
-                    deferred.resolve(response.data.data);
-                }
+            $api.getSimilarWhiskies(whisky).then(function (data) {
+                $scope.message = undefined;
+                $scope.similarWhiskies = data.data;
+            }).catch(function (err) {
+                $scope.message = err;
+            }).finally(function () {
                 $scope.busySimilarW = false;
             });
-            return deferred.promise;
         };
 
         $scope.getAllWhisky = function (resultsPerPage, pageNumber, sortBy) {
-            let params = {
-                resultsPerPage: resultsPerPage || $scope.resultsPerPage,
-                pageNumber: pageNumber || $scope.pageNumber,
-                sortBy: sortBy || $scope.sortBy
-            };
-            var ts0 = new Date().getTime();
-            $http.get('api/whisky', {params: params}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    $scope.whisky = response.data.data;
-                    $scope.resultsPerPage = response.data.metaData.resultsPerPage;
-                    $scope.pageNumber = response.data.metaData.pageNumber;
-                    $scope.sortBy = response.data.metaData.sortBy;
-                    $scope.totalResults = response.data.metaData.totalResults;
-                    $scope.lastQueryTs = new Date().getTime() - ts0;
-                }
+            let ts0 = new Date().getTime();
+            $api.getAllWhisky(resultsPerPage || $scope.resultsPerPage, pageNumber || $scope.pageNumber, sortBy || $scope.sortBy).then(function (data) {
+                $scope.message = undefined;
+                $scope.whisky = data.data;
+                $scope.resultsPerPage = data.metaData.resultsPerPage;
+                $scope.pageNumber = data.metaData.pageNumber;
+                $scope.sortBy = data.metaData.sortBy;
+                $scope.totalResults = data.metaData.totalResults;
+            }).catch(function (err) {
+                $scope.message = err;
+            }).finally(function () {
+                $scope.lastQueryTs = new Date().getTime() - ts0;
             });
         };
 
         $scope.getWhisky = function (id) {
             $scope.busyW = true;
-            var deferred = $q.defer();
-            $http.get('api/whisky/' + id, {params: {}}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    deferred.resolve(response.data.data);
-                }
+            return $api.getWhisky(id).then(function (data) {
+                $scope.message = undefined;
+                return data.data;
+            }).catch(function (err) {
+                $scope.message = err;
+            }).finally(function () {
                 $scope.busyW = false;
-            });
-            return deferred.promise;
-        };
-
-        $scope.addTitle = function (str) {
-            var w = {
-                name: str,
-            };
-            $http.put('api/whisky', w).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    $scope.getAllWhisky();
-                    $window.document.getElementById('name').focus();
-                }
             });
         };
 
         $scope.addWhisky = function (w) {
-            $http.put('api/whisky', w).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    $scope.getAllWhisky();
-                }
+            $api.addWhisky(w).then(function (data) {
+                $scope.message = undefined;
+                $scope.newWhisky = '';
+                $scope.getAllWhisky();
+            }).catch(function (err) {
+                $scope.message = err;
             });
         };
 
         $scope.updateWhisky = function (w) {
-            $http.post('api/whisky/' + w.id, w).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    $scope.getAllWhisky();
-                }
+            $api.updateWhisky(w).then(function (data) {
+                $scope.message = undefined;
+                $scope.getAllWhisky();
+            }).catch(function (err) {
+                $scope.message = err;
             });
         };
 
-        $scope.delWhisky = function (w) {
-            $http.delete('api/whisky/' + w.id, {params: {}}).then(function (response) {
-                if ($scope.validateResponse(response)) {
-                    $scope.getAllWhisky();
-                }
+        $scope.deleteWhisky = function (w) {
+            $api.deleteWhisky(w).then(function (data) {
+                $scope.message = undefined;
+                $scope.getAllWhisky();
+            }).catch(function (err) {
+                $scope.message = err;
             });
-        };
-
-        $scope.clearAllWhisky = function () {
-            $scope.whisky.forEach(function (w) {
-                $http.delete('api/whisky/' + w.id, {params: {}}).then(function (response) {
-                    if ($scope.validateResponse(response)) {
-                        $scope.getAllWhisky();
-                    }
-                });
-            });
-        };
-
-        $scope.validateResponse = function (response) {
-            if (response && response.data && response.data.status != 200) {
-                $scope.message = 'Server error: (' + response.data.status + ') ' + response.data.type + ': ' + response.data.message;
-                return false;
-            }
-            else if (response && response.status != 200) {
-                $scope.message = 'Http error: (' + response.status + ') ' + response.statusText;
-                return false;
-            }
-            else {
-                $scope.newWhisky = '';
-                $scope.message = '';
-                return response;
-            }
         };
 
         $scope.getAllWhisky(10);
@@ -327,10 +289,10 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
                             $scope.fpData.push(value);
                             let color = '#13b7c6';
                             if(value >= 80){
-                                value = '#FF5766';
+                                color = '#FF5766';
                             }
                             else if(value >= 50){
-                                value = '#FFa7b6';
+                                color = '#FFa7b6';
                             }
                             $scope.fpColors.push(color);
                         })

@@ -177,6 +177,10 @@ public class DistillerParser extends AbstractParser {
                 Double avgRating = getSafeElementDouble(doc.select("div.average-rating > span"));
                 fp.setRating(avgRating);
             }
+            // parse cask type
+            String caskType = getSafeElementText(doc.select("li.detail.cask-type > div.value"));
+            fp.setCaskType(caskType);
+            // parse actual flavor profile chart data
             Elements div = doc.select("div.flavor-profile");
             if (div == null || div.isEmpty() || div.first() == null) {
                 //log.warning("Product \"" + fp.getName() + "\" does not have Flavor Profile");

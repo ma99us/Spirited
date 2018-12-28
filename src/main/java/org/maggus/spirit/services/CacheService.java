@@ -115,13 +115,11 @@ public class CacheService {
 
     private List<Whisky> loadProductCategory(WhiskyCategory wc) {
         log.info("caching category for: " + wc);
-        if (wc.getCacheExternalUrl() == null) {
-            throw new NullPointerException("cacheExternalUrl can not be null");
-        }
         long t0 = System.currentTimeMillis();
         List<Whisky> whiskies = anblParser.loadProductCategoryPage(wc.getCacheExternalUrl());
-        if (whiskies == null) {
-            throw new NullPointerException("no data was parsed from: " + wc.getCacheExternalUrl());
+        if (whiskies.isEmpty()) {
+            log.warning("no data was loaded from: " + wc.getCacheExternalUrl());
+            return whiskies;
         }
         for (Whisky w : whiskies) {
             w.setCountry(wc.getCountry());
@@ -136,11 +134,11 @@ public class CacheService {
 
     private void loadProductDetails(Whisky whisky) {
         //log.info("caching details for: " + whisky);
-        if (whisky.getCacheExternalUrl() == null) {
-            throw new NullPointerException("cacheExternalUrl can not be null");
-        }
         long t0 = System.currentTimeMillis();
-        anblParser.loadProductPage(whisky);
+        if(!anblParser.loadProductPage(whisky)){
+            log.warning("no data was loaded from: " + whisky.getCacheExternalUrl());
+            return;
+        }
         long now = System.currentTimeMillis();
         whisky.setCacheLastUpdatedMs(now);
         whisky.setCacheSpentMs(now - t0);
@@ -149,7 +147,6 @@ public class CacheService {
     private Whisky updateWhiskyCache(Whisky whisky) throws Exception {
         // re-map Whisky entity
         //log.warning("* updating cache for Whisky: " + whisky);      // #TEST
-
         Whisky cacheW = whiskyService.findWhisky(whisky.getProductCode());
         if (cacheW == null) {
             List<Whisky> matchesW = whiskyService.findWhisky(whisky.getName(), whisky.getUnitVolumeMl(), whisky.getCountry());
@@ -216,6 +213,7 @@ public class CacheService {
         if (whisky != null && (reCache == CacheOperation.RE_CACHE || (reCache == CacheOperation.CACHE_IF_NEEDED && isCacheInvalid))) {
             log.info("* updating cache for Whisky: " + whisky + "; reCache=" + reCache + "; isCacheInvalid=" + isCacheInvalid + "; whisky.getCacheLastUpdatedMs: " + whisky.getCacheLastUpdatedMs() + " < " + (System.currentTimeMillis() - CACHE_TIMEOUT));      // #TEST
             loadProductDetails(whisky);
+            findFlavorProfileForWhisky(whisky);
             updateWhiskyCache(whisky);
         }
         return isCacheInvalid;

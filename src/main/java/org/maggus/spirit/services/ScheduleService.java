@@ -21,23 +21,23 @@ public class ScheduleService {
     @Schedule(hour = "23", minute = "59", second = "59")
     public synchronized void reBuildTheWholeCache() {
         try {
-            log.warning("=== Scheduled cache re-build at " + sdf.format(new Date()) + " ===");
+            log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
             cacheService.rebuildProductsCategoriesCache(true);
-            log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
+            log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Scheduled reBuildTheWholeCache failed!", e);
+            log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);
         }
     }
 
     @Schedule(hour = "1-23", minute = "*/30")
     public synchronized void dbKeepAlive() {
         try {
-            log.warning("=== Scheduled DB keep-alive at " + sdf.format(new Date()) + " ===");
+            log.warning("=== Scheduled DB keep-alive run at " + sdf.format(new Date()) + " ===");
             cacheService.getWhiskyCategoryService().getWhiskyCategoryById(1);
-            log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
+            //log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
             // we do not care about results
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Scheduled dbKeepAlive failed!", e);
+            log.log(Level.SEVERE, "Scheduled DB keep-alive failed!", e);
         }
     }
 
