@@ -23,3 +23,14 @@
   content: "|";
   padding-right: 0.3em;
 }
+
+ul.stores {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+
+p.footnote {
+  position: absolute;
+  bottom: 10px;
+}

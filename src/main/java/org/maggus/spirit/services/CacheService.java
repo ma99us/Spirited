@@ -289,4 +289,8 @@ public class CacheService {
     public WhiskyCategoryService getWhiskyCategoryService() {
         return whiskyCategoryService;
     }
+
+    public WarehouseService getWarehouseService() {
+        return warehouseService;
+    }
 }

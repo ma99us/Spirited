@@ -1,2 +1,97 @@
-<h1 style="text-align: center">Welcome</h1>
-<h3 style="text-align: center">Prepare to get Inspirited with the Spirit API!</h3>
+<p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
+
+<h1 style="text-align: center">Welcome to Spirited Whisky Search.</h1>
+<h2 style="text-align: center">Let's find your new favorite Whisky!</h2>
+
+<br/>
+
+<h3 id="busy" ng-show="busy" style="text-align: center" class="text-success">Please wait...</h3>
+
+<div id="selFavStores" class="align-items-center">
+    <div style="text-align:center">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#favStores"
+                aria-expanded="false"
+                aria-controls="favStores">
+            Select your preferred NB Liquor stores
+        </button>
+    </div>
+    <div id="favStores" class="panel-collapse collapse in card card-body w-50 mx-auto">
+        <ul ng-repeat="(city, stores) in allStores | orderBy:'city' | groupBy: 'city'">
+            <b>{{city}}</b>
+            <li ng-repeat="s in stores">
+                <input type="checkbox"
+                       name="selectedStores"
+                       value="{{s.address}}"
+                       ng-checked="favStores.indexOf(s) >= 0"
+                       ng-click="toggleStoreSelection(s)"
+                >
+                {{s.address}}
+            </li>
+            <span ng-hide="allStores.length > 0">--- no data ---</span>
+        </ul>
+    </div>
+    <div ng-if="preferences && favStores.length" style="text-align: center">
+        {{favStores.length}} selected; <i><span ng-repeat="s in favStores">{{s.name}}, </span></i> stores inventory will
+        be used.
+    </div>
+    <div ng-if="preferences && !favStores.length" style="text-align: center">
+        <b>No stores selected, all available inventory will be used instead.</b>
+    </div>
+</div>
+
+<br/>
+
+<div id="selFavWhisky" class="align-items-center">
+    <div style="text-align: center; font-weight:bold">
+        Select Whisky you know you like: <input type="text" size="40" ng-model="favWhiskyName"
+                                                ng-change="onFavWhiskyNameChange(favWhiskyName)"
+                                                placeholder="start typing..."/>
+    </div>
+    <div class="card card-body w-50 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
+        <ul>
+            <li ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
+                <whisky-row whisky="w" sel-whisky="favWhisky" ng-click="selectWhisky(w)"></whisky-row>
+            </li>
+            <span ng-show="filteredWhiskies.length >= 10">...</span>
+            <span ng-show="!filteredWhiskies.length">--- no matches ---</span>
+        </ul>
+    </div>
+</div>
+
+<div id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
+    <div class="card card-body w-50 mx-auto">
+        <p>{{favWhisky.description}}</p>
+        <div ng-if="favWhisky.flavorProfile" class="mx-auto">
+            <canvas id="bar" class="chart chart-bar" width="450"
+                    chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
+            </canvas>
+        </div>
+        <p ng-if="!busyW && !favWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet. :-(</p>
+        <p ng-if="busyW">Loading...</p>
+    </div>
+</div>
+
+<div id="similarWhiskies" class="align-items-center">
+    <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
+        You may also like:
+    </h3>
+    <div class="card card-body w-50 mx-auto" ng-if="similarWhiskies.length && favWhisky">
+        <ul>
+            <li ng-repeat="wd in similarWhiskies">
+                <whisky-row whisky="wd.candidate" sel-whisky="selWhisky" ng-click="showWhisky(wd.candidate)"></whisky-row> - <b><i>{{wd.maxDiffFlavor}}</i></b>
+                <span ng-show="wd.available" class="text-info"> - available in your store(s)</span>
+            </li>
+            <p ng-if="!similarWhiskies.length">Nothing tastes similar :-(</p>
+        </ul>
+    </div>
+</div>
+
+
+<br/>
+
+<div class="navbar navbar-default navbar-fixed-bottom justify-content-end">
+    <button class="btn btn-sm" type="button" ng-click="clearPrefs()">
+        Start Over
+    </button>
+</div>
+

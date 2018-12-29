@@ -3,7 +3,7 @@
 <p style="color:orangered; font-weight:bold;">{{message}}</p>
 
 <p align="right">
-    <span ng-show="lastQueryTs"> Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhisky()">Refresh</button>
+    <span ng-show="lastQueryTs"> Queried in {{lastQueryTs}}ms </span><button ng-disabled="busy" ng-click="getAllWhiskies()">Refresh</button>
     <span ng-show="cacheStatus"> | Cache last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}} in {{(cacheStatus.cacheSpentMs/1000).toFixed(1)}} secs </span>
     <span ng-show="lastRebuildTs"> | Rebuilt in {{lastRebuildTs}} secs </span><button ng-disabled="busy" ng-click="rebuildAllCache()">REBUILD ALL DATA!</button></p>
 
@@ -43,7 +43,7 @@
 <div>
     <h2>Available API Endpoints</h2>
     <h3>Whisky actions</h3>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response getAllWhisky(int, int, String) - <i>parameters: 'Results Per Page', 'Page Number', 'Sort By'.</i> Returns list of Whisky objects</p>
+    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response getAllWhiskies(int, int, String) - <i>parameters: 'Results Per Page', 'Page Number', 'Sort By'.</i> Returns list of Whisky objects</p>
     <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response getWhisky(long) - <i>parameters: Item 'Id'.</i> Returns single Whisky object.</p>
     <p><b>PUT</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response createWhisky(Whisky) - <i>parameters: populated 'Whisky' object.</i> Creates a new Whisky object in DB.</p>
     <p><b>POST</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response updateWhisky(long, Whisky) - <i>parameters: Item 'Id', populated 'Whisky' object.</i> Updates single Whisky object in DB.</p>

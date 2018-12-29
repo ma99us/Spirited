@@ -15,6 +15,14 @@ angular.module('api', [])
             }
         };
         return {
+            getAllStores: function () {
+                var deferred = $q.defer();
+                $http.get('api/store', {params: {}}).then(function (response) {
+                    validateResponse(deferred, response);
+                });
+                return deferred.promise;
+            },
+
             getCacheStatus: function () {
                 var deferred = $q.defer();
                 $http.get('api/cache/status', {params: {}}).then(function (response) {
@@ -43,7 +51,7 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            getAllWhisky: function (resultsPerPage, pageNumber, sortBy) {
+            getAllWhiskies: function (resultsPerPage, pageNumber, sortBy) {
                 var deferred = $q.defer();
                 busy = true;
                 let params = {

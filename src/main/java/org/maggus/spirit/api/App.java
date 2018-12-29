@@ -14,6 +14,7 @@ public class App extends Application {
         HashSet h = new HashSet<Class<?>>();
         h.add(WhiskyApi.class);
         h.add(CacheApi.class);
+        h.add(StoreApi.class);
         return h;
     }
 }

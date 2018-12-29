@@ -31,19 +31,19 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             }]
         });
     }])
-    .controller('View2Ctrl', ['$scope', '$api', '$window', '$q', function ($scope, $api, $window, $q) {
+    .controller('View2Ctrl', ['$scope', '$api', '$window', function ($scope, $api, $window) {
         $scope.whisky = [];
 
         $scope.$watch('searchTxt', function (newValue, oldValue) {
             if(newValue && newValue.length >=4 ){
                 // load all and filter
                 $scope.search = newValue;
-                $scope.getAllWhisky(1000, 1);
+                $scope.getAllWhiskies(1000, 1);
             }
             else{
                 // load current page only
                 $scope.search = undefined;
-                $scope.getAllWhisky(10, 1);
+                $scope.getAllWhiskies(10, 1);
             }
         }, true);
 
@@ -60,7 +60,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
         };
 
         $scope.onPageChange = function (page) {
-            $scope.getAllWhisky($scope.resultsPerPage, page, $scope.sortBy);
+            $scope.getAllWhiskies($scope.resultsPerPage, page, $scope.sortBy);
         };
 
         $scope.toggleResultsPerPage = function () {
@@ -73,7 +73,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             else {
                 $scope.resultsPerPage = 10;
             }
-            $scope.getAllWhisky();
+            $scope.getAllWhiskies();
         };
 
         $scope.toggleSortBy = function () {
@@ -86,7 +86,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             else {
                 $scope.sortBy = 'name';
             }
-            $scope.getAllWhisky();
+            $scope.getAllWhiskies();
         };
 
         ////// API calls /////
@@ -105,7 +105,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             let ts0 = new Date().getTime();
             $api.rebuildAllCache().then(function (data) {
                 $scope.message = undefined;
-                $scope.getAllWhisky();
+                $scope.getAllWhiskies();
                 $scope.getCacheStatus();
             }).catch(function (err) {
                 $scope.message = err;
@@ -127,9 +127,9 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             });
         };
 
-        $scope.getAllWhisky = function (resultsPerPage, pageNumber, sortBy) {
+        $scope.getAllWhiskies = function (resultsPerPage, pageNumber, sortBy) {
             let ts0 = new Date().getTime();
-            $api.getAllWhisky(resultsPerPage || $scope.resultsPerPage, pageNumber || $scope.pageNumber, sortBy || $scope.sortBy).then(function (data) {
+            $api.getAllWhiskies(resultsPerPage || $scope.resultsPerPage, pageNumber || $scope.pageNumber, sortBy || $scope.sortBy).then(function (data) {
                 $scope.message = undefined;
                 $scope.whisky = data.data;
                 $scope.resultsPerPage = data.metaData.resultsPerPage;
@@ -159,7 +159,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             $api.addWhisky(w).then(function (data) {
                 $scope.message = undefined;
                 $scope.newWhisky = '';
-                $scope.getAllWhisky();
+                $scope.getAllWhiskies();
             }).catch(function (err) {
                 $scope.message = err;
             });
@@ -168,7 +168,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
         $scope.updateWhisky = function (w) {
             $api.updateWhisky(w).then(function (data) {
                 $scope.message = undefined;
-                $scope.getAllWhisky();
+                $scope.getAllWhiskies();
             }).catch(function (err) {
                 $scope.message = err;
             });
@@ -177,13 +177,13 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
         $scope.deleteWhisky = function (w) {
             $api.deleteWhisky(w).then(function (data) {
                 $scope.message = undefined;
-                $scope.getAllWhisky();
+                $scope.getAllWhiskies();
             }).catch(function (err) {
                 $scope.message = err;
             });
         };
 
-        $scope.getAllWhisky(10);
+        $scope.getAllWhiskies(10);
         $scope.getCacheStatus();
     }])
     .directive('dlEnterKey', function () {

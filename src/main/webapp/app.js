@@ -11,7 +11,7 @@ angular.module('myApp', [
 ]).config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider) {
     $locationProvider.hashPrefix('!');
 
-    $routeProvider.otherwise({redirectTo: '/view2'});
+    $routeProvider.otherwise({redirectTo: '/view1'});
 
     $sceDelegateProvider.resourceUrlWhitelist([
         // Allow same origin resource loads.
