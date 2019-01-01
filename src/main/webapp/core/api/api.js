@@ -15,6 +15,15 @@ angular.module('api', [])
             }
         };
         return {
+
+            auth: function () {
+                var deferred = $q.defer();
+                $http.get('api/cache/auth', {params: {}}).then(function (response) {
+                    validateResponse(deferred, response);
+                });
+                return deferred.promise;
+            },
+
             getAllStores: function () {
                 var deferred = $q.defer();
                 $http.get('api/store', {params: {}}).then(function (response) {
@@ -32,6 +41,7 @@ angular.module('api', [])
             },
 
             rebuildAllCache: function () {
+                //$http.defaults.headers.common['Authorization'] = 'Basic <username:pw>'; where username:password has to be Base64 encoded.
                 var deferred = $q.defer();
                 busy = true;
                 $http.get('api/cache/rebuild', {params: {full: true}}).then(function (response) {

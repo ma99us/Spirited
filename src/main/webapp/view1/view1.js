@@ -25,7 +25,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             else {
                 $scope.favStores.push(store);
             }
-            if($scope.favWhisky){
+            if ($scope.favWhisky) {
                 $scope.getSimilarWhiskies($scope.favWhisky);        // recalculate availability
             }
             //console.log('Favorite stores: ' + $scope.favStores);
@@ -41,6 +41,9 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.favWhisky = undefined;
             $scope.fpData = undefined;
             $scope.similarWhiskies = undefined;
+            $scope.selectedWhisky = undefined;
+            $scope.selectedAvailableQty = undefined;
+            $scope.selFpData = undefined;
         };
 
         $scope.selectWhisky = function (w) {
@@ -60,7 +63,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         };
 
         $scope.showWhisky = function (w) {
-            //TODO:
+            $scope.selectedWhisky = w;
+            $('#selectedWhiskyModalCenter').modal('show');
+            $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
+            $scope.buildSelectedFPChart($scope.selectedWhisky, $scope.favWhisky);
         };
 
         $scope.buildFPChart = function (whisky) {
@@ -90,6 +96,43 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                         color = '#FFa7b6';
                     }
                     $scope.fpColors.push(color);
+                })
+            }
+        };
+
+        $scope.buildSelectedFPChart = function (whisky1, whisky2) {
+            const xLabels = ['smoky', 'peaty', 'spicy', 'herbal', 'oily', 'full_bodied', 'rich', 'sweet', 'briny', 'salty', 'vanilla', 'tart', 'fruity', 'floral'];
+            //$scope.fpOptions = {scaleShowGridLines: false,};
+            $scope.selFpColors = [];
+            $scope.selFpLabels = [];
+            $scope.selFpData = [[], []];
+            $scope.selFpSeries = [];
+            $scope.selFpOptions = {};
+            if (whisky1 && whisky1.flavorProfile && whisky2 && whisky2.flavorProfile) {
+                $scope.selFpOptions = {
+                    legend: {
+                        display: true
+                    },
+                    title: {
+                        display: true,
+                        text: whisky1.flavorProfile.flavors
+                    }
+                };
+                $scope.selFpSeries.push(whisky1.name);
+                $scope.selFpSeries.push(whisky2.name);
+                xLabels.forEach(function (lbl) {
+                    let label = lbl === 'full_bodied' ? 'FULL' : lbl.toUpperCase();
+                    $scope.selFpLabels.push(label);
+                    // first dataset
+                    let value1 = whisky1.flavorProfile[lbl];
+                    $scope.selFpData[0].push(value1);
+                    let color1 = '#FF5766';
+                    //$scope.selFpColors.push(color1);
+                    // second dataset
+                    let value2 = whisky2.flavorProfile[lbl];
+                    $scope.selFpData[1].push(value2);
+                    let color2 = '#cccccc';
+                    //$scope.selFpColors.push(color2);
                 })
             }
         };
@@ -126,7 +169,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     }
                 });
             }
-            if(prefs.favWhiskyName && $scope.allWhiskies){
+            if (prefs.favWhiskyName && $scope.allWhiskies) {
                 $scope.allWhiskies.forEach(function (w) {
                     if (prefs.favWhiskyName === w.name) {
                         $scope.selectWhisky(w);
@@ -168,7 +211,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         $scope.getWhisky = function (id) {
             return $api.getWhisky(id).then(function (data) {
                 $scope.message = undefined;
-                if($scope.favWhisky && $scope.favWhisky.id === data.data.id){
+                if ($scope.favWhisky && $scope.favWhisky.id === data.data.id) {
                     $scope.favWhisky = data.data;
                 }
             }).catch(function (err) {
@@ -176,10 +219,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             });
         };
 
-        $scope.getSimilarWhiskies = function(whisky){
+        $scope.getSimilarWhiskies = function (whisky) {
             $api.getSimilarWhiskies(whisky).then(function (data) {
                 $scope.message = undefined;
-                $scope.similarWhiskies = data.data.map(function(sw){
+                $scope.similarWhiskies = data.data.map(function (sw) {
                     sw.available = $scope.filterAvailability(sw.candidate).length > 0;
                     return sw;
                 });

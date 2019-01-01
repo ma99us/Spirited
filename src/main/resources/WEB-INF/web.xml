@@ -7,12 +7,11 @@
 
     <display-name>Spirited</display-name>
 
-    <!-- This is where security features are being enabled -->
     <security-constraint>
         <display-name>Restricted API Requests</display-name>
         <web-resource-collection>
             <web-resource-name>Restricted Requests to Spirited API data</web-resource-name>
-            <!-- Restricting access only to this URL for the GET method -->
+            <!-- Unrestricted access to API URL only for the GET method -->
             <url-pattern>/api/whisky/*</url-pattern>
             <http-method>DELETE</http-method>
             <http-method>PUT</http-method>
@@ -31,10 +30,9 @@
         <display-name>Restricted API Requests</display-name>
         <web-resource-collection>
             <web-resource-name>Restricted Requests to Spirited API data</web-resource-name>
-            <!-- Restricting access only to this URL for the GET method -->
-            <url-pattern>/view2/*</url-pattern>
+            <!-- Restricting access to those URLs for all methods -->
+            <url-pattern>/api/cache/auth</url-pattern>
             <url-pattern>/api/cache/rebuild</url-pattern>
-            <http-method>GET</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>spirit-admin</role-name>

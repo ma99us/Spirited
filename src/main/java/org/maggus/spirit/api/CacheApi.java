@@ -40,4 +40,15 @@ public class CacheApi {
             return Response.fail(e);
         }
     }
+
+    @Path("/auth")
+    @GET
+    public Response auth() {
+        try {
+            // TODO: check that HTTP basic authorization was sent
+            return Response.ok();
+        } catch (Exception e) {
+            return Response.fail(e);
+        }
+    }
 }

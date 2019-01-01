@@ -5,7 +5,17 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
     .config(['$routeProvider', 'ChartJsProvider', function ($routeProvider, ChartJsProvider) {
         $routeProvider.when('/view2', {
             templateUrl: 'view2/view2.html',
-            controller: 'View2Ctrl'
+            controller: 'View2Ctrl',
+            resolve: {
+                permission: function($api, $route) {
+                    return $api.auth().then(function(){
+                        console.log("authorised");
+                    }).catch(function (err) {
+                        console.log("not authorised");
+                        window.location = "#/view1";
+                    });
+                },
+            }
         });
         ChartJsProvider.setOptions({
             chartColors: ['#13b7c6', '#0c818e', '#1be0ea'],

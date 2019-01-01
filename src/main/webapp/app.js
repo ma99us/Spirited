@@ -8,26 +8,45 @@ angular.module('myApp', [
     'myApp.view1',
     'myApp.view2',
     'api'
-]).config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider) {
-    $locationProvider.hashPrefix('!');
+])
+    .service('authInterceptor', function ($q) {
+        var service = this;
 
-    $routeProvider.otherwise({redirectTo: '/view1'});
+        service.responseError = function (response) {
+            if (response.status == 401) {
+                window.location = "#/view1";
+            }
+            return $q.reject(response);
+        };
+    })
+    .config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', '$httpProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider, $httpProvider) {
+        //$locationProvider.hashPrefix('!');
+        $locationProvider.hashPrefix('');
+        // $locationProvider.html5Mode({
+        //     enabled: true,
+        //     requireBase: true
+        // });
 
-    $sceDelegateProvider.resourceUrlWhitelist([
-        // Allow same origin resource loads.
-        'self'
-        // Allow loading from our assets domain.  Notice the difference between * and **.
-    ]);
-}])
+        $routeProvider.otherwise({redirectTo: '/view1'});
+
+        $sceDelegateProvider.resourceUrlWhitelist([
+            // Allow same origin resource loads.
+            'self'
+            // Allow loading from third party domains.
+        ]);
+
+        $httpProvider.interceptors.push('authInterceptor');
+
+    }])
     .controller('IndexCtrl', ['$scope', function ($scope) {
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             let path = next.$$route.originalPath;
-            $scope.menuView1Style = "/view1" === path ? {'background-color':'CornFlowerBlue'} : {};
-            $scope.menuView2Style = "/view2" === path ? {'background-color':'CornFlowerBlue'} : {};
+            $scope.menuView1Style = "/view1" === path ? {'background-color': 'CornFlowerBlue'} : {};
+            $scope.menuView2Style = "/view2" === path ? {'background-color': 'CornFlowerBlue'} : {};
         });
 
     }])
     .run(function (localstorage) {
-        // console.log("FavTor started");
+        // console.log("Spirited started");
     });
