@@ -8,7 +8,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             controller: 'View1Ctrl'
         });
     }])
-    .controller('View1Ctrl', ['$scope', 'localstorage', '$api', function ($scope, localstorage, $api) {
+    .controller('View1Ctrl', ['$scope', 'localstorage', '$api', 'geolocation', function ($scope, localstorage, $api, geolocation) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = [];
@@ -17,14 +17,47 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.clearFavWhisky();
         };
 
+        $scope.captureUserLocation = function () {
+            $scope.message = undefined;
+            geolocation.getCurrentPosition().then(function (geo) {
+                return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
+            })
+                .then(function (cities) {
+                    let cNames = cities.map(function (c) {
+                        return c.name;
+                    });
+                    //console.log(cNames);
+                    $scope.selectAllCitiesStores(cNames);
+                    // collapse stores selection panel
+                    if($scope.favStores.length){
+                        $('#favStores').collapse('hide');
+                    }
+                })
+                .catch(function (err) {
+                    $scope.message = err;
+                });
+        };
+
         $scope.toggleStoreSelection = function (store) {
             let idx = $scope.favStores.indexOf(store);
             if (idx >= 0) {
-                $scope.favStores.splice(idx, 1);
+                $scope.favStores.splice(idx, 1);    // deselect
             }
             else {
-                $scope.favStores.push(store);
+                $scope.favStores.push(store);   // select
             }
+
+            $scope.onSelectedStoresChanged();    // update all
+        };
+
+        $scope.onSelectedStoresChanged = function(){
+            // get uniques store cities
+            $scope.favStoresCities = $scope.favStores.map(function (s) {
+                return s.city;
+            }).filter(function (value, index, self) {
+                return self.indexOf(value) === index;
+            }).join(', ');
+            // re-do the simlar whisky search
             if ($scope.favWhisky) {
                 $scope.getSimilarWhiskies($scope.favWhisky);        // recalculate availability
             }
@@ -35,6 +68,16 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 });
                 $scope.savePrefs($scope.preferences);
             }
+        };
+
+        $scope.selectAllCitiesStores = function (cities) {
+            $scope.allStores.forEach(function (s) {
+                if ($scope.favStores.indexOf(s) < 0 && cities.indexOf(s.city) >=0) {
+                    $scope.favStores.push(s);
+                }
+            });
+
+            $scope.onSelectedStoresChanged();
         };
 
         $scope.clearFavWhisky = function () {
@@ -79,6 +122,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             if (whisky && whisky.flavorProfile) {
                 $scope.fpOptions = {
                     title: {
+                        fontColor: "black",
                         display: true,
                         text: whisky.flavorProfile.flavors
                     }
@@ -111,9 +155,13 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             if (whisky1 && whisky1.flavorProfile && whisky2 && whisky2.flavorProfile) {
                 $scope.selFpOptions = {
                     legend: {
+                        labels: {
+                            fontColor: "black",
+                        },
                         display: true
                     },
                     title: {
+                        fontColor: "black",
                         display: true,
                         text: whisky1.flavorProfile.flavors
                     }
@@ -127,12 +175,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     let value1 = whisky1.flavorProfile[lbl];
                     $scope.selFpData[0].push(value1);
                     let color1 = '#FF5766';
-                    //$scope.selFpColors.push(color1);
+                    $scope.selFpColors.push(color1);
                     // second dataset
                     let value2 = whisky2.flavorProfile[lbl];
                     $scope.selFpData[1].push(value2);
-                    let color2 = '#cccccc';
-                    //$scope.selFpColors.push(color2);
+                    let color2 = '#AAAAAA';
+                    $scope.selFpColors.push(color2);
                 })
             }
         };
@@ -165,9 +213,11 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             if (prefs.favStoreNames && $scope.allStores) {
                 $scope.allStores.forEach(function (s) {
                     if (prefs.favStoreNames.indexOf(s.name) >= 0) {
-                        $scope.favStores.push(s);
+                        $scope.favStores.push(s);   // select
+                        //$scope.toggleStoreSelection(s);
                     }
                 });
+                $scope.onSelectedStoresChanged();   // update all post-store selection
             }
             if (prefs.favWhiskyName && $scope.allWhiskies) {
                 $scope.allWhiskies.forEach(function (w) {

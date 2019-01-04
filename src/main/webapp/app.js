@@ -7,7 +7,8 @@ angular.module('myApp', [
     'angular.filter',
     'myApp.view1',
     'myApp.view2',
-    'api'
+    'api',
+    'geolocation'
 ])
     .service('authInterceptor', function ($q) {
         var service = this;

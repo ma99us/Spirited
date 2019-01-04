@@ -16,6 +16,7 @@
         </button>
     </div>
     <div id="favStores" class="panel-collapse collapse in card card-body w-50 mx-auto">
+        <div class="text-center"><button class="btn btn-outline-info" ng-click="captureUserLocation()">Find nearby</button></div>
         <div class="row">
             <ul class="col-6" ng-repeat="(city, stores) in allStores | orderBy:'city' | groupBy: 'city'">
                 <b>{{city}}</b>
@@ -32,12 +33,12 @@
             </ul>
         </div>
     </div>
-    <div ng-if="preferences && favStores.length" style="text-align: center">
-        {{favStores.length}} selected; <i><span ng-repeat="s in favStores">{{s.name}}, </span></i> stores inventory will
-        be used.
+    <div ng-if="preferences && favStores.length" class="card card-body w-50 mx-auto" style="text-align: center">
+        {{favStores.length}} store(s) selected in {{favStoresCities}}, their inventory will
+        be shown.
     </div>
     <div ng-if="preferences && !favStores.length" style="text-align: center">
-        <b>No stores selected, all available inventory will be used instead.</b>
+        No stores selected, all available inventory will be used instead.
     </div>
 </div>
 
@@ -112,7 +113,8 @@
                 <p>{{selectedWhisky.description}}</p>
                 <div ng-if="selectedWhisky.flavorProfile" class="mx-auto">
                     <canvas id="selBar" class="chart chart-bar" width="450"
-                            chart-options="selFpOptions" chart-colors="selFpColors" chart-data="selFpData" chart-labels="selFpLabels" chart-series="selFpSeries">
+                            chart-options="selFpOptions" chart-colors="selFpColors" chart-data="selFpData"
+                            chart-labels="selFpLabels" chart-series="selFpSeries">
                     </canvas>
                 </div>
                 <h5 class="text-center">Availability</h5>
@@ -134,15 +136,16 @@
                     </tr>
                     </tbody>
                 </table>
-                <p class="text-center" ng-hide="selectedAvailableQty.length">--- not available in selected store(s) ---</p>
+                <p class="text-center" ng-hide="selectedAvailableQty.length">--- not available in selected store(s)
+                    ---</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
             </div>
         </div>
     </div>
 </div>
+
 
 <br/>
 
