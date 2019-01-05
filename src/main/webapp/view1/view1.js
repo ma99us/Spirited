@@ -12,6 +12,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = [];
+        $scope.dispQuantity = 10;
 
         $scope.onFavWhiskyNameChange = function (newVal) {
             $scope.clearFavWhisky();
@@ -29,7 +30,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     //console.log(cNames);
                     $scope.selectAllCitiesStores(cNames);
                     // collapse stores selection panel
-                    if($scope.favStores.length){
+                    if ($scope.favStores.length) {
                         $('#favStores').collapse('hide');
                     }
                 })
@@ -50,13 +51,13 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.onSelectedStoresChanged();    // update all
         };
 
-        $scope.onSelectedStoresChanged = function(){
+        $scope.onSelectedStoresChanged = function () {
             // get uniques store cities
-            $scope.favStoresCities = $scope.favStores.map(function (s) {
+            $scope.favStoresCities = '<i><b>' + $scope.favStores.map(function (s) {
                 return s.city;
             }).filter(function (value, index, self) {
                 return self.indexOf(value) === index;
-            }).join(', ');
+            }).join('</b></i>, <i><b>') + '</b></i>';
             // re-do the simlar whisky search
             if ($scope.favWhisky) {
                 $scope.getSimilarWhiskies($scope.favWhisky);        // recalculate availability
@@ -72,7 +73,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
 
         $scope.selectAllCitiesStores = function (cities) {
             $scope.allStores.forEach(function (s) {
-                if ($scope.favStores.indexOf(s) < 0 && cities.indexOf(s.city) >=0) {
+                if ($scope.favStores.indexOf(s) < 0 && cities.indexOf(s.city) >= 0) {
                     $scope.favStores.push(s);
                 }
             });
@@ -87,6 +88,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.selectedWhisky = undefined;
             $scope.selectedAvailableQty = undefined;
             $scope.selFpData = undefined;
+            $scope.dispQuantity = 10;
         };
 
         $scope.selectWhisky = function (w) {
@@ -100,6 +102,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.fpData = undefined;
             $scope.getWhisky(w.id).then(function () {
                 $scope.busyW = false;
+                $scope.favWhisky.available = $scope.filterAvailability($scope.favWhisky).length > 0;
                 $scope.buildFPChart($scope.favWhisky);
                 $scope.getSimilarWhiskies($scope.favWhisky);
             });
@@ -109,7 +112,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.selectedWhisky = w;
             $('#selectedWhiskyModalCenter').modal('show');
             $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
-            $scope.buildSelectedFPChart($scope.selectedWhisky, $scope.favWhisky);
+            $scope.buildSimilarFPChart($scope.selectedWhisky, $scope.favWhisky);
         };
 
         $scope.buildFPChart = function (whisky) {
@@ -144,7 +147,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             }
         };
 
-        $scope.buildSelectedFPChart = function (whisky1, whisky2) {
+        $scope.buildSimilarFPChart = function (whisky1, whisky2) {
             const xLabels = ['smoky', 'peaty', 'spicy', 'herbal', 'oily', 'full_bodied', 'rich', 'sweet', 'briny', 'salty', 'vanilla', 'tart', 'fruity', 'floral'];
             //$scope.fpOptions = {scaleShowGridLines: false,};
             $scope.selFpColors = [];
@@ -202,6 +205,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 return favStoresNames.indexOf(q.name) >= 0;
             });
             return qts;
+        };
+
+        $scope.showMoreCandidates = function () {
+            $scope.dispQuantity += 10;
         };
 
         $scope.savePrefs = function (prefs) {

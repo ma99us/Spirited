@@ -24,11 +24,11 @@ public class WhiskyApi {
 
     @Path("/like/{id}")
     @GET
-    public Response getSimilarWhisky(@PathParam("id") long id,
-                                     @QueryParam("results") @DefaultValue("10") int results) {
+    public Response getSimilarWhiskies(@PathParam("id") long id,
+                                       @QueryParam("maxDeviation") @DefaultValue("20.0") double maxDeviation) {
         try {
             Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
-            Response resp = Response.ok(suggestionsService.findSimilarWhiskies(whisky, results));
+            Response resp = Response.ok(suggestionsService.findSimilarWhiskies(whisky, maxDeviation));
             return resp;
         } catch (Exception e) {
             return Response.fail(e);
@@ -36,12 +36,20 @@ public class WhiskyApi {
     }
 
     @GET
-    public Response getAllWhisky(@QueryParam("resultsPerPage") @DefaultValue("100") int resultsPerPage,
-                                 @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
-                                 @QueryParam("sortBy") @DefaultValue("name") String sortBy) {
+    public Response getAllWhiskies(@QueryParam("resultsPerPage") @DefaultValue("100") int resultsPerPage,
+                                   @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
+                                   @QueryParam("sortBy") @DefaultValue("name") String sortBy,
+                                   @QueryParam("format") @DefaultValue("short") String format) {
         try {
             QueryMetadata metaData = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
-            Response resp = Response.ok(cacheService.getWhiskyService().getAllWhisky(metaData));
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(metaData);
+            if(!"full".equalsIgnoreCase(format)){
+                for(Whisky w: allWhiskies){
+                    w.setFlavorProfile(null);
+                    w.setQuantities(null);
+                }
+            }
+            Response resp = Response.ok(allWhiskies);
             resp.setMetaData(metaData);
             return resp;
         } catch (Exception e) {

@@ -145,21 +145,22 @@ public class CacheService {
     }
 
     private Whisky updateWhiskyCache(Whisky whisky) throws Exception {
-        // re-map Whisky entity
         //log.warning("* updating cache for Whisky: " + whisky);      // #TEST
-        Whisky cacheW = whiskyService.findWhisky(whisky.getProductCode());
-        if (cacheW == null) {
-            List<Whisky> matchesW = whiskyService.findWhisky(whisky.getName(), whisky.getUnitVolumeMl(), whisky.getCountry());
-            if (matchesW != null && matchesW.size() == 1) {
-                cacheW = matchesW.get(0);
+        Whisky cacheW = whisky; // use existing entity or 'new' whisky as is
+        if(whisky.getId() <= 0) {
+            // re-map 'new' Whisky with existing entity
+            cacheW = whiskyService.findWhisky(whisky.getProductCode()); // lookup by product code
+            if (cacheW == null) {
+                List<Whisky> matchesW = whiskyService.findWhisky(whisky.getName(), whisky.getUnitVolumeMl(), whisky.getCountry());  // fallback to lookup by name and other params
+                if (matchesW != null && matchesW.size() == 1) {
+                    cacheW = matchesW.get(0);
+                }
+            }
+            if (cacheW != null) {
+                cacheW.mergeFrom(whisky);   // update existing whisky with new info (merge)
             }
         }
-        if (cacheW != null) {
-            cacheW.mergeFrom(whisky);   // update existing whisky with new info
-        } else {
-            cacheW = whisky;    // just use new whisky as is
-        }
-        // re-map Warehouses entities
+        // see if new Warehouses entities needs to be added
         for (WarehouseQuantity wq : cacheW.getQuantities()) {
             //log.warning("? quiring Warehouse: " + wq.getName());      // #TEST
             Warehouse wh = warehouseService.getWarehouseByName(wq.getName());
@@ -215,6 +216,7 @@ public class CacheService {
             loadProductDetails(whisky);
             findFlavorProfileForWhisky(whisky);
             updateWhiskyCache(whisky);
+            em.flush();
         }
         return isCacheInvalid;
     }

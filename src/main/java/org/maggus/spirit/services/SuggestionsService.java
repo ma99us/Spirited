@@ -22,11 +22,11 @@ public class SuggestionsService {
     @Inject
     private CacheService cacheService;
 
-    public List<WhiskyDiff> findSimilarWhiskies(final Whisky whisky, Integer size) throws Exception {
+    public List<WhiskyDiff> findSimilarWhiskies(final Whisky whisky, Double maxDeviation) throws Exception {
         try {
-            log.info("Looking for similar whiskies for " + whisky);
+            log.info("Looking for similar whiskies for \"" + whisky.getName() + "\"; maxDeviation=" + maxDeviation);
             long t0 = System.currentTimeMillis();
-            List<Whisky> allWhisky = cacheService.getWhiskyService().getAllWhisky(new QueryMetadata());
+            List<Whisky> allWhisky = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
             Map<Double, WhiskyDiff> candidates = allWhisky.parallelStream().map(w -> {
                 WhiskyDiff diff = new WhiskyDiff(w);
                 diff.setStdDeviation(calcDifference(whisky.getFlavorProfile(), w.getFlavorProfile(), diff));
@@ -37,10 +37,11 @@ public class SuggestionsService {
                 if (whisky.equals(wd.getCandidate()) || wd.getStdDeviation() >= (Double.MAX_VALUE - 1.0)) {
                     continue;   // no not suggest the original whisky, and the worst matches
                 }
-                res.add(wd);
-                if (size != null && res.size() > size) {
+                if (maxDeviation != null && wd.getStdDeviation() > maxDeviation) {
                     break;
                 }
+                res.add(wd);
+                //log.info("candidate " + wd.getCandidate().getName() + "; deviation=" + wd.getStdDeviation());     // #DEBUG
             }
             long dt = System.currentTimeMillis() - t0;
             log.info("Found " + res.size() + " similar whiskies in " + (dt) + " ms");

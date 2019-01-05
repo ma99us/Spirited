@@ -22,7 +22,7 @@ public class WhiskyService {
     @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
-    public List<Whisky> getAllWhisky(QueryMetadata metaData) throws Exception {
+    public List<Whisky> getAllWhiskies(QueryMetadata metaData) throws Exception {
         TypedQuery<Whisky> q = em.createQuery("select w from Whisky w " + getSafeOrderByClause(Whisky.class, metaData.getSortBy()), Whisky.class);
         List<Whisky> resultList = q.getResultList();
         int totalSize = resultList.size();
