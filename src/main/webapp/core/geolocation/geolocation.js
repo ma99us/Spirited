@@ -3,7 +3,6 @@ angular.module('geolocation', [])
 
         function getCurrentPosition() {
             var deferred = $q.defer();
-
             if (!$window.navigator.geolocation) {
                 //deferred.reject('Geolocation not supported.');
                 return tryIPinfoGeolocation();
@@ -14,7 +13,9 @@ angular.module('geolocation', [])
                     },
                     function (err) {
                         if (err.code === 1) {
-                            return tryIPinfoGeolocation();
+                            return tryIPinfoGeolocation().then(function(geo){
+                                deferred.resolve(geo);
+                            });
                         } else {
                             deferred.reject(err.message || err);
                         }

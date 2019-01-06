@@ -20,6 +20,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
 
         $scope.captureUserLocation = function () {
             $scope.message = undefined;
+            $scope.busyLoc = true;
             geolocation.getCurrentPosition().then(function (geo) {
                 return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
             })
@@ -36,6 +37,9 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 })
                 .catch(function (err) {
                     $scope.message = err;
+                })
+                .finally(function () {
+                    $scope.busyLoc = false;
                 });
         };
 
@@ -246,6 +250,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
 
         //// API ////
 
+        $scope.getCacheStatus = function () {
+            return $api.getCacheStatus().then(function (data) {
+                $scope.message = undefined;
+                $scope.cacheStatus = data.data;
+            }).catch(function (err) {
+                $scope.message = err;
+            });
+        };
+
         $scope.getAllStores = function () {
             return $api.getAllStores().then(function (data) {
                 $scope.message = undefined;
@@ -288,13 +301,20 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             });
         };
 
-        ////
+        //// initialization:
 
-        $scope.getAllStores()
+        $scope.busy = true;
+        $scope.getCacheStatus()
+            .then(function () {
+                return $scope.getAllStores();
+            })
             .then(function () {
                 return $scope.getAllWhiskies();
             })
             .then(function () {
                 return $scope.loadPrefs();
+            })
+            .finally(function () {
+                $scope.busy = false;
             });
     }]);
