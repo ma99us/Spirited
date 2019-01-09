@@ -112,6 +112,20 @@ public class DistillerParserTest {
     }
 
     @Test
+    public void searchProductStrangeMismatches() {
+        DistillerParser parser = new DistillerParser();
+        String name = "Glentauchers 1997";
+        String type = "Single malt";
+        String country = "United Kingdom";
+        String region = "Speyside";
+        Integer age = Locators.Age.parse(name);
+        name = parser.cleanupAnblWhiskyName(name);
+        FlavorProfile fp = parser.searchSingleProduct(name, type, country, region, age);
+        assertNotNull(fp);
+        assertEquals("GLENTAUCHERS 1996".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
     public void parseFlavorProfile() {
         FlavorProfile fp = new FlavorProfile("BALBLAIR 2005", "https://distiller.com/spirits/balblair-2005");
         DistillerParser parser = new DistillerParser();
@@ -123,4 +137,5 @@ public class DistillerParserTest {
         assertEquals(86L, (long) fp.getScore());
         assertTrue(fp.getRating() > 1.0);
     }
+
 }

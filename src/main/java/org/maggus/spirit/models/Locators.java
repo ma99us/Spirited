@@ -118,9 +118,9 @@ public class Locators {
 
     public static enum WhiskyType {
         S_M("Single malt", "Single grain", "Peated Single Malt"),
-        BLENDED("Blended", "Blended grain", "Blended malt", "Peated blend", "Peated blended malt"),
-        FLAVOURED("Flavoured"),
-        BOURBON("Bourbon"),
+        BLENDED("Blended", "Blended grain", "Blended malt", "Peated blend", "Peated blended malt", "Canadian", "Single Pot Still"),
+        FLAVOURED("Flavoured", "Spiced/Flavoured"),
+        BOURBON("Bourbon", "Tennessee"),
         RYE("Rye");
 
         private final String[] type;

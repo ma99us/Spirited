@@ -43,8 +43,8 @@ angular.module('myApp', [
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             let path = next.$$route.originalPath;
-            $scope.menuView1Style = "/view1" === path ? {'background-color': 'CornFlowerBlue'} : {};
-            $scope.menuView2Style = "/view2" === path ? {'background-color': 'CornFlowerBlue'} : {};
+            $scope.menuView1Style = "/view1" === path ? {'background-color': 'CornFlowerBlue', color: 'black'} : {};
+            $scope.menuView2Style = "/view2" === path ? {'background-color': 'CornFlowerBlue', color: 'black'} : {};
         });
 
     }])

@@ -89,14 +89,105 @@ public class DistillerParser extends AbstractParser {
 
     public String cleanupAnblWhiskyName(String name) {
         name = name.replaceAll("\\s+YO", " Year");
-        name = name.replaceAll("(?i)\\s+Scotch\\s+", " ");
-        name = name.replaceAll("(?i)\\s+Single Malt\\s+", " ");
+//        name = name.replaceAll("(?i)\\s+Scotch\\s+", " ");
+//        name = name.replaceAll("(?i)\\s+Single Malt\\s+", " ");
         return name.trim();
     }
 
-    private String cleanupDistillerWhiskyName(String name){
-        name = name.replaceAll("(?i)\\s+ORIGINAL\\s+", " ");
-        return name.trim();
+//    private String[] cleanupJunkFromWhiskyName(String[] name, String junk){
+//        //name = name.replaceAll("(?i)\\s+ORIGINAL\\s+", " ");         // it's a hack!
+//        //name = name.replaceAll("\\(.*\\)", "");
+////        name = name.replaceAll(junk, "");
+//        //return name.trim();
+//    }
+
+    public int fuzzyMatchNames(String name1, String name2){
+        LevenshteinDistance ld = LevenshteinDistance.getDefaultInstance();
+        int likeness = ld.apply(name1, name2);
+        if((double)likeness/name1.length() >= 0.74){
+            //TODO: this has to be re-written
+            // try to cleanup names a bit and compare again
+            // remove everything in brackets, if any
+            name1 = name1.replaceAll("\\(.*\\)", " ");
+            name2 = name2.replaceAll("\\(.*\\)", " ");
+            String token = "Single Malt";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Scotch";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Canadian Whisky";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Speyside Whisky";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Single Pot Still";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Irish Whiskey";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Whisky";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Whiskey";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+
+            likeness = ld.apply(name1, name2);
+/// FIXME: figure out a way to prioritize first full words in the name
+            // try to match individual words
+//            String[] tokens1 = name1.toUpperCase().split("\\s+");
+//            name2 = name2.toUpperCase();
+//            //String[] tokens2 = name2.split("\\s+");
+//            int wMatches = 0;
+//            for(String w1 : tokens1){
+//                if("Year".equalsIgnoreCase(w1)){
+//                    continue;
+//                }
+//                if(name2.contains(w1)){
+//                    wMatches += w1.length();
+//                }
+//            }
+//            // if more then half words match, consider it's a match after all
+//            log.info("\t adjusting bad likeness: " + likeness + " => " + (likeness - wMatches)
+//                    + " for: \"" + name1 + "\" => \"" + name2 + "\"");
+//            likeness -= wMatches;
+        }
+        return likeness;
     }
 
     public FlavorProfile searchSingleProduct(String findName, String type, String country, String region, Integer age) {
@@ -118,24 +209,34 @@ public class DistillerParser extends AbstractParser {
                 return null;
             }
             // search for best matching whisky in result list
-            LevenshteinDistance ld = LevenshteinDistance.getDefaultInstance();
             Map<Integer, FlavorProfile> candidates = new TreeMap<>();
             for (int i = 0; i < spirits.size(); i++) {
                 JsonObject item = spirits.getJsonObject(i);
-                String name = item.getString("name").trim();
+                String itemName = item.getString("name").trim();
                 String itemFamily = item.getString("spirit_family_slug");
                 String itemType = item.getString("spirit_style_name");
                 String itemCountry = item.getString("country");
                 String itemRegion = item.getString("location").split(",", 2)[0];
-                Integer itemAge = Locators.Age.parse(name);
+                Integer itemAge = Locators.Age.parse(itemName);
+                //itemName = cleanupDistillerWhiskyName(itemName);
                 if (Locators.Spirit.equals(itemFamily, "whisky")
-                        && (type == null || Locators.WhiskyType.equals(type, itemType))
-                        && (country == null || Locators.Country.equals(country, itemCountry))
+                    //&& (type == null || Locators.WhiskyType.equals(type, itemType))
+                    //&& (country == null || Locators.Country.equals(country, itemCountry))
                     //&& (region == null || Locators.Region.equals(region, itemRegion))
                     //&& (age == null || age.equals(itemAge))
                         ) {
-                    String extUrl = BASE_URL + "/spirits/" + item.getString("slug");
-                    int likeness = ld.apply(cleanupDistillerWhiskyName(findName), cleanupDistillerWhiskyName(name));
+                    int likeness = fuzzyMatchNames(findName, itemName);    // fuzzy match names
+                    if (country != null && !Locators.Country.equals(country, itemCountry)) {
+                        likeness += 5;  // mismatch country is a big deal
+                    }
+                    if (type != null && !Locators.WhiskyType.equals(type, itemType)) {
+                        if(Locators.Country.equals("United Kingdom", itemCountry)){
+                            likeness += 4;  // mismatch type is quite a big deal, but only for Scotch
+                        }
+                        else{
+                            likeness += 2;  // otherwise, not a big deal
+                        }
+                    }
                     if (region != null && !Locators.Region.equals(region, itemRegion)) {
                         likeness += 1;  // mismatch region is not a big deal
                     }
@@ -145,16 +246,26 @@ public class DistillerParser extends AbstractParser {
                     if(candidates.containsKey(likeness)){
                         likeness += 1;  // if same likeness already exists, it should maintain precedence
                     }
-                    candidates.put(likeness, new FlavorProfile(name, extUrl));
+                    String extUrl = BASE_URL + "/spirits/" + item.getString("slug");
+                    candidates.put(likeness, new FlavorProfile(itemName, extUrl));
                 }
             }
             if (candidates.isEmpty()) {
                 //log.warning("No Such Product found: \"" + findName + "\"");
                 return null;
             }
-            FlavorProfile found = candidates.values().iterator().next();    // get the one form the top
-            //log.info("* Parsing external API response from " + url + ", searched: \"" + findName + "\" => found: \"" + name + "\"");
-            return found;
+            //TODO: do not use obviously 'bad' matches. get the one form the top fro now
+            Map.Entry<Integer, FlavorProfile> first = candidates.entrySet().iterator().next();
+            Integer minLikeness = first.getKey();
+            FlavorProfile foundFP = first.getValue();
+            double relLikeness = (double)minLikeness / findName.length();
+            boolean isGood = relLikeness < 0.74;    //FIXME: should not be hardcoded?
+            if(relLikeness >= 0.3) {
+                log.info("* FP lookup; \"" + findName + "\" => \"" + foundFP.getName() + "\", likeness=" + minLikeness
+                        + ", relative likeness = " + relLikeness
+                        + " - "  + (isGood ? "GOOD" : "BAD"));
+            }
+            return isGood ? foundFP : null;
         } catch (Exception ex) {
             log.log(Level.SEVERE, "Failed to parse Product Search page: " + url, ex);
             return null;

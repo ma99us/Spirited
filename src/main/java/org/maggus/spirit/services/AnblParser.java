@@ -24,13 +24,30 @@ public class AnblParser extends AbstractParser {
 
     public enum CacheUrls {
         BASE_URL("http://www.anbl.com"),
+        // Scotch
         SCOTCH_SINGLE_MALTS(BASE_URL.getUrl() + "/scotch-single-malts-1"),
         SCOTCH_BLENDS(BASE_URL.getUrl() + "/scotch-whisky-blends-1"),
         SCOTCH_SM_ISLA(BASE_URL.getUrl() + "/islay"),
         SCOTCH_SM_HIGHLAND(BASE_URL.getUrl() + "/highland"),
         SCOTCH_SM_SPEYSIDE(BASE_URL.getUrl() + "/speyside-1"),
         SCOTCH_SM_ISLANDS(BASE_URL.getUrl() + "/islands-1"),
-        SCOTCH_SM_LOWLAND(BASE_URL.getUrl() + "/lowland");
+        SCOTCH_SM_LOWLAND(BASE_URL.getUrl() + "/lowland"),
+        // Canadian
+        CANADA_SM(BASE_URL.getUrl() + "/single-malt-grain-3"),
+        CANADA_BLENDS(BASE_URL.getUrl() + "/blended-2"),
+        CANADA_RYE(BASE_URL.getUrl() + "/rye-4"),
+        CANADA_FLAVOURED(BASE_URL.getUrl() + "/spiced-flavoured-2"),
+        // Ireland
+        IRELAND_SM(BASE_URL.getUrl() + "/single-malt-grain-5"),
+        IRELAND_BLENDS(BASE_URL.getUrl() + "/blended-3"),
+        // Japan
+        JAPAN_BLENDS(BASE_URL.getUrl() + "/japan-1"),
+        // USA
+        USA_RYE(BASE_URL.getUrl() + "/rye-1"),
+        USA_BOURBON(BASE_URL.getUrl() + "/bourbon"),
+        USA_FLAVOURED(BASE_URL.getUrl() + "/spiced-flavoured-3"),
+        USA_TEN_BOURBON(BASE_URL.getUrl() + "/tennessee-sour-mash"),
+        ;
 
         private final String url;
 
@@ -46,29 +63,46 @@ public class AnblParser extends AbstractParser {
     public List<WhiskyCategory> buildProductsCategories() {
         List<WhiskyCategory> wcs = new ArrayList<>();
 
-        // load Blended
+        // load Scotch
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_BLENDS.name(), CacheUrls.SCOTCH_BLENDS.getUrl(),
                 Locators.Country.UK.toString(), null, Locators.WhiskyType.BLENDED.toString()));
-
-        // load Isla
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_ISLA.name(), CacheUrls.SCOTCH_SM_ISLA.getUrl(),
                 Locators.Country.UK.toString(), Locators.Region.UK_ISLA.toString(), Locators.WhiskyType.S_M.toString()));
-
-        // load Highland
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_HIGHLAND.name(), CacheUrls.SCOTCH_SM_HIGHLAND.getUrl(),
                 Locators.Country.UK.toString(), Locators.Region.UK_HIGH.toString(), Locators.WhiskyType.S_M.toString()));
-
-        // load Highland
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_SPEYSIDE.name(), CacheUrls.SCOTCH_SM_SPEYSIDE.getUrl(),
                 Locators.Country.UK.toString(), Locators.Region.UK_SPEY.toString(), Locators.WhiskyType.S_M.toString()));
-
-        // load Islands
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_ISLANDS.name(), CacheUrls.SCOTCH_SM_ISLANDS.getUrl(),
                 Locators.Country.UK.toString(), Locators.Region.UK_ISLANDS.toString(), Locators.WhiskyType.S_M.toString()));
-
-        // load Islands
         wcs.add(new WhiskyCategory(CacheUrls.SCOTCH_SM_LOWLAND.name(), CacheUrls.SCOTCH_SM_LOWLAND.getUrl(),
                 Locators.Country.UK.toString(), Locators.Region.UK_LOW.toString(), Locators.WhiskyType.S_M.toString()));
+        // load Canadian
+        wcs.add(new WhiskyCategory(CacheUrls.CANADA_SM.name(), CacheUrls.CANADA_SM.getUrl(),
+                Locators.Country.CA.toString(), null, Locators.WhiskyType.S_M.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.CANADA_BLENDS.name(), CacheUrls.CANADA_BLENDS.getUrl(),
+                Locators.Country.CA.toString(), null, Locators.WhiskyType.BLENDED.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.CANADA_RYE.name(), CacheUrls.CANADA_RYE.getUrl(),
+                Locators.Country.CA.toString(), null, Locators.WhiskyType.RYE.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.CANADA_FLAVOURED.name(), CacheUrls.CANADA_FLAVOURED.getUrl(),
+                Locators.Country.CA.toString(), null, Locators.WhiskyType.FLAVOURED.toString()));
+        // load Irish
+        wcs.add(new WhiskyCategory(CacheUrls.IRELAND_SM.name(), CacheUrls.IRELAND_SM.getUrl(),
+                Locators.Country.IR.toString(), null, Locators.WhiskyType.S_M.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.IRELAND_BLENDS.name(), CacheUrls.IRELAND_BLENDS.getUrl(),
+                Locators.Country.IR.toString(), null, Locators.WhiskyType.BLENDED.toString()));
+        // load Japan
+        wcs.add(new WhiskyCategory(CacheUrls.JAPAN_BLENDS.name(), CacheUrls.JAPAN_BLENDS.getUrl(),
+                Locators.Country.JP.toString(), null, Locators.WhiskyType.BLENDED.toString()));
+        // load American
+        wcs.add(new WhiskyCategory(CacheUrls.USA_RYE.name(), CacheUrls.USA_RYE.getUrl(),
+                Locators.Country.US.toString(), null, Locators.WhiskyType.RYE.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.USA_BOURBON.name(), CacheUrls.USA_BOURBON.getUrl(),
+                Locators.Country.US.toString(), null, Locators.WhiskyType.BOURBON.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.USA_FLAVOURED.name(), CacheUrls.USA_FLAVOURED.getUrl(),
+                Locators.Country.US.toString(), null, Locators.WhiskyType.FLAVOURED.toString()));
+        wcs.add(new WhiskyCategory(CacheUrls.USA_TEN_BOURBON.name(), CacheUrls.USA_TEN_BOURBON.getUrl(),
+                Locators.Country.US.toString(), Locators.Region.US_TE.toString(), Locators.WhiskyType.BOURBON.toString()));
+
 
         //TODO: load more stuff here
 

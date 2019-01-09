@@ -146,7 +146,7 @@ public class CacheService {
 
     private Whisky updateWhiskyCache(Whisky whisky) throws Exception {
         //log.warning("* updating cache for Whisky: " + whisky);      // #TEST
-        Whisky cacheW = whisky; // use existing entity or 'new' whisky as is
+        Whisky cacheW = null; // try to locate and update existing Whisky entity
         if(whisky.getId() <= 0) {
             // re-map 'new' Whisky with existing entity
             cacheW = whiskyService.findWhisky(whisky.getProductCode()); // lookup by product code
@@ -160,6 +160,10 @@ public class CacheService {
                 cacheW.mergeFrom(whisky);   // update existing whisky with new info (merge)
             }
         }
+        if(cacheW == null){
+            cacheW = whisky; // use 'new' whisky as is
+        }
+        //log.warning("* cacheW=" + cacheW);      // #TEST
         // see if new Warehouses entities needs to be added
         for (WarehouseQuantity wq : cacheW.getQuantities()) {
             //log.warning("? quiring Warehouse: " + wq.getName());      // #TEST
@@ -238,12 +242,12 @@ public class CacheService {
                 }
             } while (fp == null);
             if (fp == null) {
-                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
+//#TEMP                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
                 return false;
             }
             dstlrParser.loadFlavorProfile(fp);
             if (fp.getFlavors() == null || fp.getFlavors().isEmpty()) {
-                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\" => \"" + fp.getName() + "\"");
+//#TEMP                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\" => \"" + fp.getName() + "\"");
                 return false;
             }
             long now = System.currentTimeMillis();
