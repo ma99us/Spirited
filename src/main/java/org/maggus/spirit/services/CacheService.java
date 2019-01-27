@@ -229,18 +229,7 @@ public class CacheService {
         try {
             //log.info("= Matching Flavor Profile for Whisky: \"" + whisky.getName() + "\"");
             long t0 = System.currentTimeMillis();
-            // fix ANBL whisky names to match Distiller
-            String name = dstlrParser.cleanupAnblWhiskyName(whisky.getName());
-            FlavorProfile fp = null;
-            do {
-                fp = dstlrParser.searchSingleProduct(name, whisky.getType(), whisky.getCountry(), whisky.getRegion(), Locators.Age.parse(whisky.getName())); // find on a external site
-                String simName = simplifyWhiskyName(name);
-                if (simName.equals(name)) {
-                    break;  // search string can not be simplified anymore, we are done
-                } else {
-                    name = simName;
-                }
-            } while (fp == null);
+            FlavorProfile fp = dstlrParser.fuzzySearchFlavorProfile(whisky);
             if (fp == null) {
 //#TEMP                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
                 return false;
@@ -260,32 +249,6 @@ public class CacheService {
             log.log(Level.SEVERE, "Failed to find a Flavor Profile for Whisky: " + whisky.getName(), ex);
             return false;
         }
-    }
-
-    private String simplifyWhiskyName(String name) {
-        List<String> fixed = new ArrayList<>();
-        String[] tags = name.split("\\s+");
-        int lastNonDigitTagIdx = 0;
-        for (int i = 0; i < tags.length; i++) {
-            String tag = tags[i];
-            if (i == 0) {
-                // always use first word as is
-                fixed.add(tag);
-            } else {
-                String digits = tag.replaceAll("[^\\d]+", "");
-                if (digits.isEmpty()) {
-                    lastNonDigitTagIdx = i;
-                    fixed.add(tag); // candidate for truncation
-                } else {
-                    fixed.add(digits);  // add only numbers
-                }
-            }
-        }
-        // finally drop last word without any numbers in it
-        if (lastNonDigitTagIdx > 0 && lastNonDigitTagIdx < fixed.size()) {
-            fixed.remove(lastNonDigitTagIdx);
-        }
-        return name = String.join(" ", fixed);
     }
 
     public WhiskyService getWhiskyService() {

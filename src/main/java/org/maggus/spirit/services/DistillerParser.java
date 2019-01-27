@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.maggus.spirit.models.FlavorProfile;
 import org.maggus.spirit.models.Locators;
+import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -87,19 +88,12 @@ public class DistillerParser extends AbstractParser {
         }
     }
 
-    public String cleanupAnblWhiskyName(String name) {
+    private String cleanupInputWhiskyName(String name) {
         name = name.replaceAll("\\s+YO", " Year");
 //        name = name.replaceAll("(?i)\\s+Scotch\\s+", " ");
 //        name = name.replaceAll("(?i)\\s+Single Malt\\s+", " ");
         return name.trim();
     }
-
-//    private String[] cleanupJunkFromWhiskyName(String[] name, String junk){
-//        //name = name.replaceAll("(?i)\\s+ORIGINAL\\s+", " ");         // it's a hack!
-//        //name = name.replaceAll("\\(.*\\)", "");
-////        name = name.replaceAll(junk, "");
-//        //return name.trim();
-//    }
 
     public int fuzzyMatchNames(String name1, String name2){
         LevenshteinDistance ld = LevenshteinDistance.getDefaultInstance();
@@ -160,6 +154,13 @@ public class DistillerParser extends AbstractParser {
                 name2 = name2.replaceAll(token, "");
             }
             token = "Whiskey";
+            if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
+                name1 = name1.replaceAll(token, "");
+            }
+            else if(name1.indexOf(token) < 0 && name2.indexOf(token) >= 0){
+                name2 = name2.replaceAll(token, "");
+            }
+            token = "Original";
             if(name1.indexOf(token) >= 0 && name2.indexOf(token) < 0){
                 name1 = name1.replaceAll(token, "");
             }
@@ -254,7 +255,7 @@ public class DistillerParser extends AbstractParser {
                 //log.warning("No Such Product found: \"" + findName + "\"");
                 return null;
             }
-            //TODO: do not use obviously 'bad' matches. get the one form the top fro now
+            //judge the overall match quality of the 'top' candidate, and ignore apparent 'bad' matches by returning null
             Map.Entry<Integer, FlavorProfile> first = candidates.entrySet().iterator().next();
             Integer minLikeness = first.getKey();
             FlavorProfile foundFP = first.getValue();
@@ -270,6 +271,21 @@ public class DistillerParser extends AbstractParser {
             log.log(Level.SEVERE, "Failed to parse Product Search page: " + url, ex);
             return null;
         }
+    }
+
+    public FlavorProfile fuzzySearchFlavorProfile(Whisky whisky) {
+        String name = cleanupInputWhiskyName(whisky.getName());// fix ANBL whisky names to match Distiller
+        FlavorProfile fp = null;
+        do {
+            fp = searchSingleProduct(name, whisky.getType(), whisky.getCountry(), whisky.getRegion(), Locators.Age.parse(whisky.getName())); // find on a external site
+            String simName = simplifyWhiskyName(name);
+            if (simName.equals(name)) {
+                break;  // search string can not be simplified anymore, we are done
+            } else {
+                name = simName;
+            }
+        } while (fp == null);
+        return fp;
     }
 
     public void loadFlavorProfile(FlavorProfile fp) {

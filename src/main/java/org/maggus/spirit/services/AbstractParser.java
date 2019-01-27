@@ -2,6 +2,8 @@ package org.maggus.spirit.services;
 
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,5 +55,31 @@ abstract class AbstractParser {
             digits += matcher.group(1);
         }
         return digits;
+    }
+
+    protected String simplifyWhiskyName(String name) {
+        List<String> fixed = new ArrayList<>();
+        String[] tags = name.split("\\s+");
+        int lastNonDigitTagIdx = 0;
+        for (int i = 0; i < tags.length; i++) {
+            String tag = tags[i];
+            if (i == 0) {
+                // always use first word as is
+                fixed.add(tag);
+            } else {
+                String digits = tag.replaceAll("[^\\d]+", "");
+                if (digits.isEmpty()) {
+                    lastNonDigitTagIdx = i;
+                    fixed.add(tag); // candidate for truncation
+                } else {
+                    fixed.add(digits);  // add only numbers
+                }
+            }
+        }
+        // finally drop last word without any numbers in it
+        if (lastNonDigitTagIdx > 0 && lastNonDigitTagIdx < fixed.size()) {
+            fixed.remove(lastNonDigitTagIdx);
+        }
+        return name = String.join(" ", fixed);
     }
 }
