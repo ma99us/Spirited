@@ -231,12 +231,12 @@ public class CacheService {
             long t0 = System.currentTimeMillis();
             FlavorProfile fp = dstlrParser.fuzzySearchFlavorProfile(whisky);
             if (fp == null) {
-//#TEMP                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
+                log.warning("! Can not find FP Product for : \"" + whisky.getName() + "\" " + whisky.getType() + ", " + whisky.getRegion() + ", " + whisky.getCountry());
                 return false;
             }
             dstlrParser.loadFlavorProfile(fp);
             if (fp.getFlavors() == null || fp.getFlavors().isEmpty()) {
-//#TEMP                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\" => \"" + fp.getName() + "\"");
+                log.warning("! No Flavor Profile in Product: \"" + whisky.getName() + "\" => \"" + fp.getName() + "\"");
                 return false;
             }
             long now = System.currentTimeMillis();

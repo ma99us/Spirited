@@ -20,6 +20,8 @@ public class FlavorProfile extends CacheItem {
     private long id;
     @CacheIndex
     private String name;            // Whisky name
+    private Double likeness;        // Whisky search likeness
+    // Distiller info
     private String flavors;         // flavor summary tags
     private String caskType;        // cask type text description
     private Integer score;          // Distiller score
@@ -44,6 +46,13 @@ public class FlavorProfile extends CacheItem {
         super();
         setName(name);
         setCacheExternalUrl(url);
+    }
+
+    public FlavorProfile(String name, String url, double likeness) {
+        super();
+        setName(name);
+        setCacheExternalUrl(url);
+        setLikeness(likeness);
     }
 
     @Override
