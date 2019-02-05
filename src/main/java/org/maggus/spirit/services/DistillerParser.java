@@ -32,6 +32,14 @@ public class DistillerParser extends AbstractParser {
 
     public static final String BASE_URL = "https://distiller.com";
 
+    public DistillerParser(){
+        this(false);
+    }
+
+    public DistillerParser(boolean isDebugEnabled) {
+        super(isDebugEnabled);
+    }
+
     protected void prepareConnection(HttpURLConnection conn) throws ProtocolException {
         conn.setRequestMethod("GET");
         conn.setRequestProperty("accept", "application/json,text/*");
@@ -99,7 +107,7 @@ public class DistillerParser extends AbstractParser {
             "Single Pot Still", "Irish Whiskey", "1st Release", "2nd Release", "3rd Release", "4th Release",
             "First Editions", "Original", "Speyside", "Canadian", "Japanese", "Blended", "Scotch", "Whisky",
             "Whiskey", "Strength", "Gaelic", "Kentucky", "Bourbon", "Discovery", "Limited", "Edition", "The",
-            "Old", "NO" };
+            "Vintage", "Old", "NO" };
 
     private double fuzzyMatchNames(String name1, String name2, boolean doFilterJunk) {
         LevenshteinDistance ld = LevenshteinDistance.getDefaultInstance();
@@ -114,7 +122,7 @@ public class DistillerParser extends AbstractParser {
             for (ListIterator<String> iter2 = split2.listIterator(); iter2.hasNext(); ) {
                 String tag2 = iter2.next();
                 int dist = ld.apply(tag1, tag2);
-                if ((double) dist / tag1.length() < 0.2) {   // 'exact' match
+                if ((double) dist / tag1.length() <= 0.2) {   // 'exact' match
                     likeness += -tag1.length();
                     iter1.remove();
                     iter2.remove();
@@ -263,14 +271,18 @@ public class DistillerParser extends AbstractParser {
                 FlavorProfile foundFP = first.getValue();
                 int words = name.split("\\s+").length;
                 boolean isGood = minLikeness < -0.2;    //FIXME: should not be hardcoded?
-                log.info("* FP lookup; \"" + name + "\" => \"" + foundFP.getName() + "\", likeness=" + minLikeness
-                        + "; candidates: " + candidates.size() + "; words count: " + words
-                        + " - " + (isGood ? "GOOD" : "BAD"));
+                if (isDebugEnabled) {
+                    log.info("* FP lookup; \"" + name + "\" => \"" + foundFP.getName() + "\", likeness=" + minLikeness
+                            + "; candidates: " + candidates.size() + "; words count: " + words
+                            + " - " + (isGood ? "GOOD" : "BAD"));
+                }
                 bestCandidates.put(minLikeness, foundFP);
                 fp = isGood ? foundFP : null;
             }
             else{
-                log.info("* FP lookup; \"" + name + "\" => -no results- ");
+                if (isDebugEnabled) {
+                    log.info("* FP lookup; \"" + name + "\" => -no results- ");
+                }
             }
 
             String simName = simplifyWhiskyName(name);
@@ -284,10 +296,14 @@ public class DistillerParser extends AbstractParser {
             Map.Entry<Double, FlavorProfile> first = bestCandidates.entrySet().iterator().next();
             FlavorProfile fp1 = first.getValue();
             if(fp1.getLikeness() < 0.2) {
-                log.info("* Using candidate FP for: \"" + whisky.getName() + "\" !=> \"" + fp1.getName() + "\", likeness=" + fp1.getLikeness());
+                if (isDebugEnabled) {
+                    log.info("* Using candidate FP for: \"" + whisky.getName() + "\" !=> \"" + fp1.getName() + "\", likeness=" + fp1.getLikeness());
+                }
                 fp = fp1;
             }
-            //log.warning("Failed to find matching FP for: \"" + whisky.getName() + "\"");
+        }
+        if(isDebugEnabled && fp == null){
+            log.warning("* NO matching FP for: \"" + whisky.getName() + "\"");
         }
         return fp;
     }

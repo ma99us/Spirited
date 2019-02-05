@@ -1,16 +1,20 @@
 package org.maggus.spirit.services;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.maggus.spirit.models.FlavorProfile;
-import org.maggus.spirit.models.Locators;
 import org.maggus.spirit.models.Whisky;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public class DistillerParserTest {
+
+    DistillerParser parser;
+
+    @Before
+    public void before(){
+        parser = new DistillerParser(true);
+    }
 
 //    @Test
 //    public void getAllProducts() {
@@ -23,7 +27,7 @@ public class DistillerParserTest {
     @Test
     public void parseFlavorProfile() {
         FlavorProfile fp = new FlavorProfile("BALBLAIR 2005", "https://distiller.com/spirits/balblair-2005");
-        DistillerParser parser = new DistillerParser();
+
         parser.loadFlavorProfile(fp);
         assertEquals("FULL BODIED".toLowerCase(), fp.getFlavors().toLowerCase());
         assertEquals(20L, (long) fp.getSpicy());
@@ -35,7 +39,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProduct() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("BALBLAIR 2005", null, null);
         FlavorProfile fp = parser.fuzzySearchFlavorProfile(whisky);
         assertNotNull(fp);
@@ -44,7 +47,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductBlendedMalt() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Poit Dhubh Blended Malt 8 YO", null, null);
         whisky.setType("Blended");
         whisky.setCountry("United Kingdom");
@@ -55,7 +57,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductWrongResultsOrder() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Dalmore 18 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -67,7 +68,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductWrongRegion() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glenfarclas 17 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -79,7 +79,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductJunkInName() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tomatin Scotch Single Malt 12 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -91,7 +90,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductJunkInNameNotExact() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glen Moray Single Malt Scotch 15 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -103,7 +101,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchSingleProductJunkInResultName() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glendronach 12 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -115,7 +112,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductStrangeMismatches() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glentauchers 1997", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -127,7 +123,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductJunkInResult() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Yellow Spot Irish Whiskey", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("Ireland");
@@ -138,7 +133,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tamdhu Batch Strength III", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Speyside");
@@ -150,7 +144,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch1() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Hibiki Harmony", null, null);
         whisky.setType("Blended");
         whisky.setCountry("Japan");
@@ -161,7 +154,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch2() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Antiquity Blue Blended Whisky", null, null);
         whisky.setType("Blended");
         whisky.setCountry("United Kingdom");
@@ -172,7 +164,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch3() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("William Grant Family Reserve", null, null);
         whisky.setType("Blended");
         whisky.setCountry("United Kingdom");
@@ -183,7 +174,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch4() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tokinoka", null, null);
         whisky.setType("Blended");
         whisky.setCountry("Japan");
@@ -194,7 +184,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch5() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Jameson Irish", null, null);
         whisky.setType("Blended");
         whisky.setCountry("Ireland");
@@ -205,7 +194,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch6() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("AnCnoc 2002", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Highland");
@@ -217,7 +205,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch7() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tomatin Cask Strength 2007", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Highland");
@@ -229,7 +216,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch8() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glenfarclas 105 Cask", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Speyside");
@@ -241,7 +227,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch9() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Canadian Club Reserve", null, null);
         whisky.setType("Blended");
         whisky.setCountry("Canada");
@@ -252,7 +237,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch10() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tamdhu Speyside Single Malt Scotch Whisky 10 YO", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Speyside");
@@ -264,7 +248,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch11() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Poit Dhubh Gaelic Blended Malt 21 YO", null, null);
         whisky.setType("Blended");
         whisky.setCountry("United Kingdom");
@@ -275,7 +258,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch12() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("J & B Rare", null, null);
         whisky.setType("Blended");
         whisky.setCountry("United Kingdom");
@@ -286,7 +268,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch13() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Bearface Triple Oak Canadian 7 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("Canada");
@@ -297,7 +278,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch14() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Connoisseurs Choice Caol Ila 2004", null, null);
         whisky.setType("Single malt");
         whisky.setRegion("Isla");
@@ -309,7 +289,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch15() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glengoyne Highland Single Malt Scotch Whisky 10 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -320,7 +299,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch16() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Discovery Miltonduff 10 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -331,7 +309,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch17() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("First Editions Auchroisk 19 YO", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -342,7 +319,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductInperefectMatch18() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Tomatin Limited Edition Cask Strength Edition", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -352,8 +328,17 @@ public class DistillerParserTest {
     }
 
     @Test
+    public void searchProductInperefectMatch19() {
+        Whisky whisky = new Whisky("Tomatin Cu Bocan 2005", null, null);
+        whisky.setType("Single malt");
+        whisky.setCountry("United Kingdom");
+        FlavorProfile fp = parser.fuzzySearchFlavorProfile(whisky);
+        assertNotNull(fp);
+        assertEquals("TOMATIN CÙ BÒCAN 2005 VINTAGE".toUpperCase(), fp.getName().toUpperCase());
+    }
+
+    @Test
     public void searchProductNoResult() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Schenley Black Velvet", null, null);
         whisky.setCountry("Canada");
         FlavorProfile fp = parser.fuzzySearchFlavorProfile(whisky);
@@ -363,7 +348,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductNoResult1() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Glen Breton Silver", null, null);
         whisky.setCountry("Canada");
         FlavorProfile fp = parser.fuzzySearchFlavorProfile(whisky);
@@ -373,7 +357,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Wild Turkey 81 Proof Kentucky Straight Bourbon", null, null);
         whisky.setType("Bourbon");
         whisky.setCountry("USA");
@@ -384,7 +367,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon1() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Evan Williams 1783", null, null);
         whisky.setType("Bourbon");
         whisky.setCountry("USA");
@@ -395,7 +377,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon2() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Jack Daniels Master Series 5", null, null);
         whisky.setType("Bourbon");
         whisky.setCountry("USA");
@@ -406,7 +387,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon3() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Wild Turkey 101", null, null);
         whisky.setType("Bourbon");
         whisky.setCountry("USA");
@@ -417,7 +397,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon4() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Bakers Bourbon 7 YO", null, null);
         whisky.setType("Bourbon");
         whisky.setCountry("USA");
@@ -428,7 +407,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductBourbon5() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Strathisla 2005", null, null);
         whisky.setType("Single malt");
         whisky.setCountry("United Kingdom");
@@ -439,7 +417,6 @@ public class DistillerParserTest {
 
     @Test
     public void searchProductUsa() {
-        DistillerParser parser = new DistillerParser();
         Whisky whisky = new Whisky("Jack Daniels", null, null);
         whisky.setCountry("USA");
         FlavorProfile fp = parser.fuzzySearchFlavorProfile(whisky);

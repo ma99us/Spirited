@@ -9,6 +9,12 @@ import java.util.regex.Pattern;
 
 abstract class AbstractParser {
 
+    protected final boolean isDebugEnabled;
+
+    protected AbstractParser(boolean isDebugEnabled) {
+        this.isDebugEnabled = isDebugEnabled;
+    }
+
     private final Pattern numbers = Pattern.compile("(\\d+\\.\\d+|\\d+)");  // integer and decimal numbers
 
     protected String getSafeElementText(Elements els) {

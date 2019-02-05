@@ -187,7 +187,9 @@
 <br/>
 
 <div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <span class="justify-content-start" ng-show="cacheStatus"> Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}}</span>
+    <span class="justify-content-start" ng-show="cacheStatus"> Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}}
+        <span ng-show="cacheStatus.country"> | {{cacheStatus.country}} Whiskies</span>
+    </span>
     <span class="justify-content-end"><button class="btn btn-sm" type="button" ng-click="clearPrefs()">
         Start Over
     </button></span>

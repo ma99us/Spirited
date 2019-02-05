@@ -60,6 +60,14 @@ public class AnblParser extends AbstractParser {
         }
     }
 
+    public AnblParser() {
+        this(false);
+    }
+
+    public AnblParser(boolean isDebugEnabled) {
+        super(isDebugEnabled);
+    }
+
     public List<WhiskyCategory> buildProductsCategories() {
         List<WhiskyCategory> wcs = new ArrayList<>();
 

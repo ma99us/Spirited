@@ -9,6 +9,7 @@ import org.maggus.spirit.services.CacheService;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/cache")
 @Produces({MediaType.APPLICATION_JSON})
@@ -24,6 +25,12 @@ public class CacheApi {
     public Response getCacheStatus() {
         try {
             WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(AnblParser.CacheUrls.BASE_URL.name());
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
+            int wCount = allWhiskies.size();
+            int fpCount = (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count();
+            int fpPerc = (int) ((double) fpCount / wCount * 100);
+            wc.setCountry(String.format("%d", wCount));
+            wc.setRegion(String.format("%d%%", fpPerc));
             return Response.ok(wc);
         } catch (Exception e) {
             return Response.fail(e);
