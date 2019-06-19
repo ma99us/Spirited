@@ -1,6 +1,6 @@
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
 
-<h1 style="text-align: center">Welcome to Spirited Whisky Search.</h1>
+<h2 style="text-align: center">Welcome to Spirited Whisky Search.</h2>
 <h2 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h2>
 
 <br/>
@@ -15,7 +15,7 @@
             Select your preferred NB Liquor stores
         </button>
     </div>
-    <div id="favStores" class="panel-collapse collapse in card card-body w-50 mx-auto">
+    <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
         <div class="text-center">
             <button class="btn btn-outline-info" ng-click="captureUserLocation()">
                 <span ng-show="!busyLoc">Find nearby stores</span>
@@ -38,7 +38,7 @@
             </ul>
         </div>
     </div>
-    <div ng-if="preferences && favStores.length" class="card card-body w-50 mx-auto" style="text-align: center">
+    <div ng-if="preferences && favStores.length" class="card card-body col-lg-6 mx-auto" style="text-align: center">
         <span>{{favStores.length}} store(s) selected in <span ng-bind-html="favStoresCities"></span>, only their inventory will
             be shown.</span>
     </div>
@@ -56,10 +56,10 @@
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing the name..."/>
     </h4>
-    <div class="card card-body w-50 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
+    <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
         <ul>
             <li ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
-                <whisky-row whisky="w" sel-whisky="favWhisky" ng-click="selectWhisky(w)"></whisky-row>
+                <whisky-row whisky="w" sel-whisky="favWhisky" ng-click="selectFavWhisky(w)"></whisky-row>
             </li>
             <span ng-show="filteredWhiskies.length >= 10">...</span>
             <h4 style="text-align: center" ng-show="!filteredWhiskies.length">--- no matches ---</h4>
@@ -68,12 +68,13 @@
 </div>
 
 <div ng-show="!busy" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
-    <div class="card card-body w-50 mx-auto">
+    <div class="card card-body col-lg-6 mx-auto">
         <span><whisky-row whisky="favWhisky" ng-click="showWhisky(favWhisky)"></whisky-row> <span
                 ng-show="favWhisky.available" class="text-info"> - available</span></span>
         <p>{{favWhisky.description}}</p>
-        <div ng-if="favWhisky.flavorProfile" class="mx-auto">
-            <canvas id="bar" class="chart chart-bar" width="450"
+        <div id="barDiv">
+            <canvas ng-if="favWhisky.flavorProfile" id="bar" class="chart chart-bar"
+                    ng-style="fpStyle"
                     chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
             </canvas>
         </div>
@@ -87,21 +88,21 @@
     <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
         You may also like:
     </h3>
-    <div class="card card-body w-50 mx-auto" ng-if="similarWhiskies.length && favWhisky">
+    <div class="col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
         <span style="text-align: right">Sorted: <i>most similar first</i></span>
-        <ul>
-            <li ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
+        <div class="list-group align-items-center">
+            <a href="#" class="list-group-item" style="width: 100%" ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
                 <whisky-row whisky="wd.candidate" sel-whisky="selWhisky"
                             ng-click="showWhisky(wd.candidate)"></whisky-row>
                 - <b><i>{{wd.maxDiffFlavor}}</i></b>
                 <span ng-show="wd.available" class="text-info"> - available</span>
-            </li>
-            <button class="btn btn-outline-info" style="width: 100%" type="button"
-                    ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">Show more...
-            </button>
-            <h4 style="text-align: center" ng-if="!similarWhiskies.length">Nothing tastes similar :-(</h4>
-        </ul>
+            </a>
+        </div>
+        <button class="btn btn-outline-info" style="width: 100%" type="button"
+                ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">Show more...
+        </button>
     </div>
+    <h4 style="text-align: center" ng-if="!similarWhiskies.length">Nothing tastes similar :-(</h4>
 </div>
 
 <!-- Modal -->
@@ -123,58 +124,69 @@
                     <h6 class="col-6"><span class="float-right">{{selectedWhisky.alcoholContent ? ('ABV: ' +
                         selectedWhisky.alcoholContent.toFixed(1)) : ''}}</span></h6>
                 </div>
-                <table border="0">
-                    <tr>
-                        <td valign="top">
-                            <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
-                               data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400"
-                               data-height="600">
-                                <img class="img-fluid" style="max-width: 200px; max-height: 300px;"
-                                     ng-src="{{selectedWhisky.thumbnailUrl}}">
-                            </a>
-                            <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
-                                {{selectedWhisky.unitVolumeMl}} ml</p>
-                            <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
-                                | currency}}</strong></p>
-                        </td>
-                        <td valign="top">
-                            {{selectedWhisky.description}}
-                        </td>
-                    </tr>
-                </table>
-                <div ng-if="selectedWhisky.flavorProfile && selectedWhisky !== favWhisky" class="mx-auto">
-                    <canvas id="selBar" class="chart chart-bar" width="450"
-                            chart-options="selFpOptions" chart-colors="selFpColors" chart-data="selFpData"
-                            chart-labels="selFpLabels" chart-series="selFpSeries">
-                    </canvas>
+                <div class="row">
+                    <table border="0">
+                        <tr>
+                            <td valign="top">
+                                <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
+                                   data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400"
+                                   data-height="600">
+                                    <img class="img-fluid" style="max-width: 200px; max-height: 300px;"
+                                         ng-src="{{selectedWhisky.thumbnailUrl}}">
+                                </a>
+                                <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
+                                    {{selectedWhisky.unitVolumeMl}} ml</p>
+                                <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
+                                    | currency}}</strong></p>
+                            </td>
+                            <td valign="top">
+                                {{selectedWhisky.description}}
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <div ng-if="selectedWhisky.flavorProfile && selectedWhisky === favWhisky" class="mx-auto">
-                    <canvas id="favBar" class="chart chart-bar" width="450"
-                            chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData"
-                            chart-labels="fpLabels">
-                    </canvas>
+                <div class="row">
+                    <div id="chartDiv" class="col-12 align-items-center mx-auto">
+                        <canvas ng-if="!busySW && selectedWhisky.flavorProfile && selectedWhisky.id !== favWhisky.id && selFpData" id="selBar"
+                                class="chart chart-bar"
+                                ng-style="selFpStyle"
+                                chart-options="selFpOptions" chart-colors="selFpColors" chart-data="selFpData"
+                                chart-labels="selFpLabels" chart-series="selFpSeries">
+                        </canvas>
+                        <canvas ng-if="!busySW && selectedWhisky.flavorProfile && selectedWhisky.id === favWhisky.id && fpData" id="favBar"
+                                class="chart chart-bar"
+                                ng-style="selFpStyle"
+                                chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData"
+                                chart-labels="fpLabels">
+                        </canvas>
+                        <h4 ng-if="!busySW && !selectedWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet. :-(</h4>
+                        <h4 ng-if="busySW">Loading...</h4>
+                    </div>
                 </div>
-                <h5 class="text-center">Availability</h5>
-                <table width="100%" border="0" ng-if="selectedAvailableQty.length">
-                    <thead>
-                    <tr>
-                        <th>Store</th>
-                        <th>Address</th>
-                        <th>City</th>
-                        <th>Quantity</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="wq in selectedAvailableQty | orderBy:'name'">
-                        <td style="border-top: 1px solid #cdd0d4;">{{wq.name}}</td>
-                        <td style="border-top: 1px solid #cdd0d4;">{{wq.address}}</td>
-                        <td style="border-top: 1px solid #cdd0d4;">{{wq.city}}</td>
-                        <td style="border-top: 1px solid #cdd0d4;" align="center">{{wq.quantity}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <h4 class="text-center" ng-hide="selectedAvailableQty.length">--- not available in selected store(s)
-                    ---</h4>
+                <div class="row">
+                    <div class="col-12 align-items-center mx-auto">
+                        <div ng-show="!busySW && selectedAvailableQty.length">
+                            <h5 class="text-center">Available at:</h5>
+                            <table width="100%" border="0" ng-if="selectedAvailableQty.length">
+                                <thead>
+                                <tr>
+                                    <th>Store</th>
+                                    <th>Address</th>
+                                    <th>Quantity</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="wq in selectedAvailableQty | orderBy:'name'">
+                                    <td style="border-top: 1px solid #cdd0d4;">{{wq.name}}</td>
+                                    <td style="border-top: 1px solid #cdd0d4;">{{wq.address +','}}<br>{{wq.city}}</td>
+                                    <td style="border-top: 1px solid #cdd0d4;" align="center">{{wq.quantity}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h5 class="text-center" ng-show="!busySW && !selectedAvailableQty.length">Not available in selected store(s) :-(</h5>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -183,15 +195,21 @@
     </div>
 </div>
 
-
 <br/>
 
 <div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <span class="justify-content-start" ng-show="cacheStatus"> Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}}
-        <span ng-show="cacheStatus.country"> | {{cacheStatus.country}} Whiskies</span>
-    </span>
-    <span class="justify-content-end"><button class="btn btn-sm" type="button" ng-click="clearPrefs()">
-        Start Over
-    </button></span>
+    <table border="0" width="100%">
+        <tr>
+            <td ng-show="cacheStatus" align="left">
+                Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
+                <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Whiskies</span>
+            </td>
+            <td align="right">
+                <button class="btn btn-sm" type="button" ng-click="clearPrefs()">
+                    Start Over
+                </button>
+            </td>
+        </tr>
+    </table>
 </div>
 

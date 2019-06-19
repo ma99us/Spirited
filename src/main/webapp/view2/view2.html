@@ -49,14 +49,15 @@
 <div>
     <h2>Available API Endpoints</h2>
     <h3>Whisky actions</h3>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response getAllWhiskies(int, int, String) - <i>parameters: 'Results Per Page', 'Page Number', 'Sort By'.</i> Returns list of Whisky objects</p>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response getWhisky(long) - <i>parameters: Item 'Id'.</i> Returns single Whisky object.</p>
-    <p><b>PUT</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/</b>        ->      Response createWhisky(Whisky) - <i>parameters: populated 'Whisky' object.</i> Creates a new Whisky object in DB.</p>
-    <p><b>POST</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response updateWhisky(long, Whisky) - <i>parameters: Item 'Id', populated 'Whisky' object.</i> Updates single Whisky object in DB.</p>
-    <p><b>DELETE</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/{id}</b>    ->      Response deleteWhisky(long) - <i>parameters: Item 'Id'.</i> Deletes single Whisky from DB.</p>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/whisky/like/{id}</b>    ->      Response getSimilarWhisky(long) - <i>parameters: Item 'Id'.</i> Returns list of Whisky objects with similar Flavor Profiles to given one.</p>
+    <p><b>Current host:</b> http://ghost.gerdov.com:8181/Spirited</p>
+    <p><b>GET</b> <b>/api/whisky/</b>        ->      Response getAllWhiskies(int, int, String) - <i>parameters: 'Results Per Page', 'Page Number', 'Sort By'.</i> Returns list of Whisky objects</p>
+    <p><b>GET</b> <b>/api/whisky/{id}</b>    ->      Response getWhisky(long) - <i>parameters: Item 'Id'.</i> Returns single Whisky object.</p>
+    <p><b>PUT</b> <b>/api/whisky/</b>        ->      Response createWhisky(Whisky) - <i>parameters: populated 'Whisky' object.</i> Creates a new Whisky object in DB.</p>
+    <p><b>POST</b> <b>/api/whisky/{id}</b>    ->      Response updateWhisky(long, Whisky) - <i>parameters: Item 'Id', populated 'Whisky' object.</i> Updates single Whisky object in DB.</p>
+    <p><b>DELETE</b> <b>/api/whisky/{id}</b>    ->      Response deleteWhisky(long) - <i>parameters: Item 'Id'.</i> Deletes single Whisky from DB.</p>
+    <p><b>GET</b> <b>/api/whisky/like/{id}</b>    ->      Response getSimilarWhisky(long) - <i>parameters: Item 'Id'.</i> Returns list of Whisky objects with similar Flavor Profiles to given one.</p>
     <h3>Cache maintenance</h3>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/cache/status</b> ->      Response cacheStatus() - <i>Returns some information and statistics about last time cached data was re-built.</i></p>
-    <p><b>GET</b> http://ghost.gerdov.com:8181/Spirited/<b>api/cache/rebuild</b> ->      Response rebuildAllCachedData() - <i>Clears and re-caches all data from third parties. Long operation, could take several minutes!</i></p>
+    <p><b>GET</b> <b>/api/cache/status</b> ->      Response cacheStatus() - <i>Returns some information and statistics about last time cached data was re-built.</i></p>
+    <p><b>GET</b> <b>/api/cache/rebuild</b> ->      Response rebuildAllCachedData() - <i>Clears and re-caches all data from third parties. Long operation, could take several minutes!</i></p>
 
 </div>
