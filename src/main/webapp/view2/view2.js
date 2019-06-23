@@ -218,8 +218,8 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             restrict: 'E',
             scope: {
                 whisky: '<',
-                onClick: '&',
-                selWhisky: '<'
+                onClick: '&?',
+                selWhisky: '<?'
             },
             templateUrl: 'view2/whisky-row.html',
             controller: ['$scope', function ($scope) {
@@ -322,7 +322,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
                 resultsPerPage: '=',
                 pageNumber: '=',
                 totalResults: '=',
-                callback: '&',
+                callback: '&?',
             },
             templateUrl: 'view2/pagination.html',
             controller: ['$scope', function ($scope) {

@@ -1,7 +1,7 @@
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
 
 <h2 style="text-align: center">Welcome to Spirited Whisky Search.</h2>
-<h2 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h2>
+<h3 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h3>
 
 <br/>
 
@@ -9,7 +9,7 @@
 
 <div ng-show="!busy" id="selFavStores" class="align-items-center">
     <div style="text-align:center">
-        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#favStores"
+        <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-primary'" type="button" data-toggle="collapse" data-target="#favStores"
                 aria-expanded="false"
                 aria-controls="favStores">
             Select your preferred NB Liquor stores
@@ -57,20 +57,24 @@
                                            placeholder="start typing the name..."/>
     </h4>
     <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
-        <ul>
-            <li ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
-                <whisky-row whisky="w" sel-whisky="favWhisky" ng-click="selectFavWhisky(w)"></whisky-row>
-            </li>
+        <div class="list-group align-items-center">
+            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
+                <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+            </a>
             <span ng-show="filteredWhiskies.length >= 10">...</span>
             <h4 style="text-align: center" ng-show="!filteredWhiskies.length">--- no matches ---</h4>
-        </ul>
+        </div>
     </div>
 </div>
 
 <div ng-show="!busy" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
     <div class="card card-body col-lg-6 mx-auto">
-        <span><whisky-row whisky="favWhisky" ng-click="showWhisky(favWhisky)"></whisky-row> <span
-                ng-show="favWhisky.available" class="text-info"> - available</span></span>
+        <div class="list-group align-items-center">
+            <a href="" ng-click="showWhisky(favWhisky)" class="list-group-item list-group-item-info" style="width: 100%">
+                <whisky-row whisky="favWhisky"></whisky-row>
+                <span ng-show="favWhisky.available" class="text-info"> - available</span>
+            </a>
+        </div>
         <p>{{favWhisky.description}}</p>
         <div id="barDiv">
             <canvas ng-if="favWhisky.flavorProfile" id="bar" class="chart chart-bar"
@@ -91,9 +95,8 @@
     <div class="col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
         <span style="text-align: right">Sorted: <i>most similar first</i></span>
         <div class="list-group align-items-center">
-            <a href="#" class="list-group-item" style="width: 100%" ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
-                <whisky-row whisky="wd.candidate" sel-whisky="selWhisky"
-                            ng-click="showWhisky(wd.candidate)"></whisky-row>
+            <a href="" ng-click="showWhisky(wd.candidate)" ng-class="wd.candidate.id == selectedWhisky.id ? 'list-group-item list-group-item-info' : 'list-group-item'" style="width: 100%" ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
+                <whisky-row whisky="wd.candidate" sel-whisky="selWhisky"></whisky-row>
                 - <b><i>{{wd.maxDiffFlavor}}</i></b>
                 <span ng-show="wd.available" class="text-info"> - available</span>
             </a>
@@ -102,7 +105,7 @@
                 ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">Show more...
         </button>
     </div>
-    <h4 style="text-align: center" ng-if="!similarWhiskies.length">Nothing tastes similar :-(</h4>
+    <h4 style="text-align: center" ng-if="!similarWhiskies.length && favWhisky">Nothing tastes similar :-(</h4>
 </div>
 
 <!-- Modal -->

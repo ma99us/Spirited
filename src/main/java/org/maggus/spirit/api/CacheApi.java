@@ -24,13 +24,13 @@ public class CacheApi {
     @GET
     public Response getCacheStatus() {
         try {
-            WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(AnblParser.CacheUrls.BASE_URL.name());
             List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
-            int wCount = allWhiskies.size();
-            int fpCount = (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count();
-            int fpPerc = (int) ((double) fpCount / wCount * 100);
-            wc.setCountry(String.format("%d", wCount));
-            wc.setRegion(String.format("%d%%", fpPerc));
+            int wCount = allWhiskies != null ? allWhiskies.size() : 0;
+            int fpCount = allWhiskies != null ? (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count() : 0;
+            int fpPerc = wCount > 0 ? (int) ((double) fpCount / wCount * 100) : 0;
+            WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(AnblParser.CacheUrls.BASE_URL.name());
+            wc.setCountry(String.format("%d", wCount));     // hack; use "country" to send total number of whiskies
+            wc.setRegion(String.format("%d%%", fpPerc));    // hack; use "region" to send percentage of whiskies with Flavour Profiles
             return Response.ok(wc);
         } catch (Exception e) {
             return Response.fail(e);
