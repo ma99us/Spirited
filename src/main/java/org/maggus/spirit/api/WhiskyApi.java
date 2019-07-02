@@ -2,6 +2,7 @@ package org.maggus.spirit.api;
 
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Whisky;
+import org.maggus.spirit.models.WhiskyDiff;
 import org.maggus.spirit.services.CacheService;
 import org.maggus.spirit.services.SuggestionsService;
 
@@ -22,13 +23,30 @@ public class WhiskyApi {
     @Inject
     private SuggestionsService suggestionsService;
 
+    @Path("/find/{code}")
+    @GET
+    public Response findWhisky(@PathParam("code") String code) {
+        try {
+            Whisky whisky = cacheService.getWhiskyService().findWhisky(code);
+            cacheService.validateCache(whisky, CacheService.CacheOperation.CACHE_IF_NEEDED);
+            return Response.ok(whisky);
+        } catch (Exception e) {
+            return Response.fail(e);
+        }
+    }
+
     @Path("/like/{id}")
     @GET
     public Response getSimilarWhiskies(@PathParam("id") long id,
                                        @QueryParam("maxDeviation") @DefaultValue("20.0") double maxDeviation) {
         try {
             Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
-            Response resp = Response.ok(suggestionsService.findSimilarWhiskies(whisky, maxDeviation));
+            List<WhiskyDiff> similarWhiskies = suggestionsService.findSimilarWhiskies(whisky, maxDeviation);
+            for(WhiskyDiff wd: similarWhiskies){
+                wd.getCandidate().setFlavorProfile(null);
+                //wd.getCandidate().setQuantities(null);
+            }
+            Response resp = Response.ok(similarWhiskies);
             return resp;
         } catch (Exception e) {
             return Response.fail(e);

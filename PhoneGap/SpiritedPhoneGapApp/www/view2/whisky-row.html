@@ -1,0 +1,6 @@
+<span ng-style="rowStyle"><img style="max-width: 40px; max-height: 60px;" ng-if="whisky.thumbnailUrl"
+                               ng-src="{{whisky.thumbnailUrl}}">
+    <a ng-if="onClick" href="" ng-click="onClick({w: whisky})">{{whisky.name}}</a>
+    <span ng-if="!onClick"><b>{{whisky.name}}</b></span>
+    <i>{{whisky.unitVolumeMl}}ml</i> - {{whisky.unitPrice | currency}}
+</span>

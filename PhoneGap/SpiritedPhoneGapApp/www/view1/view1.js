@@ -14,6 +14,27 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         $scope.allWhiskies = [];
         $scope.dispQuantity = 10;
 
+        $scope.scanBarcode = function () {
+            //$scope.findWhisky('5000277003457');     // #DEBUG
+            cordova.plugins.barcodeScanner.scan(
+                function (result) {
+                    // alert("We got a barcode\n" +
+                    //     "Result: " + result.text + "\n" +
+                    //     "Format: " + result.format + "\n" +
+                    //     "Cancelled: " + result.cancelled);
+
+                    if (result.cancelled || !result.text) {
+                        alert("Scanning failed");
+                        return;
+                    }
+                    $scope.findWhisky(result.text);
+                },
+                function (error) {
+                    alert("Scanning failed: " + error);
+                }
+            );
+        };
+
         $scope.onFavWhiskyNameChange = function (newVal) {
             $scope.clearFavWhisky();
         };
@@ -325,6 +346,19 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     sw.available = $scope.filterAvailability(sw.candidate).length > 0;
                     return sw;
                 });
+            }).catch(function (err) {
+                $scope.message = err;
+            });
+        };
+
+        $scope.findWhisky = function (code) {
+            $api.findWhisky(code).then(function (data) {
+                if (!data.data) {
+                    alert('no such product :-(');
+                    throw 'no such product :-(';
+                }
+                $scope.message = undefined;
+                $scope.selectFavWhisky(data.data)
             }).catch(function (err) {
                 $scope.message = err;
             });

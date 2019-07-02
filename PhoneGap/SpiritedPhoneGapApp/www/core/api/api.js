@@ -1,8 +1,7 @@
 angular.module('api', [])
     .factory('$api', ['$http', '$q', function ($http, $q) {
-        const hostAdr = '';
         //const hostAdr = 'http://192.168.2.19/spirited/';
-        //const hostAdr = 'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/';
+        const hostAdr = 'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/';
         let busy = false;
         let validateResponse = function (deferred, response) {
             if (response && response.data && response.data.status != 200) {
@@ -95,6 +94,18 @@ angular.module('api', [])
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/' + id, {params: {}}).then(function (response) {
+                    busy = false;
+                    validateResponse(deferred, response);
+                }, function(err) {
+                    validateResponse(deferred, err);
+                });
+                return deferred.promise;
+            },
+
+            findWhisky: function (code) {
+                var deferred = $q.defer();
+                busy = true;
+                $http.get(hostAdr + 'api/whisky/find/' + code, {params: {}}).then(function (response) {
                     busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {

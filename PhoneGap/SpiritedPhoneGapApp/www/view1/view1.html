@@ -56,6 +56,10 @@
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing the name..."/>
     </h4>
+    <h4 style="text-align: center;">
+        <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan the NB Liquor product barcode on the bottle</button>
+    </h4>
+
     <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
         <div class="list-group align-items-center">
             <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
@@ -134,8 +138,7 @@
                             <td valign="top">
                                 <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
                                    data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400"
-                                   data-height="600"
-                                   style=" width:100%; overflow-x:scroll;">
+                                   data-height="600">
                                     <img class="img-fluid" style="max-width: 200px; max-height: 300px;"
                                          ng-src="{{selectedWhisky.thumbnailUrl}}">
                                 </a>
