@@ -53,6 +53,7 @@
     <h3 style="text-align: center;">
         Select Whisky you know you like:</h3>
     <h4 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
+                                           ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing the name..."/>
     </h4>
@@ -60,13 +61,14 @@
         <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan the NB Liquor product barcode on the bottle</button>
     </h4>
 
-    <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 3 && !favWhisky">
+    <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 4 && !favWhisky">
         <div class="list-group align-items-center">
-            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in filteredWhiskies = (allWhiskies | fuzzyBy: 'name': favWhiskyName | limitTo:10)">
+            <span ng-show="busyC">Looking...</span>
+            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in allWhiskies">
                 <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
             </a>
-            <span ng-show="filteredWhiskies.length >= 10">...</span>
-            <h4 style="text-align: center" ng-show="!filteredWhiskies.length">--- no matches ---</h4>
+            <span ng-show="allWhiskies.length >= 10">...</span>
+            <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.length">--- no matches ---</h4>
         </div>
     </div>
 </div>
@@ -86,8 +88,7 @@
                     chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData" chart-labels="fpLabels">
             </canvas>
         </div>
-        <h4 ng-if="!busyW && !favWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet.
-            :-(</h4>
+        <!--<h4 ng-if="!busyW && !favWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet. :-(</h4>-->
         <h4 ng-if="busyW">Loading...</h4>
     </div>
 </div>
@@ -110,7 +111,7 @@
                 ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">Show more...
         </button>
     </div>
-    <h4 style="text-align: center" ng-if="!similarWhiskies.length && favWhisky">Nothing tastes similar :-(</h4>
+    <!--<h4 style="text-align: center" ng-if="!similarWhiskies.length && favWhisky">Nothing tastes similar :-(</h4>-->
 </div>
 
 <!-- Modal -->
@@ -143,6 +144,7 @@
                                          ng-src="{{selectedWhisky.thumbnailUrl}}">
                                 </a>
                                 <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
+                                    <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
                                     {{selectedWhisky.unitVolumeMl}} ml</p>
                                 <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
                                     | currency}}</strong></p>
@@ -167,7 +169,7 @@
                                 chart-options="fpOptions" chart-colors="fpColors" chart-data="fpData"
                                 chart-labels="fpLabels">
                         </canvas>
-                        <h4 ng-if="!busySW && !selectedWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet. :-(</h4>
+                        <!--<h4 ng-if="!busySW && !selectedWhisky.flavorProfile">Sorry, we do not have Flavor Profile for this Whisky yet. :-(</h4>-->
                         <h4 ng-if="busySW">Loading...</h4>
                     </div>
                 </div>
@@ -186,7 +188,7 @@
                                 <tbody>
                                 <tr ng-repeat="wq in selectedAvailableQty | orderBy:'name'">
                                     <td style="border-top: 1px solid #cdd0d4;">{{wq.name}}</td>
-                                    <td style="border-top: 1px solid #cdd0d4;">{{wq.address +','}}<br>{{wq.city}}</td>
+                                    <td style="border-top: 1px solid #cdd0d4;"><address-link address="{{wq.address}}, {{wq.city}}"></address-link></td>
                                     <td style="border-top: 1px solid #cdd0d4;" align="center">{{wq.quantity}}</td>
                                 </tr>
                                 </tbody>
@@ -209,8 +211,15 @@
     <table border="0" width="100%">
         <tr>
             <td ng-show="cacheStatus" align="left">
-                Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
-                <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Whiskies</span>
+                <div class="d-none d-lg-block d-xl-block">
+                    Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
+                    <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
+                </div>
+            </td>
+            <td>
+                <div class="d-none d-lg-block d-xl-block">
+                    <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img class="qr-code" src="img/qrcode.png"></a>
+                </div>
             </td>
             <td align="right">
                 <button class="btn btn-sm" type="button" ng-click="clearPrefs()">

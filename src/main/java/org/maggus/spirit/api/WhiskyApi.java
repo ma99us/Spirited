@@ -25,9 +25,9 @@ public class WhiskyApi {
 
     @Path("/find/{code}")
     @GET
-    public Response findWhisky(@PathParam("code") String code) {
+    public Response findWhiskyByCode(@PathParam("code") String code) {
         try {
-            Whisky whisky = cacheService.getWhiskyService().findWhisky(code);
+            Whisky whisky = cacheService.getWhiskyService().findWhiskyByCode(code);
             cacheService.validateCache(whisky, CacheService.CacheOperation.CACHE_IF_NEEDED);
             return Response.ok(whisky);
         } catch (Exception e) {
@@ -35,16 +35,47 @@ public class WhiskyApi {
         }
     }
 
-    @Path("/like/{id}")
+    @Path("/like/{name}")
+    @GET
+    public Response findWhiskiesLike(@PathParam("name") String name) {
+        try {
+            List<Whisky> whisky = cacheService.getWhiskyService().fuzzyFindWhiskiesByName(name);
+            for (Whisky w : whisky) {
+                w.setCacheExternalUrl(null);        // from CacheItem
+                w.setCacheSpentMs(null);            // from CacheItem
+                w.setCacheLastUpdatedMs(null);      // from CacheItem
+                w.setFlavorProfile(null);
+                w.setQuantities(null);
+                w.setCountry(null);
+                w.setRegion(null);
+                //w.setType(null);
+                w.setAlcoholContent(null);
+                w.setDescription(null);
+            }
+            return Response.ok(whisky);
+        } catch (Exception e) {
+            return Response.fail(e);
+        }
+    }
+
+    @Path("/similar/{id}")
     @GET
     public Response getSimilarWhiskies(@PathParam("id") long id,
                                        @QueryParam("maxDeviation") @DefaultValue("20.0") double maxDeviation) {
         try {
             Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
             List<WhiskyDiff> similarWhiskies = suggestionsService.findSimilarWhiskies(whisky, maxDeviation);
-            for(WhiskyDiff wd: similarWhiskies){
+            for (WhiskyDiff wd : similarWhiskies) {
+                wd.getCandidate().setCacheExternalUrl(null);        // from CacheItem
+                wd.getCandidate().setCacheSpentMs(null);            // from CacheItem
+                wd.getCandidate().setCacheLastUpdatedMs(null);      // from CacheItem
                 wd.getCandidate().setFlavorProfile(null);
                 //wd.getCandidate().setQuantities(null);
+                //wd.getCandidate().setCountry(null);
+                wd.getCandidate().setRegion(null);
+                //wd.getCandidate().setType(null);
+                wd.getCandidate().setAlcoholContent(null);
+                wd.getCandidate().setDescription(null);
             }
             Response resp = Response.ok(similarWhiskies);
             return resp;
@@ -61,10 +92,20 @@ public class WhiskyApi {
         try {
             QueryMetadata metaData = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
             List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(metaData);
-            if(!"full".equalsIgnoreCase(format)){
-                for(Whisky w: allWhiskies){
+            if (!"long".equalsIgnoreCase(format)) { // strip some additional info to make response smaller
+                for (Whisky w : allWhiskies) {
+                    w.setCacheExternalUrl(null);        // from CacheItem
+                    w.setCacheSpentMs(null);            // from CacheItem
+                    w.setCacheLastUpdatedMs(null);      // from CacheItem
                     w.setFlavorProfile(null);
                     w.setQuantities(null);
+                    if (!"medium".equalsIgnoreCase(format)) {
+                        w.setCountry(null);
+                        w.setRegion(null);
+                        w.setType(null);
+                        w.setAlcoholContent(null);
+                        w.setDescription(null);
+                    }
                 }
             }
             Response resp = Response.ok(allWhiskies);

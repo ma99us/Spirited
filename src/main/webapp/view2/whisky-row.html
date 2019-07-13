@@ -2,5 +2,5 @@
                                ng-src="{{whisky.thumbnailUrl}}">
     <a ng-if="onClick" href="" ng-click="onClick({w: whisky})">{{whisky.name}}</a>
     <span ng-if="!onClick"><b>{{whisky.name}}</b></span>
-    <i>{{whisky.unitVolumeMl}}ml</i> - {{whisky.unitPrice | currency}}
+    <i><span ng-if="whisky.qtyPerContainer > 1">{{whisky.qtyPerContainer}}X</span>{{whisky.unitVolumeMl}}ml</i> - {{whisky.unitPrice | currency}}
 </span>

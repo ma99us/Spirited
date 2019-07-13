@@ -11,10 +11,13 @@
                                                                         size="30" dl-enter-key="onEnter(whisky)"
                                                                         ng-model="whisky.name"/></p>
                 <p><label>Type:</label>
-                    <select ng-readonly="!editable" id="typeSelect" name="type" ng-model="whisky.type">
-                        <option value="Single malt">Single malt</option>
-                        <option value="Blended">Blended</option>
-                    </select>
+                    <!--<select ng-readonly="!editable" id="typeSelect" name="type" ng-model="whisky.type">-->
+                        <!--<option value="Single malt">Single malt</option>-->
+                        <!--<option value="Blended">Blended</option>-->
+                    <!--</select>-->
+                    <input ng-readonly="!editable" id="type" type="text"
+                           dl-enter-key="onEnter(whisky)"
+                           ng-model="whisky.type"/>
                 </p>
                 <p><label>Country:</label><input ng-readonly="!editable" id="country" type="text"
                                                  dl-enter-key="onEnter(whisky)"
@@ -24,6 +27,9 @@
                 <p><label>Price:</label><input ng-readonly="!editable" id="unitPrice" type="number" min="0" step=".01"
                                                dl-enter-key="onEnter(whisky)"
                                                ng-model="whisky.unitPrice"/>CAD</p>
+                <p><label>Quantity per container:</label><input ng-readonly="!editable" id="qtyPerContainer" type="number"
+                                                dl-enter-key="onEnter(whisky)"
+                                                ng-model="whisky.qtyPerContainer"/>X</p>
                 <p><label>Volume:</label><input ng-readonly="!editable" id="unitVolumeMl" type="number"
                                                 dl-enter-key="onEnter(whisky)"
                                                 ng-model="whisky.unitVolumeMl"/>ml</p>

@@ -1,16 +1,18 @@
 package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
+import org.maggus.spirit.models.Locators;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 
-@Singleton
 @Log
+@Stateless
 public class ScheduleService {
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd '  ' hh:mm:ss");
@@ -18,11 +20,22 @@ public class ScheduleService {
     @Inject
     private CacheService cacheService;
 
-    @Schedule(hour = "23", minute = "59", second = "59")
-    public synchronized void reBuildTheWholeCache() {
+    @Schedule(hour = "23", minute = "59", second = "59", persistent=false)
+    public synchronized void reBuildWhiskyCache() {
         try {
             log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
-            cacheService.rebuildProductsCategoriesCache(true);
+            cacheService.rebuildProductsCategoriesCache(true, Locators.SpiritType.WHISKY);
+            log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);
+        }
+    }
+
+    @Schedule(hour = "0", minute = "29", second = "59", persistent=false)
+    public synchronized void reBuildBeerCache() {
+        try {
+            log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
+            cacheService.rebuildProductsCategoriesCache(true, Locators.SpiritType.BEER);
             log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);

@@ -55,7 +55,8 @@
     <p><b>PUT</b> <b>/api/whisky/</b>        ->      Response createWhisky(Whisky) - <i>parameters: populated 'Whisky' object.</i> Creates a new Whisky object in DB.</p>
     <p><b>POST</b> <b>/api/whisky/{id}</b>    ->      Response updateWhisky(long, Whisky) - <i>parameters: Item 'Id', populated 'Whisky' object.</i> Updates single Whisky object in DB.</p>
     <p><b>DELETE</b> <b>/api/whisky/{id}</b>    ->      Response deleteWhisky(long) - <i>parameters: Item 'Id'.</i> Deletes single Whisky from DB.</p>
-    <p><b>GET</b> <b>/api/whisky/like/{id}</b>    ->      Response getSimilarWhisky(long) - <i>parameters: Item 'Id'.</i> Returns list of Whisky objects with similar Flavor Profiles to given one.</p>
+    <p><b>GET</b> <b>/api/whisky/similar/{id}</b>    ->      Response getSimilarWhisky(long) - <i>parameters: Item 'Id'.</i> Returns list of Whisky objects with similar Flavor Profiles to given one.</p>
+    <p><b>GET</b> <b>/api/whisky/code/{code}</b>    ->      Response findWhiskyByCode(String) - <i>parameters: Item 'Product Code'.</i> Returns single Whisky object if found.</p>
     <h3>Cache maintenance</h3>
     <p><b>GET</b> <b>/api/cache/status</b> ->      Response cacheStatus() - <i>Returns some information and statistics about last time cached data was re-built.</i></p>
     <p><b>GET</b> <b>/api/cache/rebuild</b> ->      Response rebuildAllCachedData() - <i>Clears and re-caches all data from third parties. Long operation, could take several minutes!</i></p>

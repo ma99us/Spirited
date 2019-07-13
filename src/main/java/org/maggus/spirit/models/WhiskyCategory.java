@@ -58,6 +58,20 @@ public class WhiskyCategory extends CacheItem {
         return Objects.hash(getName());
     }
 
+    public void mergeFrom(WhiskyCategory wc){
+        if(wc == null){
+            return;
+        }
+        if(wc.getCacheExternalUrl() != null) {setCacheExternalUrl(wc.getCacheExternalUrl());}
+        if(wc.getCacheLastUpdatedMs() != null) {setCacheLastUpdatedMs(wc.getCacheLastUpdatedMs());}
+        if(wc.getCacheSpentMs() != null) {setCacheSpentMs(wc.getCacheSpentMs());}
+        //
+        if(wc.getName() != null) {setName(wc.getName());};
+        if(wc.getCountry() != null) {setCountry(wc.getCountry());};
+        if(wc.getRegion() != null) {setRegion(wc.getRegion());};
+        if(wc.getType() != null) {setType(wc.getType());};
+    }
+
 //    @Override
 //    public String toString() {
 //        final JsonObjectBuilder builder = Json.createBuilderFactory(null).createObjectBuilder();

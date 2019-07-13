@@ -64,7 +64,19 @@ angular.module('api', [])
             getSimilarWhiskies: function (whisky) {
                 var deferred = $q.defer();
                 busy = true;
-                $http.get(hostAdr + 'api/whisky/like/' + whisky.id, {params: {}}).then(function (response) {
+                $http.get(hostAdr + 'api/whisky/similar/' + whisky.id, {params: {}}).then(function (response) {
+                    busy = false;
+                    validateResponse(deferred, response);
+                }, function(err) {
+                    validateResponse(deferred, err);
+                });
+                return deferred.promise;
+            },
+
+            findWhiskiesLike: function (name) {
+                var deferred = $q.defer();
+                busy = true;
+                $http.get(hostAdr + 'api/whisky/like/' + name, {params: {}}).then(function (response) {
                     busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {

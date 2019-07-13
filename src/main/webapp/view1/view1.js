@@ -8,14 +8,21 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             controller: 'View1Ctrl'
         });
     }])
-    .controller('View1Ctrl', ['$scope', 'localstorage', '$api', 'geolocation', function ($scope, localstorage, $api, geolocation) {
+    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', function ($scope, $q, localstorage, $api, geolocation) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = [];
         $scope.dispQuantity = 10;
 
         $scope.onFavWhiskyNameChange = function (newVal) {
-            $scope.clearFavWhisky();
+            if(newVal.length >=4){
+                $scope.busyC = true;
+                $scope.clearFavWhisky();
+                $scope.allWhiskies = [];
+                $scope.getAllWhiskies(newVal).finally(function(){
+                    $scope.busyC = false;
+                });
+            }
         };
 
         $scope.captureUserLocation = function () {
@@ -96,6 +103,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         };
 
         $scope.selectFavWhisky = function (w) {
+            $scope.clearFavWhisky();
             $scope.favWhisky = w;
             $scope.favWhiskyName = w.name;
             if ($scope.preferences) {
@@ -104,7 +112,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             }
             $scope.busyW = true;
             $scope.fpData = undefined;
-            $scope.getFavWhisky(w.id).then(function () {
+            return $scope.getFavWhisky(w.id).then(function () {
                 $scope.favWhisky.available = $scope.filterAvailability($scope.favWhisky).length > 0;
                 $scope.buildFPChart($scope.favWhisky);
                 $scope.getSimilarWhiskies($scope.favWhisky);
@@ -119,7 +127,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.selectedWhisky = w;
             $('#selectedWhiskyModalCenter').modal('show');
             $('#selectedWhiskyModalCenter').on('shown.bs.modal', function () {
-                $scope.getSelWhisky(w.id).then(function () {
+                $scope.getSelWhisky(w).then(function () {
                     $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
                     $scope.buildSimilarFPChart($scope.selectedWhisky, $scope.favWhisky);
                     $scope.busySW = false;
@@ -248,11 +256,13 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 });
                 $scope.onSelectedStoresChanged();   // update all post-store selection
             }
-            if (prefs.favWhiskyName && $scope.allWhiskies) {
-                $scope.allWhiskies.forEach(function (w) {
-                    if (prefs.favWhiskyName === w.name) {
-                        $scope.selectFavWhisky(w);
-                    }
+            if (prefs.favWhiskyName) {
+                $scope.getAllWhiskies(prefs.favWhiskyName).then(function(){
+                    $scope.allWhiskies.forEach(function (w) {
+                        if (prefs.favWhiskyName === w.name) {
+                            $scope.selectFavWhisky(w);
+                        }
+                    });
                 });
             }
             $scope.preferences = prefs;
@@ -286,11 +296,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             });
         };
 
-        $scope.getAllWhiskies = function () {
-            return $api.getAllWhiskies(1000, 1, 'name').then(function (data) {
+        $scope.getAllWhiskies = function (name) {
+            return $api.findWhiskiesLike(name).then(function (data) {
                 $scope.message = undefined;
                 $scope.allWhiskies = data.data;
-                $scope.totaWhiskiesNum = data.metaData.totalResults;
             }).catch(function (err) {
                 $scope.message = err;
             });
@@ -307,15 +316,24 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             });
         };
 
-        $scope.getSelWhisky = function (id) {
-            return $api.getWhisky(id).then(function (data) {
-                $scope.message = undefined;
-                if ($scope.selectedWhisky && $scope.selectedWhisky.id === data.data.id) {
-                    $scope.selectedWhisky = data.data;
-                }
-            }).catch(function (err) {
-                $scope.message = err;
-            });
+        $scope.getSelWhisky = function (whisky) {
+            if (whisky.flavorProfile && whisky.quantities && whisky.quantities.length) {
+                // do not re-request whisky data from API again if already have it
+                $scope.selectedWhisky = whisky;
+                let deferred = $q.defer();
+                deferred.resolve(whisky);
+                return deferred.promise;
+            }
+            else {
+                return $api.getWhisky(whisky.id).then(function (data) {
+                    $scope.message = undefined;
+                    if ($scope.selectedWhisky && $scope.selectedWhisky.id === data.data.id) {
+                        $scope.selectedWhisky = data.data;
+                    }
+                }).catch(function (err) {
+                    $scope.message = err;
+                });
+            }
         };
 
         $scope.getSimilarWhiskies = function (whisky) {
@@ -330,15 +348,28 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             });
         };
 
+        $scope.findWhisky = function (code) {
+            $api.findWhisky(code).then(function (data) {
+                if (!data.data) {
+                    alert('no such product :-(');
+                    throw 'no such product :-(';
+                }
+                $scope.message = undefined;
+                return $scope.selectFavWhisky(data.data);
+            }). then(function () {
+                $scope.showWhisky($scope.favWhisky);
+            })
+            .catch(function (err) {
+                $scope.message = err;
+            });
+        };
+
         //// initialization:
 
         $scope.busy = true;
         $scope.getCacheStatus()
             .then(function () {
                 return $scope.getAllStores();
-            })
-            .then(function () {
-                return $scope.getAllWhiskies();
             })
             .then(function () {
                 return $scope.loadPrefs();
@@ -349,4 +380,18 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             .finally(function () {
                 $scope.busy = false;
             });
-    }]);
+    }])
+    .directive('addressLink', function () {
+        return {
+            restrict: 'E',
+            scope: {
+                addressTxt: '@address'
+            },
+            template: "<a href='http://maps.google.com/maps?q={{mapLink}}' target='_blank'><address>{{address}}</address></a>",
+            link: function (scope, elem, attrs) {
+                scope.mapLink = encodeURIComponent(scope.addressTxt);
+                scope.address = scope.addressTxt;
+            }
+        };
+    })
+;

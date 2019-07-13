@@ -28,7 +28,10 @@ public class CacheApi {
             int wCount = allWhiskies != null ? allWhiskies.size() : 0;
             int fpCount = allWhiskies != null ? (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count() : 0;
             int fpPerc = wCount > 0 ? (int) ((double) fpCount / wCount * 100) : 0;
-            WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(AnblParser.CacheUrls.BASE_URL.name());
+            WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(cacheService.CACHE_UPDATE);
+            if(wc == null){
+                throw new NullPointerException("Bad Cache Status");
+            }
             wc.setCountry(String.format("%d", wCount));     // hack; use "country" to send total number of whiskies
             wc.setRegion(String.format("%d%%", fpPerc));    // hack; use "region" to send percentage of whiskies with Flavour Profiles
             return Response.ok(wc);
@@ -41,7 +44,7 @@ public class CacheApi {
     @GET
     public Response rebuildCache(@QueryParam("full") @DefaultValue("false") boolean full) {
         try {
-            cacheService.rebuildProductsCategoriesCache(full);
+            cacheService.rebuildAllProductsCategoriesCache(full);
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);

@@ -1,8 +1,6 @@
 package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
-import org.apache.commons.text.similarity.FuzzyScore;
-import org.apache.commons.text.similarity.JaccardDistance;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,7 +22,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 @Stateless
 @Log
@@ -166,10 +163,9 @@ public class DistillerParser extends AbstractParser {
     }
 
     private Document loadSearchPage(String url) throws IOException {
-        Document doc = Jsoup.connect(url)
+        Document doc = loadDocument(Jsoup.connect(url)
                 .cookie("distiller_default_spirit_family", "whiskey")
-                .referrer("https://distiller.com/search")
-                .get();
+                .referrer("https://distiller.com/search"));
         return doc;
     }
 
@@ -228,7 +224,7 @@ public class DistillerParser extends AbstractParser {
                     if (country != null && !Locators.Country.equals(country, itemCountry)) {
                         likeness += 0.5;  // mismatch country is a big deal
                     }
-                    if (type != null && !Locators.WhiskyType.equals(type, itemType)) {
+                    if (type != null && !Locators.SpiritType.equals(type, itemType)) {
                         if (Locators.Country.equals("United Kingdom", itemCountry)) {
                             likeness += 0.4;  // mismatch type is quite a big deal, but only for Scotch
                         } else {
@@ -345,10 +341,9 @@ public class DistillerParser extends AbstractParser {
 
     public void loadFlavorProfile(FlavorProfile fp) {
         try {
-            Document doc = Jsoup.connect(fp.getCacheExternalUrl())
+            Document doc = loadDocument(Jsoup.connect(fp.getCacheExternalUrl())
                     .header("referer", "https://distiller.com/search")
-                    .header("x-distiller-developer-token", "8e01b58d-6bc8-407e-b7fb-5b989b5b23e9")
-                    .get();
+                    .header("x-distiller-developer-token", "8e01b58d-6bc8-407e-b7fb-5b989b5b23e9"));
             String title = doc.title();
             // parse distiller score
             Integer distScore = getSafeElementInteger(doc.select("li.stat.distiller-rating > div > span.expert-rating"));

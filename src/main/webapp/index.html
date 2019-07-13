@@ -40,7 +40,7 @@
 <!-- In production use:
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
 -->
-<script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
 <script src="lib/angular-route/angular-route.js"></script>
 <script src="lib/angular-resource/angular-resource.js"></script>
 <script src="lib/angular-sanitize/angular-sanitize.js"></script>
@@ -60,11 +60,31 @@
 <script src="core/localstorage/localstorage.js"></script>
 <script src="core/geolocation/geolocation.js"></script>
 <script type="text/javascript">
+        function preventDefault(e) {
+            e.preventDefault();
+        };
+        var lightbox = null;
     // enable 'lightbox' data-toggle links
     $(document).on('click', '[data-toggle="lightbox"]', function (event) {
         event.preventDefault();
-        $(this).ekkoLightbox({ wrapping: false});
-    });
+            $(this).ekkoLightbox({
+                wrapping: false, alwaysShowClose: true,
+                onShown: function () {
+                    console.log('Popup shown'); // #DEBUG
+                    lightbox =this;
+                    $('body').bind('touchmove', preventDefault);
+                },
+                onNavigate: function (direction, itemIndex) {
+                    console.log('Popup navigating ' + direction + '. Current item: ' + itemIndex);  // #DEBUG
+                },
+                onHidden: function (direction, itemIndex) {
+                    console.log('Popup hidden');    // #DEBUG
+                    lightbox =null;
+                    $('body').unbind('touchmove', preventDefault);
+                    $('#selectedWhiskyModalCenter').css('overflow', 'auto');
+                }
+            });
+        });
 </script>
 </body>
 </html>

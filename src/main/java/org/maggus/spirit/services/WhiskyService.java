@@ -3,7 +3,9 @@ package org.maggus.spirit.services;
 import lombok.extern.java.Log;
 import org.maggus.spirit.api.QueryMetadata;
 import org.maggus.spirit.models.Whisky;
+import org.maggus.spirit.models.WhiskyDiff;
 
+import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -14,6 +16,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Stateful
 @Log
@@ -21,6 +26,7 @@ public class WhiskyService {
 
     @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
+    private List<Whisky> cachedSpirits;
 
     public List<Whisky> getAllWhiskies(QueryMetadata metaData) throws Exception {
         TypedQuery<Whisky> q = em.createQuery("select w from Whisky w " + getSafeOrderByClause(Whisky.class, metaData.getSortBy()), Whisky.class);
@@ -43,7 +49,7 @@ public class WhiskyService {
         return em.find(Whisky.class, id);
     }
 
-    public Whisky findWhisky(String productCode) throws Exception {
+    public Whisky findWhiskyByCode(String productCode) throws Exception {
         try {
             if (productCode == null || productCode.isEmpty()) {
                 throw new NoResultException("productCode can not be null");
@@ -56,6 +62,43 @@ public class WhiskyService {
         } catch (NonUniqueResultException ex) {
             log.warning("! multiple products with the same product code = \"" + productCode + "\". This should not happen!");
             return null;
+        }
+    }
+
+    public List<Whisky> fuzzyFindWhiskiesByName(String name) throws Exception {
+        if (name == null || name.isEmpty()) {
+            throw new NoResultException("name can not be null");
+        }
+        if (cachedSpirits == null) {
+            synchronized (this) {
+                if (cachedSpirits == null) {
+                    QueryMetadata meta = new QueryMetadata();
+                    meta.setSortBy("name");
+                    cachedSpirits = getAllWhiskies(meta);
+                }
+            }
+        }
+        Map<Double, Whisky> candidates = cachedSpirits.parallelStream().map(w -> {
+            WhiskyDiff diff = new WhiskyDiff(w);
+            diff.setStdDeviation(AbstractParser.fuzzyMatchNames(w.getName(), name));
+            return diff;
+        }).collect(Collectors.toMap(WhiskyDiff::getStdDeviation, WhiskyDiff::getCandidate, (oldValue, newValue) -> oldValue, TreeMap::new));
+        int maxCandidates = 10; // return at max that many candidates
+        ArrayList<Whisky> whiskies = new ArrayList<>(maxCandidates);
+        for (Map.Entry<Double, Whisky> entry : candidates.entrySet()) {
+            if (maxCandidates-- <= 0) {
+                break;
+            }
+            whiskies.add(entry.getValue());
+        }
+        return whiskies;
+    }
+
+    private void resetCache() {
+        if (cachedSpirits != null) {
+            synchronized (this) {
+                cachedSpirits = null;
+            }
         }
     }
 
@@ -78,6 +121,7 @@ public class WhiskyService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public synchronized Whisky persistWhisky(Whisky whisky) throws Exception {
+        resetCache();
         if (whisky.getId() > 0) {
             return em.merge(whisky);
         } else {
@@ -88,11 +132,13 @@ public class WhiskyService {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public synchronized void deleteWhisky(Whisky whisky) throws Exception {
+        resetCache();
         em.remove(whisky);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public synchronized void deleteAllWhisky() throws Exception {
+        resetCache();
         log.warning("! Clearing the whole DB Whisky table!");
         Query q = em.createQuery("DELETE FROM Whisky");
         q.executeUpdate();

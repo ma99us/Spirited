@@ -3,6 +3,7 @@ package org.maggus.spirit.services;
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Warehouse;
 
+import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;

@@ -7,6 +7,7 @@ import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.WhiskyDiff;
 
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-@Stateful
+@Stateless
 @Log
 public class SuggestionsService {
 

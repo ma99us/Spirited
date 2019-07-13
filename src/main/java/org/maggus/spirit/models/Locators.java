@@ -116,16 +116,28 @@ public class Locators {
         }
     }
 
-    public static enum WhiskyType {
+    public static enum SpiritType {
+        WHISKY("Whisky"),
+        // Whisky sub-types
         S_M("Single malt", "Single grain", "Peated Single Malt"),
         BLENDED("Blended", "Blended grain", "Blended malt", "Peated blend", "Peated blended malt", "Canadian", "Single Pot Still"),
         FLAVOURED("Flavoured", "Spiced/Flavoured"),
         BOURBON("Bourbon", "Tennessee"),
-        RYE("Rye");
+        RYE("Rye"),
+        // non-Whisky spirits
+        VODKA("Vodka"),
+        RUM("Rum"),
+        MOONSHINE("Moonshine"),
+        VINE("Vine"),
+        BEER("Beer"),
+        //TODO: add more types here
+        ;
 
         private final String[] type;
 
-        WhiskyType(String... type) {
+        private static SpiritType[] allWhiskyTypes = {WHISKY, S_M, BLENDED, FLAVOURED, BOURBON, RYE};
+
+        SpiritType(String... type) {
             this.type = type;
         }
 
@@ -133,8 +145,8 @@ public class Locators {
             return type[0];
         }
 
-        public static WhiskyType parse(String str) {
-            for (WhiskyType wt : WhiskyType.values()) {
+        public static SpiritType parse(String str) {
+            for (SpiritType wt : SpiritType.values()) {
                 if (Arrays.stream(wt.type).anyMatch(t -> t.equalsIgnoreCase(str))) {
                     return wt;
                 }
@@ -143,9 +155,14 @@ public class Locators {
         }
 
         public static boolean equals(String obj1, String obj2) {
-            WhiskyType c1 = WhiskyType.parse(obj1);
-            WhiskyType c2 = WhiskyType.parse(obj2);
+            SpiritType c1 = SpiritType.parse(obj1);
+            SpiritType c2 = SpiritType.parse(obj2);
             return c1 != null && c1.equals(c2);
+        }
+
+        public static boolean isWhisky(String type) {
+            SpiritType wType = parse(type);
+            return wType != null && Arrays.asList(allWhiskyTypes).contains(wType);
         }
     }
 

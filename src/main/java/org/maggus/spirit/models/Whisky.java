@@ -23,6 +23,7 @@ public class Whisky extends CacheItem {
     private String country;         // country of origin
     private String region;          // region within Country if available
     private Integer unitVolumeMl;   // bottle volume in milliliters
+    private Integer qtyPerContainer;    // number of bottles/cans in one pack
     private BigDecimal unitPrice;   // decimal price in dollars CAD
     private String thumbnailUrl;    // url or path to small imabge of the bottle
     private String type;            // should be one of the items in WHISKY_TYPES enum
@@ -89,6 +90,7 @@ public class Whisky extends CacheItem {
         if(w.getThumbnailUrl() != null) {setThumbnailUrl(w.getThumbnailUrl());};
         if(w.getType() != null) {setType(w.getType());};
         if(w.getProductCode() != null) {setProductCode(w.getProductCode());};
+        if(w.getQtyPerContainer() != null) {setQtyPerContainer(w.getQtyPerContainer());};
         if(w.getAlcoholContent() != null) {setAlcoholContent(w.getAlcoholContent());};
         if(w.getDescription() != null) {setDescription(w.getDescription());};
         //
