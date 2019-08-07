@@ -5,7 +5,6 @@ import org.maggus.spirit.api.QueryMetadata;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.WhiskyDiff;
 
-import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -14,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +28,7 @@ public class WhiskyService {
     private EntityManager em;
     private List<Whisky> cachedSpirits;
 
+    //@Transactional(value=Transactional.TxType.REQUIRES_NEW)
     public List<Whisky> getAllWhiskies(QueryMetadata metaData) throws Exception {
         TypedQuery<Whisky> q = em.createQuery("select w from Whisky w " + getSafeOrderByClause(Whisky.class, metaData.getSortBy()), Whisky.class);
         List<Whisky> resultList = q.getResultList();
@@ -42,7 +43,14 @@ public class WhiskyService {
             idx1 = idx1 > totalSize ? totalSize : idx1;
             resultList = resultList.subList(idx0, idx1);
         }
-        return resultList;
+        return resultList.stream().map(w -> {
+            em.detach(w);
+            return w.clone();
+        }).collect(Collectors.toList());
+//        resultList.forEach(w -> {
+//            em.detach(w);
+//        });
+//        return resultList;
     }
 
     public Whisky getWhisky(long id) throws Exception {

@@ -1,6 +1,7 @@
 package org.maggus.spirit.api;
 
 import lombok.extern.java.Log;
+import org.maggus.spirit.models.Locators;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.WhiskyCategory;
 import org.maggus.spirit.services.AnblParser;
@@ -42,9 +43,15 @@ public class CacheApi {
 
     @Path("/rebuild")
     @GET
-    public Response rebuildCache(@QueryParam("full") @DefaultValue("false") boolean full) {
+    public Response rebuildCache(@QueryParam("category") @DefaultValue("ALL") String category,
+                                 @QueryParam("deep") @DefaultValue("true") boolean deep) {
         try {
-            cacheService.rebuildAllProductsCategoriesCache(full);
+            if ("ALL".equalsIgnoreCase(category)) {
+                cacheService.rebuildAllProductsCategoriesCache(deep);
+            } else {
+                Locators.SpiritType spiritType = Locators.SpiritType.valueOf(category);
+                cacheService.rebuildProductsCategoriesCache(deep, spiritType);
+            }
             return Response.ok();
         } catch (Exception e) {
             return Response.fail(e);

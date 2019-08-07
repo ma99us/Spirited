@@ -28,17 +28,22 @@ public class SuggestionsService {
             log.info("Looking for similar whiskies for \"" + whisky.getName() + "\"; maxDeviation=" + maxDeviation);
             long t0 = System.currentTimeMillis();
             List<Whisky> allWhisky = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
-            Map<Double, WhiskyDiff> candidates = allWhisky.parallelStream().map(w -> {
-                WhiskyDiff diff = new WhiskyDiff(w);
-                diff.setStdDeviation(calcDifference(whisky.getFlavorProfile(), w.getFlavorProfile(), diff));
-                return diff;
-            }).collect(Collectors.toMap(WhiskyDiff::getStdDeviation, d -> d, (oldValue, newValue) -> oldValue, TreeMap::new));
+            //log.info("allWhisky size " + allWhisky.size());     // #DEBUG
+            Map<Double, WhiskyDiff> candidates = allWhisky.parallelStream()
+                    .filter(w -> w.getFlavorProfile() != null)
+                    .map(w -> {
+                        WhiskyDiff diff = new WhiskyDiff(w);
+                        diff.setStdDeviation(calcDifference(whisky.getFlavorProfile(), w.getFlavorProfile(), diff));
+                        return diff;
+                    }).collect(Collectors.toMap(WhiskyDiff::getStdDeviation, d -> d, (oldValue, newValue) -> oldValue, TreeMap::new));
+            //log.info("candidates size " + candidates.size());     // #DEBUG
             List<WhiskyDiff> res = new ArrayList<>();
             for (WhiskyDiff wd : candidates.values()) {
-                if (whisky.equals(wd.getCandidate()) || wd.getStdDeviation() >= (Double.MAX_VALUE - 1.0)) {
+                //log.info("wd " + wd.getCandidate().getName() + "; deviation=" + wd.getStdDeviation());     // #DEBUG
+                if (whisky.equals(wd.getCandidate())) {
                     continue;   // no not suggest the original whisky, and the worst matches
                 }
-                if (maxDeviation != null && wd.getStdDeviation() > maxDeviation) {
+                if ((maxDeviation != null && wd.getStdDeviation() > maxDeviation) || (wd.getStdDeviation() == Double.MAX_VALUE)) {
                     break;
                 }
                 res.add(wd);

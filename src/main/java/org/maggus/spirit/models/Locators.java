@@ -86,7 +86,7 @@ public class Locators {
     public static enum Spirit {
         WHISKY("Whisky", "Whiskey"),
         VODKA("Vodka", "Flavored vodka"),
-        RUM("Rum", "Dark rum", "Flavored rum", "Gold rum"),
+        RUM("Rum", "Dark rum", "Flavored rum", "Gold rum", "Amber rum", "White rum", "Spiced rum"),
         COGNAC("Cognac"),
         GIN("Gin", "Distilled gin", "Dry gin");
 
@@ -125,11 +125,15 @@ public class Locators {
         BOURBON("Bourbon", "Tennessee"),
         RYE("Rye"),
         // non-Whisky spirits
+        BRANDY("Brandy", "Armagnac", "Calvados", "Cognac"),
         VODKA("Vodka"),
         RUM("Rum"),
+        TEQUILA("Tequila"),
+        GIN("Gin"),
         MOONSHINE("Moonshine"),
         VINE("Vine"),
         BEER("Beer"),
+        CIDER("Cider")
         //TODO: add more types here
         ;
 

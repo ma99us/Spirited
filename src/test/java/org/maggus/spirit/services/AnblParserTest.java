@@ -24,7 +24,7 @@ public class AnblParserTest {
     }
 
     @Test
-    public void testDetailedProductinfo() throws Exception {
+    public void testDetailedProductinfo1() throws Exception {
         Whisky whisky = new Whisky();
         whisky.setCacheExternalUrl("https://www.anbl.com/aberfeldy-12-yo-750ml-14703");
         parser.loadProductPage(whisky);
@@ -33,4 +33,13 @@ public class AnblParserTest {
         assertEquals(new Double(40.0), whisky.getAlcoholContent());
     }
 
+    @Test
+    public void testDetailedProductinfo2() throws Exception {
+        Whisky whisky = new Whisky();
+        whisky.setCacheExternalUrl("https://www.anbl.com/oban-14-yo-750ml-10869");
+        parser.loadProductPage(whisky);
+        assertEquals("622153618040", whisky.getProductCode());
+        assertTrue(whisky.getDescription() != null && whisky.getDescription().contains("Mouth-filling late autumn fruits"));
+        assertEquals(new Double(43.0), whisky.getAlcoholContent());
+    }
 }

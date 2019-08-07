@@ -11,7 +11,7 @@ import java.util.*;
 @Entity
 @Data
 @NoArgsConstructor
-public class Whisky extends CacheItem {
+public class Whisky extends CacheItem implements Cloneable {
 
     @Id
     @GeneratedValue(generator="WhiskyGen", strategy = GenerationType.AUTO)
@@ -82,6 +82,7 @@ public class Whisky extends CacheItem {
         if(w.getCacheLastUpdatedMs() != null) {setCacheLastUpdatedMs(w.getCacheLastUpdatedMs());}
         if(w.getCacheSpentMs() != null) {setCacheSpentMs(w.getCacheSpentMs());}
         //
+        if(w.getId() > 0) {setId(w.getId());};
         if(w.getName() != null) {setName(w.getName());};
         if(w.getCountry() != null) {setCountry(w.getCountry());};
         if(w.getRegion() != null) {setRegion(w.getRegion());};
@@ -96,5 +97,12 @@ public class Whisky extends CacheItem {
         //
         if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
         if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
+    }
+
+    @Override
+    public Whisky clone() {
+        Whisky clone = new Whisky(getName(), getUnitVolumeMl(), getUnitPrice());
+        clone.mergeFrom(this);
+        return clone;
     }
 }

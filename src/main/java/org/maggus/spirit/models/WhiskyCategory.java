@@ -66,6 +66,7 @@ public class WhiskyCategory extends CacheItem {
         if(wc.getCacheLastUpdatedMs() != null) {setCacheLastUpdatedMs(wc.getCacheLastUpdatedMs());}
         if(wc.getCacheSpentMs() != null) {setCacheSpentMs(wc.getCacheSpentMs());}
         //
+        if(wc.getId() > 0) {setId(wc.getId());};
         if(wc.getName() != null) {setName(wc.getName());};
         if(wc.getCountry() != null) {setCountry(wc.getCountry());};
         if(wc.getRegion() != null) {setRegion(wc.getRegion());};

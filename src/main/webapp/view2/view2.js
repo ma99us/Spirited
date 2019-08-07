@@ -110,10 +110,10 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             });
         };
 
-        $scope.rebuildAllCache = function(){
+        $scope.rebuildAllCache = function(category){
             $scope.busy = true;
             let ts0 = new Date().getTime();
-            $api.rebuildAllCache().then(function (data) {
+            $api.rebuildAllCache(category).then(function (data) {
                 $scope.message = undefined;
                 $scope.getAllWhiskies();
                 $scope.getCacheStatus();

@@ -148,7 +148,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.selectedWhisky = w;
             $('#selectedWhiskyModalCenter').modal('show');
             $('#selectedWhiskyModalCenter').on('shown.bs.modal', function () {
-                $scope.getSelWhisky(w).then(function () {
+                $scope.getSelWhisky($scope.selectedWhisky).then(function () {
                     $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
                     $scope.buildSimilarFPChart($scope.selectedWhisky, $scope.favWhisky);
                     $scope.busySW = false;

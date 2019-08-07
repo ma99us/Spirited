@@ -1,6 +1,5 @@
 angular.module('api', [])
     .factory('$api', ['$http', '$q', function ($http, $q) {
-        //const hostAdr = 'http://192.168.2.19/spirited/';
         const hostAdr = 'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/';
         let busy = false;
         let validateResponse = function (deferred, response) {
@@ -48,11 +47,11 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            rebuildAllCache: function () {
+            rebuildAllCache: function (category) {
                 //$http.defaults.headers.common['Authorization'] = 'Basic <username:pw>'; where username:password has to be Base64 encoded.
                 var deferred = $q.defer();
                 busy = true;
-                $http.get(hostAdr + 'api/cache/rebuild', {params: {full: true}}).then(function (response) {
+                $http.get(hostAdr + 'api/cache/rebuild', {params: {category: category || 'ALL', deep: true}}).then(function (response) {
                     busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
@@ -85,13 +84,14 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            getAllWhiskies: function (resultsPerPage, pageNumber, sortBy) {
+            getAllWhiskies: function (resultsPerPage, pageNumber, sortBy, format) {
                 var deferred = $q.defer();
                 busy = true;
                 let params = {
                     resultsPerPage: resultsPerPage,
                     pageNumber: pageNumber,
-                    sortBy: sortBy
+                    sortBy: sortBy,
+                    format: format || "short"
                 };
                 $http.get(hostAdr + 'api/whisky', {params: params}).then(function (response) {
                     busy = false;

@@ -8,11 +8,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             controller: 'View1Ctrl'
         });
     }])
-    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', function ($scope, $q, localstorage, $api, geolocation) {
+    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', '$routeParams', function ($scope, $q, localstorage, $api, geolocation, $routeParams) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = [];
         $scope.dispQuantity = 10;
+        $scope.paramProduct = $routeParams.prod;
 
         $scope.onFavWhiskyNameChange = function (newVal) {
             if(newVal.length >=4){
@@ -127,7 +128,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.selectedWhisky = w;
             $('#selectedWhiskyModalCenter').modal('show');
             $('#selectedWhiskyModalCenter').on('shown.bs.modal', function () {
-                $scope.getSelWhisky(w).then(function () {
+                $scope.getSelWhisky($scope.selectedWhisky).then(function () {
                     $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
                     $scope.buildSimilarFPChart($scope.selectedWhisky, $scope.favWhisky);
                     $scope.busySW = false;
@@ -241,6 +242,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.dispQuantity += 10;
         };
 
+        $scope.pickOneProduct = function (products, name) {
+            products.forEach(function (w) {
+                if (name === w.name) {
+                    return w;
+                }
+            });
+            return products[0] || null;
+        };
+
         $scope.savePrefs = function (prefs) {
             localstorage.setObject("spirited", prefs || $scope.preferences);
         };
@@ -256,13 +266,18 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 });
                 $scope.onSelectedStoresChanged();   // update all post-store selection
             }
-            if (prefs.favWhiskyName) {
-                $scope.getAllWhiskies(prefs.favWhiskyName).then(function(){
-                    $scope.allWhiskies.forEach(function (w) {
-                        if (prefs.favWhiskyName === w.name) {
-                            $scope.selectFavWhisky(w);
-                        }
+            if($scope.paramProduct){
+                $scope.getAllWhiskies($scope.paramProduct).then(function(){
+                    let candidate = $scope.pickOneProduct($scope.allWhiskies, $scope.paramProduct);
+                    $scope.selectFavWhisky(candidate).then(function () {
+                        $scope.showWhisky($scope.favWhisky);
                     });
+                });
+            }
+            else if (prefs.favWhiskyName) {
+                $scope.getAllWhiskies(prefs.favWhiskyName).then(function(){
+                    let candidate = $scope.pickOneProduct($scope.allWhiskies, prefs.favWhiskyName);
+                    $scope.selectFavWhisky(candidate);
                 });
             }
             $scope.preferences = prefs;

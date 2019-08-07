@@ -5,13 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
 
 public class WhiskyTestService {
 

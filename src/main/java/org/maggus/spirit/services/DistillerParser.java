@@ -2,6 +2,7 @@ package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -248,10 +249,12 @@ public class DistillerParser extends AbstractParser {
                 return null;
             }
             return candidates;
+        } catch (HttpStatusException ex) {
+            log.log(Level.WARNING, "HTTP error: " + ex.getMessage() + " from " + url);
         } catch (Exception ex) {
             log.log(Level.SEVERE, "Failed to parse Product Search page: " + url, ex);
-            return null;
         }
+        return null;
     }
 
     public FlavorProfile fuzzySearchFlavorProfile(Whisky whisky) {
@@ -385,6 +388,8 @@ public class DistillerParser extends AbstractParser {
             fp.setFruity(json.getInt("fruity", 0));
             fp.setFloral(json.getInt("floral", 0));
             //log.info("* Parsing external API response from " + fp.getCacheExternalUrl() + " - \"" + title + "\", resulting in: " + fp);
+        } catch (HttpStatusException ex) {
+            log.log(Level.WARNING, "HTTP error: " + ex.getMessage() + " from " + fp.getCacheExternalUrl());
         } catch (Exception ex) {
             log.log(Level.SEVERE, "Failed to parse Product Flavor Chart page: " + fp.getCacheExternalUrl(), ex);
         }

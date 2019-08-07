@@ -20,7 +20,7 @@ public class ScheduleService {
     @Inject
     private CacheService cacheService;
 
-    @Schedule(hour = "23", minute = "59", second = "59", persistent=false)
+    @Schedule(hour = "0", minute = "0", second = "59", persistent=false)
     public synchronized void reBuildWhiskyCache() {
         try {
             log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
@@ -31,11 +31,24 @@ public class ScheduleService {
         }
     }
 
-    @Schedule(hour = "0", minute = "29", second = "59", persistent=false)
+    @Schedule(hour = "0", minute = "30", second = "59", persistent=false)
     public synchronized void reBuildBeerCache() {
         try {
             log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
             cacheService.rebuildProductsCategoriesCache(true, Locators.SpiritType.BEER);
+            log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);
+        }
+    }
+
+    @Schedule(hour = "0", minute = "45", second = "59", persistent=false)
+    public synchronized void reBuildOtherSpiritsCache() {
+        try {
+            log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
+            cacheService.rebuildProductsCategoriesCache(true, Locators.SpiritType.RUM,
+                    Locators.SpiritType.TEQUILA, Locators.SpiritType.GIN, Locators.SpiritType.CIDER,
+                    Locators.SpiritType.BRANDY);
             log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);

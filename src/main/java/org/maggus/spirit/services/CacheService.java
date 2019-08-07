@@ -48,7 +48,16 @@ public class CacheService {
     public final String CACHE_UPDATE = "CACHE_UPDATE";
 
     public synchronized void rebuildAllProductsCategoriesCache(boolean deep) throws Exception {
-        rebuildProductsCategoriesCache(deep, Locators.SpiritType.WHISKY, Locators.SpiritType.BEER); //TODO: add others here
+        rebuildProductsCategoriesCache(deep,
+                Locators.SpiritType.WHISKY,
+                Locators.SpiritType.BEER,
+                Locators.SpiritType.RUM,
+                Locators.SpiritType.TEQUILA,
+                Locators.SpiritType.GIN,
+                Locators.SpiritType.CIDER,
+                Locators.SpiritType.BRANDY
+                //TODO: add others here
+        );
     }
 
     public synchronized void rebuildProductsCategoriesCache(boolean deep, Locators.SpiritType... types) throws Exception {
@@ -62,10 +71,10 @@ public class CacheService {
 ////            //warehouseService.deleteAllWarehouses();
 //            return;
 //        }
-        log.info("Rebuilding Products Categories cache; deep=" + deep + ", types: " + Arrays.toString(types));
+        log.info("*** Rebuilding Products Categories cache; deep=" + deep + ", types: " + Arrays.toString(types));
         ForkJoinPool commonPool = ForkJoinPool.commonPool();
         log.info("Trying to use Parallelism of " + commonPool.getParallelism());
-        long t0 = System.currentTimeMillis();
+        final long t0 = System.currentTimeMillis();
 
         // load all Products Categories now
         List<Whisky> whiskies = Collections.synchronizedList(new ArrayList<>());
@@ -85,8 +94,8 @@ public class CacheService {
             }
             whiskyCategoryService.persistWhiskyCategory(wcEntity);
         }
-        long dt = System.currentTimeMillis() - t0;
-        log.info("Found " + whiskies.size() + " products from " + categories.size() + " categories in " + dt / 1000 + " seconds.");
+        final long t1 = System.currentTimeMillis();
+        log.info("Found " + whiskies.size() + " products from " + categories.size() + " categories in " + (t1 - t0) / 1000 + " seconds.");
 
         //cacheAllFlavorProfiles();
         // load all Products details
@@ -110,16 +119,19 @@ public class CacheService {
             //warehouseService.deleteAllWarehouses();
 
             // persist all products
-            log.info("caching " + whiskiesCache.size() + " new products into DB");
+            final long t2 = System.currentTimeMillis();
+            log.info("Products loaded in " + (t2 - t1) / 1000 + " seconds - " + (t2 - t1) / whiskies.size() + "ms per product.");     // #DEBUG
+            log.info("Caching " + whiskiesCache.size() + " new products into DB...");
             for (Whisky w : whiskiesCache) {
                 //System.out.print(".");
                 updateWhiskyCache(w);
             }
 
             // store meta information about the cached types
-            long now = System.currentTimeMillis();
-            dt = now - t0;
-            WhiskyCategory cacheUpdate = new WhiskyCategory(CACHE_UPDATE, null, now, dt);
+            final long t3 = System.currentTimeMillis();
+            log.info("Products cached in " + (t3 - t2) / 1000 + " seconds - " + (t3 - t2) / whiskies.size() + "ms per product.");     // #DEBUG
+
+            WhiskyCategory cacheUpdate = new WhiskyCategory(CACHE_UPDATE, null, t3, t3 - t0);
             cacheUpdate.setType(Arrays.toString(types));
             cacheUpdate.setCountry(String.format("%d", whiskiesCache.size()));
             WhiskyCategory cacheUpdateEntity = whiskyCategoryService.getWhiskyCategoryByName(cacheUpdate.getName());
@@ -128,11 +140,11 @@ public class CacheService {
             } else {
                 cacheUpdateEntity = cacheUpdate;
             }
+            log.info("Finalizing cache status: " + cacheUpdateEntity + "...");
             whiskyCategoryService.persistWhiskyCategory(cacheUpdateEntity);
-            log.info("+ persisted Cache Update category: " + cacheUpdate);
 
             em.flush();
-            log.info("Done caching " + whiskiesCache.size() + " products in " + (dt / 1000) + " seconds");
+            log.info("*** All Done for " + whiskiesCache.size() + " products, in " + (t3 - t0) / 1000 + " seconds in total.");
         } else {
             log.warning("! No products to cache!?");
         }
@@ -179,9 +191,9 @@ public class CacheService {
             // re-map 'new' Whisky with existing entity
             whiskyEntity = whiskyService.findWhiskyByCode(whisky.getProductCode()); // lookup by product code
             if (whiskyEntity == null) {
-                List<Whisky> matchesW = whiskyService.findWhisky(whisky.getName(), whisky.getUnitVolumeMl(), whisky.getCountry());  // fallback to lookup by name and other params
-                if (matchesW != null && matchesW.size() == 1) {
-                    whiskyEntity = matchesW.get(0);
+                List<Whisky> candidates = whiskyService.findWhisky(whisky.getName(), whisky.getUnitVolumeMl(), whisky.getCountry());  // fallback to lookup by name and other params
+                if (candidates != null && candidates.size() == 1) {
+                    whiskyEntity = candidates.get(0);
                 }
             }
             if (whiskyEntity != null) {
