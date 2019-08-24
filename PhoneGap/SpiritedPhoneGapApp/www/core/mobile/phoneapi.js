@@ -3,9 +3,11 @@ angular.module('phoneapi', [])
         const cordova = $window.cordova;
         const plugins = cordova ? cordova.plugins : null;
         const diagnostic = plugins ? plugins.diagnostic : null;
+        alert('cordova=' + cordova + '; plugins=' + plugins + '; diagnostic=' + diagnostic);    //#TEST
 
         return {
             useCamera: function (successFunc, errorFunc) {
+                alert('diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
                 if(!diagnostic){
                     errorFunc('No Cordova');
                 } else {
@@ -35,6 +37,7 @@ angular.module('phoneapi', [])
             },
 
             useLocation: function (successFunc, errorFunc) {
+                alert('diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
                 if(!diagnostic){
                     errorFunc('No Cordova');
                 } else {
