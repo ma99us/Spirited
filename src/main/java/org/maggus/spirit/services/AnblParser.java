@@ -63,6 +63,7 @@ public class AnblParser extends AbstractParser {
         CIDER(BASE_URL.getUrl() + "/ciders-1"),
         // Brandy
         BRANDY(BASE_URL.getUrl() + "/brandy-4"),
+        VODKA(BASE_URL.getUrl() + "/vodka"),
         ;
 
         private final String url;
@@ -102,6 +103,8 @@ public class AnblParser extends AbstractParser {
                 buildCiderCategories(wcs);
             } else if (Locators.SpiritType.BRANDY == type) {
                 buildBrandyCategories(wcs);
+            }else if (Locators.SpiritType.VODKA == type) {
+                buildVodkaCategories(wcs);
             }
             //TODO: load more stuff here
         }
@@ -195,6 +198,13 @@ public class AnblParser extends AbstractParser {
     private List<WhiskyCategory> buildBrandyCategories(List<WhiskyCategory> wcs) {
         wcs.add(new WhiskyCategory(CacheUrls.BRANDY.name(), CacheUrls.BRANDY.getUrl(), null, null,
                 Locators.SpiritType.BRANDY.toString()));
+
+        return wcs;
+    }
+
+    private List<WhiskyCategory> buildVodkaCategories(List<WhiskyCategory> wcs) {
+        wcs.add(new WhiskyCategory(CacheUrls.VODKA.name(), CacheUrls.VODKA.getUrl(), null, null,
+                Locators.SpiritType.VODKA.toString()));
 
         return wcs;
     }

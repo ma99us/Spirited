@@ -48,7 +48,7 @@ public class ScheduleService {
             log.warning("=== Scheduled cache re-build started at " + sdf.format(new Date()) + " ===");
             cacheService.rebuildProductsCategoriesCache(true, Locators.SpiritType.RUM,
                     Locators.SpiritType.TEQUILA, Locators.SpiritType.GIN, Locators.SpiritType.CIDER,
-                    Locators.SpiritType.BRANDY);
+                    Locators.SpiritType.BRANDY, Locators.SpiritType.VODKA);
             log.warning("=== Scheduled cache re-build done at " + sdf.format(new Date()) + " ===");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Scheduled cache re-build failed!", e);

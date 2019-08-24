@@ -55,7 +55,8 @@ public class CacheService {
                 Locators.SpiritType.TEQUILA,
                 Locators.SpiritType.GIN,
                 Locators.SpiritType.CIDER,
-                Locators.SpiritType.BRANDY
+                Locators.SpiritType.BRANDY,
+                Locators.SpiritType.VODKA
                 //TODO: add others here
         );
     }
