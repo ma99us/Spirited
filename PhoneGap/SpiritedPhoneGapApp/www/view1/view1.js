@@ -15,7 +15,6 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
         $scope.dispQuantity = 10;
 
         $scope.scanBarcode = function () {
-            //$scope.findWhisky('5000277003457');     // #DEBUG
             phoneapi.useCamera(function () {
                     cordova.plugins.barcodeScanner.scan(
                         function (result) {
@@ -30,8 +29,13 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
                         }
                     );
                 },
-                function () {
-                    alert("Camera unavailable");
+                function (err) {
+                    if (err === 'No Cordova') {
+                        $scope.findWhisky('5000277003457');     // #TEST
+                    } else {
+                        alert("Camera unavailable");
+
+                    }
                 });
         };
 
@@ -70,8 +74,16 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
                     .finally(function () {
                         $scope.busyLoc = false;
                     });
-            }, function(){
-                alert("Location unavailable");
+            }, function(err){
+                if (err === 'No Cordova') {
+                    $scope.selectAllCitiesStores(['Fredericton']);      // #TEST
+                    // collapse stores selection panel
+                    if ($scope.favStores.length) {
+                        $('#favStores').collapse('hide');
+                    }
+                } else {
+                    alert("Location unavailable");
+                }
             });
 
         };
