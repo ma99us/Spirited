@@ -1,0 +1,114 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "angular-loader@1.7.8",
+        "scope": null,
+        "escapedName": "angular-loader",
+        "name": "angular-loader",
+        "rawSpec": "1.7.8",
+        "spec": "1.7.8",
+        "type": "version"
+      },
+      "D:\\Projects\\SpiritApi\\PhoneGap\\SpiritedPhoneGapApp"
+    ]
+  ],
+  "_from": "angular-loader@1.7.8",
+  "_hasShrinkwrap": false,
+  "_id": "angular-loader@1.7.8",
+  "_inCache": true,
+  "_location": "/angular-loader",
+  "_nodeVersion": "8.15.1",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/angular-loader_1.7.8_1552304550136_0.1856137579938264"
+  },
+  "_npmUser": {
+    "name": "petebd",
+    "email": "pete@bacondarwin.com"
+  },
+  "_npmVersion": "6.4.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "angular-loader@1.7.8",
+    "scope": null,
+    "escapedName": "angular-loader",
+    "name": "angular-loader",
+    "rawSpec": "1.7.8",
+    "spec": "1.7.8",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/angular-loader/-/angular-loader-1.7.8.tgz",
+  "_shasum": "0c2fdc8db7aad0d37a126c8d1bc315c7497d82d9",
+  "_shrinkwrap": null,
+  "_spec": "angular-loader@1.7.8",
+  "_where": "D:\\Projects\\SpiritApi\\PhoneGap\\SpiritedPhoneGapApp",
+  "author": {
+    "name": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
+  },
+  "bugs": {
+    "url": "https://github.com/angular/angular.js/issues"
+  },
+  "dependencies": {},
+  "description": "AngularJS module for asynchronously loading modules",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "integrity": "sha512-MKwUS618iCbFfv6Igs1uYglVmjol+4g4rNSK2ezdyWyC6+cXffPFUm0voj3qf3HuN5R1pH1pGCpCB0sO/qFHig==",
+    "shasum": "0c2fdc8db7aad0d37a126c8d1bc315c7497d82d9",
+    "tarball": "https://registry.npmjs.org/angular-loader/-/angular-loader-1.7.8.tgz",
+    "fileCount": 7,
+    "unpackedSize": 33356,
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJchkmnCRA9TVsSAnZWagAAs+IP/3oeqd1cx5OkH2SHgFSO\nTfmp68Bu91UZvZchKM38zu7GT18OhkARotG24jkJle3KeyQFPc5cZyRY6OLo\nkMVIDaJa5roxjkmRjuBm8BLXLOoiCdZ3Co3tmJtC5ylReaPfIif28hHn2jJb\n4P8cc+ehXQRHAlBo+hMh0qysFNIav2LgCHnficea6grQdiUf6yv7QqvnhEWz\nus6EH6NihdkYyOS7Cy55syfSBlwSw76STfseXpn5aS+IrcGBmbNQDNobeUED\n1To9dIyZ1epf6wW1SHGz+gVQJgep8ZdSsAeCzigqfe1N/s8F/NbuWbZWd3Fy\nsGtF6sYt7sAh8obYWVWalJqeLKFI32nmdBlwII/DYcolf6pq6JwMeEr0l7g9\nvYXm4I+TkhKMcn4vCCctbqGRrDX9nNRreDwKUuEhMHNqdm5o7GSZB24yeu/K\nikN12oHV/a7Nwf2aoudClj39raHmDgEPE+8Z6jDrezn4z+tAiqv3EjwFED8t\niz0dneITtyu4Nx8gs4EvO0ZO6q0Y/uhl1MniFy0xQ9F2AXjwnW3IL3Tl0FIz\nQHKMwOr6v/Ow8RqTTSV9F+0NLcJ82XuzZnVGuIkdiCrRiePEiDLBUEgc6pBD\nHMirKeLq9r6rWXFXDwolbgKBxBeX2YPdeEJv3E8H4zPlS39xjXQiXZa2nJZh\nGL0/\r\n=Ft2e\r\n-----END PGP SIGNATURE-----\r\n"
+  },
+  "gitHead": "94f06cc70229d87b89488d28fbcee0207ff69150",
+  "homepage": "http://angularjs.org",
+  "jspm": {
+    "shim": {
+      "angular-loader": {
+        "deps": [
+          "angular"
+        ]
+      }
+    }
+  },
+  "keywords": [
+    "angular",
+    "framework",
+    "browser",
+    "loader",
+    "client-side"
+  ],
+  "license": "MIT",
+  "main": "angular-loader.js",
+  "maintainers": [
+    {
+      "name": "angular",
+      "email": "devops+npm@angular.io"
+    },
+    {
+      "name": "angularcore",
+      "email": "angular-core+npm@google.com"
+    },
+    {
+      "name": "petebd",
+      "email": "pete@bacondarwin.com"
+    }
+  ],
+  "name": "angular-loader",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angular/angular.js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.7.8"
+}

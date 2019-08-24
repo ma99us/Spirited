@@ -46,19 +46,12 @@
     <title>Spirited App</title>
     </head>
     <body>
-<!--
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
--->
     <div ng-view></div>
 
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
+    <!--Cordova/PhoneGap-->
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
     <!--AngularJS-->
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular-route/angular-route.js"></script>
@@ -79,6 +72,7 @@
     <script src="core/api/api.js"></script>
     <script src="core/localstorage/localstorage.js"></script>
     <script src="core/geolocation/geolocation.js"></script>
+    <script src="core/mobile/phoneapi.js"></script>
     <script type="text/javascript">
         function preventDefault(e) {
             e.preventDefault();

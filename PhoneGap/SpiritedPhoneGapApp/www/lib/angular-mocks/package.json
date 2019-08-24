@@ -1,0 +1,115 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "angular-mocks@1.7.8",
+        "scope": null,
+        "escapedName": "angular-mocks",
+        "name": "angular-mocks",
+        "rawSpec": "1.7.8",
+        "spec": "1.7.8",
+        "type": "version"
+      },
+      "D:\\Projects\\SpiritApi\\PhoneGap\\SpiritedPhoneGapApp"
+    ]
+  ],
+  "_from": "angular-mocks@1.7.8",
+  "_hasShrinkwrap": false,
+  "_id": "angular-mocks@1.7.8",
+  "_inCache": true,
+  "_location": "/angular-mocks",
+  "_nodeVersion": "8.15.1",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/angular-mocks_1.7.8_1552304588736_0.2638820743973538"
+  },
+  "_npmUser": {
+    "name": "petebd",
+    "email": "pete@bacondarwin.com"
+  },
+  "_npmVersion": "6.4.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "angular-mocks@1.7.8",
+    "scope": null,
+    "escapedName": "angular-mocks",
+    "name": "angular-mocks",
+    "rawSpec": "1.7.8",
+    "spec": "1.7.8",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "#DEV:/",
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/angular-mocks/-/angular-mocks-1.7.8.tgz",
+  "_shasum": "95e7887ca91d1a3e176cc22f2d1941d284ce9767",
+  "_shrinkwrap": null,
+  "_spec": "angular-mocks@1.7.8",
+  "_where": "D:\\Projects\\SpiritApi\\PhoneGap\\SpiritedPhoneGapApp",
+  "author": {
+    "name": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
+  },
+  "bugs": {
+    "url": "https://github.com/angular/angular.js/issues"
+  },
+  "dependencies": {},
+  "description": "AngularJS mocks for testing",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "integrity": "sha512-LB13ESBT0eJrhQhfPXyLR9qm4LI9g44hyBFwUqZKEHEA4DpfxVTu0ONipiNoN0zWtmEAezA8u2gjcoaO2TStig==",
+    "shasum": "95e7887ca91d1a3e176cc22f2d1941d284ce9767",
+    "tarball": "https://registry.npmjs.org/angular-mocks/-/angular-mocks-1.7.8.tgz",
+    "fileCount": 8,
+    "unpackedSize": 139363,
+    "npm-signature": "-----BEGIN PGP SIGNATURE-----\r\nVersion: OpenPGP.js v3.0.4\r\nComment: https://openpgpjs.org\r\n\r\nwsFcBAEBCAAQBQJchknNCRA9TVsSAnZWagAAAG8QAKP4VOJUT8jhdchFWZdV\nYajyogzYLEYQkj3k5DuMY8j9zJ6+7v0SukwO9/HA4tZTP+KFD41nlQ/UMsr2\nhp+Rc9PlQW00SuN6XiYpUWHANq+5Xg5aII5qOV8NcIltmAcdDGjQtYDNMMFB\nHQnEmLjeuhpo6OPN5rbiCG5gbkGzEVL/4VcgLinkvq046p0BO9H2dIhrE8ER\nNUEMoy7i1Gx7q9quPFwW/GR0djKpfgojZuQr11O4lQPHTj8MpUe8fvLYiRH9\npqo5RMIo21iyzGw6R0/uZaZ7CysZrQ1LoheiXUhg1GPHudAFYXkbBZ5i2sTo\nZ1FPbEWlT88P6QJAB550jeE4iyjZ2BtQzHmukBAa8Hm2Q/9rjLZv2EEFWp8L\nFPXx6/qxPHJxVrdbEyDg3oiavHV1+T5EOwWamQtfl0nt9EMX4ggANwkWiWrV\nziX2Z7M0OnRrc5c/imgwcHfw/anfjFY6shzGLKV+DU8e0GA87WV6JTwatlsz\nCwEswFucenlRRxdJ1aGWlEohRyDPFb5RcfJKaI+k2FT1H6MbT1JoSJ1NPMLg\npiq3e3UQqasAFAE05yTnnEAr6WUgm0O1mmlDP1vt4//IaS2//y4uAOsfwfsZ\nZbKuWOJ8xHoLJiYUw7qWYEvERN6dyea5UyxLbnzzxCy5WnH2rthz8NGpOmsd\nppDB\r\n=Shx9\r\n-----END PGP SIGNATURE-----\r\n"
+  },
+  "gitHead": "39334f3762e264a87e206ab8e1fb297bd73d14ad",
+  "homepage": "http://angularjs.org",
+  "jspm": {
+    "shim": {
+      "angular-mocks": {
+        "deps": [
+          "angular"
+        ]
+      }
+    }
+  },
+  "keywords": [
+    "angular",
+    "framework",
+    "browser",
+    "mocks",
+    "testing",
+    "client-side"
+  ],
+  "license": "MIT",
+  "main": "angular-mocks.js",
+  "maintainers": [
+    {
+      "name": "angular",
+      "email": "devops+npm@angular.io"
+    },
+    {
+      "name": "angularcore",
+      "email": "angular-core+npm@google.com"
+    },
+    {
+      "name": "petebd",
+      "email": "pete@bacondarwin.com"
+    }
+  ],
+  "name": "angular-mocks",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angular/angular.js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.7.8"
+}

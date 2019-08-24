@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp.view1', ['ngRoute', 'localstorage'])
+angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
 
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/view1', {
@@ -8,7 +8,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             controller: 'View1Ctrl'
         });
     }])
-    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', function ($scope, $q, localstorage, $api, geolocation) {
+    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', 'phoneapi', function ($scope, $q, localstorage, $api, geolocation, phoneapi) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = [];
@@ -16,59 +16,64 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
 
         $scope.scanBarcode = function () {
             //$scope.findWhisky('5000277003457');     // #DEBUG
-            cordova.plugins.barcodeScanner.scan(
-                function (result) {
-                    // alert("We got a barcode\n" +
-                    //     "Result: " + result.text + "\n" +
-                    //     "Format: " + result.format + "\n" +
-                    //     "Cancelled: " + result.cancelled);
-
-                    if (result.cancelled || !result.text) {
-                        alert("Scanning failed");
-                        return;
-                    }
-                    $scope.findWhisky(result.text);
+            phoneapi.useCamera(function () {
+                    cordova.plugins.barcodeScanner.scan(
+                        function (result) {
+                            if (result.cancelled || !result.text) {
+                                alert("Scanning failed");
+                            } else {
+                                $scope.findWhisky(result.text);
+                            }
+                        },
+                        function (error) {
+                            alert("Scanning failed: " + error);
+                        }
+                    );
                 },
-                function (error) {
-                    alert("Scanning failed: " + error);
-                }
-            );
+                function () {
+                    alert("Camera unavailable");
+                });
         };
 
         $scope.onFavWhiskyNameChange = function (newVal) {
-            if(newVal.length >=4){
+            if (newVal.length >= 4) {
                 $scope.busyC = true;
                 $scope.clearFavWhisky();
                 $scope.allWhiskies = [];
-                $scope.getAllWhiskies(newVal).finally(function(){
+                $scope.getAllWhiskies(newVal).finally(function () {
                     $scope.busyC = false;
                 });
             }
         };
 
         $scope.captureUserLocation = function () {
-            $scope.message = undefined;
-            $scope.busyLoc = true;
-            geolocation.getCurrentPosition().then(function (geo) {
-                return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
-            })
-                .then(function (cities) {
-                    let cNames = cities.map(function (c) {
-                        return c.name;
+            phoneapi.useLocation(function(){
+                $scope.message = undefined;
+                $scope.busyLoc = true;
+                geolocation.getCurrentPosition().then(function (geo) {
+                    return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
+                })
+                    .then(function (cities) {
+                        let cNames = cities.map(function (c) {
+                            return c.name;
+                        });
+                        //console.log(cNames);
+                        $scope.selectAllCitiesStores(cNames);
+                        // collapse stores selection panel
+                        if ($scope.favStores.length) {
+                            $('#favStores').collapse('hide');
+                        }
+                    })
+                    .catch(function (err) {
+                        $scope.message = err;
+                    })
+                    .finally(function () {
+                        $scope.busyLoc = false;
                     });
-                    //console.log(cNames);
-                    $scope.selectAllCitiesStores(cNames);
-                    // collapse stores selection panel
-                    if ($scope.favStores.length) {
-                        $('#favStores').collapse('hide');
-                    }
-                })
-                .catch(function (err) {
-                    $scope.message = err;
-                })
-                .finally(function () {
-                    $scope.busyLoc = false;
-                });
+            }, function(){
+                alert("Location unavailable");
+            });
+
         };
 
         $scope.toggleStoreSelection = function (store) {
@@ -189,7 +194,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     $scope.fpColors.push(color);
                 });
                 let width = $('#barDiv')[0].clientWidth;
-                $scope.fpStyle = {'width': width+'px', 'height': width/1.7+'px'};
+                $scope.fpStyle = {'width': width + 'px', 'height': width / 1.7 + 'px'};
             }
         };
 
@@ -236,7 +241,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 });
             }
             let width = $('#chartDiv')[0].clientWidth;
-            $scope.selFpStyle = {'width': width+'px', 'height': width/1.4+'px'};
+            $scope.selFpStyle = {'width': width + 'px', 'height': width / 1.4 + 'px'};
         };
 
         $scope.filterAvailability = function (whisky) {
@@ -278,7 +283,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 $scope.onSelectedStoresChanged();   // update all post-store selection
             }
             if (prefs.favWhiskyName) {
-                $scope.getAllWhiskies(prefs.favWhiskyName).then(function(){
+                $scope.getAllWhiskies(prefs.favWhiskyName).then(function () {
                     $scope.allWhiskies.forEach(function (w) {
                         if (prefs.favWhiskyName === w.name) {
                             $scope.selectFavWhisky(w);
@@ -377,12 +382,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 }
                 $scope.message = undefined;
                 return $scope.selectFavWhisky(data.data);
-            }). then(function () {
+            }).then(function () {
                 $scope.showWhisky($scope.favWhisky);
             })
-            .catch(function (err) {
-                $scope.message = err;
-            });
+                .catch(function (err) {
+                    $scope.message = err;
+                });
         };
 
         //// initialization:
@@ -395,7 +400,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             .then(function () {
                 return $scope.loadPrefs();
             })
-            .catch(function(err){
+            .catch(function (err) {
                 $scope.message = err;
             })
             .finally(function () {

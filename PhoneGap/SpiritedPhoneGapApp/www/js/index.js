@@ -17,6 +17,9 @@
  * under the License.
  */
 var app = {
+    cameraAvailable: false,
+    geoAvailable: false,
+
     // Application Constructor
     initialize: function() {
         document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
@@ -56,6 +59,16 @@ var app = {
                 navigator.app.exitApp();
             }
         }, false);
+
+        navigator.geolocation.getCurrentPosition(function(position){
+            this.geoAvailable = true;
+            console.log('Geolocation success: ' + position);   // #DEBUG
+        }, function(error){
+            this.geoAvailable = false;
+            console.log('Geolocation failure: ' + error);   // #DEBUG
+        });
+
+        console.log('Camera: ' + navigator.camera);   // #DEBUG
     }
 };
 

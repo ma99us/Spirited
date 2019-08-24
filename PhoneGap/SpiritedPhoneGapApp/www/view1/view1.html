@@ -1,11 +1,11 @@
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
 
-<h2 style="text-align: center">Welcome to Spirited Whisky Search.</h2>
-<h3 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h3>
+<h3 style="text-align: center">Welcome to Spirited Whisky Search.</h3>
+<h4 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h4>
 
 <br/>
 
-<h3 id="busy" ng-show="busy" style="text-align: center" class="text-info">Initializing. Please wait...</h3>
+<h5 id="busy" ng-show="busy" style="text-align: center" class="text-info">Initializing. Please wait...</h5>
 
 <div ng-show="!busy" id="selFavStores" class="align-items-center">
     <div style="text-align:center">
@@ -18,7 +18,7 @@
     <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
         <div class="text-center">
             <button class="btn btn-outline-info" ng-click="captureUserLocation()">
-                <span ng-show="!busyLoc">Find nearby stores</span>
+                <span ng-disabled="" ng-show="!busyLoc">Find nearby stores</span>
                 <span ng-show="busyLoc">Looking around...</span>
             </button>
         </div>
@@ -50,16 +50,16 @@
 <br/>
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
-    <h3 style="text-align: center;">
-        Select Whisky you know you like:</h3>
-    <h4 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
+    <h4 style="text-align: center;">
+        Select Whisky you know you like:</h4>
+    <h5 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
                                            ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing the name..."/>
-    </h4>
-    <h4 style="text-align: center;">
+    </h5>
+    <h5 style="text-align: center;">
         <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan the NB Liquor product barcode on the bottle</button>
-    </h4>
+    </h5>
 
     <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 4 && !favWhisky">
         <div class="list-group align-items-center">
@@ -94,9 +94,9 @@
 </div>
 
 <div ng-show="!busy" id="similarWhiskies" class="align-items-center">
-    <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
+    <h4 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
         You may also like:
-    </h3>
+    </h4>
     <div class="col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
         <span style="text-align: right">Sorted: <i>most similar first</i></span>
         <div class="list-group align-items-center">
