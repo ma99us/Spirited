@@ -22,6 +22,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
             }
         };
 
+        $scope.isDeviceReady = phoneapi.isDeviceReady;  // function
+
         $scope.scanBarcode = function () {
             phoneapi.useCamera(function () {
                     cordova.plugins.barcodeScanner.scan(

@@ -57,7 +57,7 @@
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing the name..."/>
     </h5>
-    <h5 style="text-align: center;">
+    <h5 ng-if="isDeviceReady()" style="text-align: center;">
         <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan the NB Liquor product barcode on the bottle</button>
     </h5>
 
