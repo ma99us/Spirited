@@ -14,6 +14,14 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
         $scope.allWhiskies = [];
         $scope.dispQuantity = 10;
 
+        $scope.log = function (msg) {
+            if (msg && typeof msg === 'object') {
+                $scope.message = JSON.stringify(msg);
+            } else {
+                $scope.message = msg
+            }
+        };
+
         $scope.scanBarcode = function () {
             phoneapi.useCamera(function () {
                     cordova.plugins.barcodeScanner.scan(
@@ -51,8 +59,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
         };
 
         $scope.captureUserLocation = function () {
-            phoneapi.useLocation(function(){
-                $scope.message = undefined;
+            phoneapi.useLocation(function () {
+                $scope.log(undefined);
                 $scope.busyLoc = true;
                 geolocation.getCurrentPosition().then(function (geo) {
                     return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
@@ -69,12 +77,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
                         }
                     })
                     .catch(function (err) {
-                        $scope.message = err;
+                        $scope.log(err);
                     })
                     .finally(function () {
                         $scope.busyLoc = false;
                     });
-            }, function(err){
+            }, function (err) {
                 if (err === 'No Cordova') {
                     $scope.selectAllCitiesStores(['Fredericton']);      // #TEST
                     // collapse stores selection panel
@@ -318,39 +326,39 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
 
         $scope.getCacheStatus = function () {
             return $api.getCacheStatus().then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.cacheStatus = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getAllStores = function () {
             return $api.getAllStores().then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.allStores = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getAllWhiskies = function (name) {
             return $api.findWhiskiesLike(name).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.allWhiskies = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getFavWhisky = function (id) {
             return $api.getWhisky(id).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 if ($scope.favWhisky && $scope.favWhisky.id === data.data.id) {
                     $scope.favWhisky = data.data;
                 }
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
@@ -364,25 +372,25 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
             }
             else {
                 return $api.getWhisky(whisky.id).then(function (data) {
-                    $scope.message = undefined;
+                    $scope.log(undefined);
                     if ($scope.selectedWhisky && $scope.selectedWhisky.id === data.data.id) {
                         $scope.selectedWhisky = data.data;
                     }
                 }).catch(function (err) {
-                    $scope.message = err;
+                    $scope.log(err);
                 });
             }
         };
 
         $scope.getSimilarWhiskies = function (whisky) {
             $api.getSimilarWhiskies(whisky).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.similarWhiskies = data.data.map(function (sw) {
                     sw.available = $scope.filterAvailability(sw.candidate).length > 0;
                     return sw;
                 });
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
@@ -392,32 +400,37 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
                     alert('no such product :-(');
                     throw 'no such product :-(';
                 }
-                $scope.message = undefined;
+                $scope.log(undefined);
                 return $scope.selectFavWhisky(data.data);
             }).then(function () {
                 $scope.showWhisky($scope.favWhisky);
             })
                 .catch(function (err) {
-                    $scope.message = err;
+                    $scope.log(err);
                 });
         };
 
         //// initialization:
-
-        $scope.busy = true;
-        $scope.getCacheStatus()
-            .then(function () {
-                return $scope.getAllStores();
-            })
-            .then(function () {
-                return $scope.loadPrefs();
-            })
-            .catch(function (err) {
-                $scope.message = err;
-            })
-            .finally(function () {
-                $scope.busy = false;
-            });
+        try {
+            $scope.busy = true;
+            $scope.getCacheStatus()
+                .then(function () {
+                    return $scope.getAllStores();
+                })
+                .then(function () {
+                    return $scope.loadPrefs();
+                })
+                .catch(function(err){
+                    $scope.log(err);
+                })
+                .finally(function () {
+                    $scope.busy = false;
+                });
+        }
+        catch (err) {
+            $scope.log(err);
+            $scope.busy = false;
+        }
     }])
     .directive('addressLink', function () {
         return {

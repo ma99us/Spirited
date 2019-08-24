@@ -1,7 +1,8 @@
 angular.module('phoneapi', [])
     .factory('phoneapi', ['$q', '$window', function ($q, $window) {
         const cordova = $window.cordova;
-        const diagnostic = cordova ? cordova.plugins.diagnostic : null;
+        const plugins = cordova ? cordova.plugins : null;
+        const diagnostic = plugins ? plugins.diagnostic : null;
 
         return {
             useCamera: function (successFunc, errorFunc) {
