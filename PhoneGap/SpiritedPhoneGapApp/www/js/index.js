@@ -32,6 +32,7 @@ var app = {
         console.log('Device ready');   // #DEBUG
         this.deviceReady = true;
         this.initDevice();
+        alert('Device ready');
     },
 
     // Update DOM on a Received Event
