@@ -1,16 +1,16 @@
 angular.module('phoneapi', [])
-    .factory('phoneapi', ['$q', 'cordova', function ($q, $window, cordova) {
+    .factory('phoneapi', ['$q', '$window', function ($q, $window) {
         return {
             useCamera: function (successFunc, errorFunc) {
                 if(!cordova){
                     errorFunc('No Cordova');
                 } else {
-                    cordova.plugins.diagnostic.isCameraAuthorized(
+                    $window.cordova.plugins.diagnostic.isCameraAuthorized(
                         function (authorized) {
                             if (!authorized) {
-                                cordova.plugins.diagnostic.requestCameraAuthorization(
+                                $window.cordova.plugins.diagnostic.requestCameraAuthorization(
                                     function (status) {
-                                        if (status == cordova.plugins.diagnostic.permissionStatus.GRANTED) {
+                                        if (status == $window.cordova.plugins.diagnostic.permissionStatus.GRANTED) {
                                             successFunc();
                                         } else {
                                             errorFunc('Bad status: ' + status);
@@ -34,11 +34,11 @@ angular.module('phoneapi', [])
                 if(!cordova){
                     errorFunc('No Cordova');
                 } else {
-                    cordova.plugins.diagnostic.isLocationAuthorized(function (authorized) {
+                    $window.cordova.plugins.diagnostic.isLocationAuthorized(function (authorized) {
                         if (!authorized) {
-                            cordova.plugins.diagnostic.requestLocationAuthorization(function (status) {
-                                if (status === cordova.plugins.diagnostic.permissionStatus.GRANTED
-                                    || status === cordova.plugins.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
+                            $window.cordova.plugins.diagnostic.requestLocationAuthorization(function (status) {
+                                if (status === $window.cordova.plugins.diagnostic.permissionStatus.GRANTED
+                                    || status === $window.cordova.plugins.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
                                     successFunc();
                                 }
                                 else {
