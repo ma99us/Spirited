@@ -1,14 +1,29 @@
 angular.module('phoneapi', [])
     .factory('phoneapi', ['$q', '$window', function ($q, $window) {
-        const cordova = $window.cordova;
-        const plugins = cordova ? cordova.plugins : null;
-        const diagnostic = plugins ? plugins.diagnostic : null;
-        alert('cordova=' + cordova + '; plugins=' + plugins + '; diagnostic=' + diagnostic);    //#TEST
+
+        function isDeviceReady() {
+            return $window.app.deviceReady || false;
+        }
+
+        function getCordovaPlugins() {
+            const cordova = isDeviceReady() ? $window.cordova : null;
+            return cordova ? cordova.plugins : null;
+        }
+
+        function getCordovaDiagnosticPlugin() {
+            const plugins = getCordovaPlugins();
+            return plugins ? plugins.diagnostic : null;
+        }
 
         return {
+            isDeviceReady: function () {
+                return isDeviceReady();
+            },
+
             useCamera: function (successFunc, errorFunc) {
-                alert('diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
-                if(!diagnostic){
+                const diagnostic = getCordovaDiagnosticPlugin()
+                alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
+                if (!diagnostic) {
                     errorFunc('No Cordova');
                 } else {
                     diagnostic.isCameraAuthorized(
@@ -37,8 +52,9 @@ angular.module('phoneapi', [])
             },
 
             useLocation: function (successFunc, errorFunc) {
-                alert('diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
-                if(!diagnostic){
+                const diagnostic = getCordovaDiagnosticPlugin()
+                alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
+                if (!diagnostic) {
                     errorFunc('No Cordova');
                 } else {
                     diagnostic.isLocationAuthorized(function (authorized) {

@@ -17,8 +17,7 @@
  * under the License.
  */
 var app = {
-    cameraAvailable: false,
-    geoAvailable: false,
+    deviceReady: false,
 
     // Application Constructor
     initialize: function() {
@@ -30,20 +29,14 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
-        this.receivedEvent('deviceready');
+        console.log('Device ready');   // #DEBUG
+        this.deviceReady = true;
+        this.initDevice();
     },
 
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        console.log('Received Event: ' + id);   // #DEBUG
-
-        // var parentElement = document.getElementById(id);
-        // var listeningElement = parentElement.querySelector('.listening');
-        // var receivedElement = parentElement.querySelector('.received');
-        //
-        // listeningElement.setAttribute('style', 'display:none;');
-        // receivedElement.setAttribute('style', 'display:block;');
-
+    initDevice: function(id) {
+        // intercept Exit by Back button press
         document.addEventListener("backbutton", function (e) {
             if (lightbox) {
                 lightbox.close();
@@ -60,15 +53,15 @@ var app = {
             }
         }, false);
 
-        navigator.geolocation.getCurrentPosition(function(position){
-            this.geoAvailable = true;
-            console.log('Geolocation success: ' + position);   // #DEBUG
-        }, function(error){
-            this.geoAvailable = false;
-            console.log('Geolocation failure: ' + error);   // #DEBUG
-        });
-
-        console.log('Camera: ' + navigator.camera);   // #DEBUG
+        // navigator.geolocation.getCurrentPosition(function(position){
+        //     this.geoAvailable = true;
+        //     console.log('Geolocation success: ' + position);   // #DEBUG
+        // }, function(error){
+        //     this.geoAvailable = false;
+        //     console.log('Geolocation failure: ' + error);   // #DEBUG
+        // });
+        //
+        // console.log('Camera: ' + navigator.camera);   // #DEBUG
     }
 };
 
