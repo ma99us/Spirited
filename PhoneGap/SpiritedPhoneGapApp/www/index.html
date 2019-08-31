@@ -23,8 +23,8 @@
     <meta charset="utf-8" />
     <meta name="description" content="PhoneGap App for SpiritApi">
         <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-        <!--<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *; font-src 'self' data:" />-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *; font-src 'self' data:" />
+        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
         <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
@@ -74,32 +74,5 @@
     <script src="core/localstorage/localstorage.js"></script>
     <script src="core/geolocation/geolocation.js"></script>
     <script src="core/mobile/phoneapi.js"></script>
-    <!--<script type="text/javascript">-->
-        <!--function preventDefault(e) {-->
-            <!--e.preventDefault();-->
-        <!--};-->
-        <!--var lightbox = null;-->
-        <!--// enable 'lightbox' data-toggle links-->
-        <!--$(document).on('click', '[data-toggle="lightbox"]', function (event) {-->
-            <!--event.preventDefault();-->
-            <!--$(this).ekkoLightbox({-->
-                <!--wrapping: false, alwaysShowClose: true,-->
-                <!--onShown: function () {-->
-                    <!--console.log('Popup shown'); // #DEBUG-->
-                    <!--lightbox =this;-->
-                    <!--$('body').bind('touchmove', preventDefault);-->
-                <!--},-->
-                <!--onNavigate: function (direction, itemIndex) {-->
-                    <!--console.log('Popup navigating ' + direction + '. Current item: ' + itemIndex);  // #DEBUG-->
-                <!--},-->
-                <!--onHidden: function (direction, itemIndex) {-->
-                    <!--console.log('Popup hidden');    // #DEBUG-->
-                    <!--lightbox =null;-->
-                    <!--$('body').unbind('touchmove', preventDefault);-->
-                    <!--$('#selectedWhiskyModalCenter').css('overflow', 'auto');-->
-                <!--}-->
-            <!--});-->
-        <!--});-->
-    <!--</script>-->
     </body>
 </html>

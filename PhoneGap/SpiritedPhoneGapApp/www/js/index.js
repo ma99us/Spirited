@@ -18,6 +18,7 @@
  */
 var app = {
     deviceReady: false,
+    lightbox: null,
 
     // Application Constructor
     initialize: function() {
@@ -32,19 +33,19 @@ var app = {
         console.log('Device ready');   // #DEBUG
         this.deviceReady = true;
         this.initDevice();
-        alert('Device ready');
+        //alert('Device ready');
     },
 
     // Update DOM on a Received Event
     initDevice: function(id) {
         // intercept Exit by Back button press
         document.addEventListener("backbutton", function (e) {
-            if (lightbox) {
-                lightbox.close();
+            if (app.lightbox) {
+                app.lightbox.close();
                 e.preventDefault();
             }
             else if (($("#selectedWhiskyModalCenter").data('bs.modal') || {})._isShown) {
-                $("#selectedWhiskyModalCenter").modal('hide')
+                $("#selectedWhiskyModalCenter").modal('hide');
                 e.preventDefault();
             }
             else if (!confirm("Are you sure you want to close the app?")) {
@@ -53,6 +54,30 @@ var app = {
                 navigator.app.exitApp();
             }
         }, false);
+
+
+        // enable 'lightbox' data-toggle links
+        $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+            event.preventDefault();
+            $(this).ekkoLightbox({
+                wrapping: false, alwaysShowClose: true,
+                onShown: function () {
+                    console.log('Popup shown'); // #DEBUG
+                    app.lightbox =this;
+                    $('body').bind('touchmove', app.preventDefault);
+                },
+                onNavigate: function (direction, itemIndex) {
+                    console.log('Popup navigating ' + direction + '. Current item: ' + itemIndex);  // #DEBUG
+                },
+                onHidden: function (direction, itemIndex) {
+                    console.log('Popup hidden');    // #DEBUG
+                    app.lightbox =null;
+                    $('body').unbind('touchmove', app.preventDefault);
+                    $('#selectedWhiskyModalCenter').css('overflow', 'auto');
+                }
+            });
+        });
+
 
         // navigator.geolocation.getCurrentPosition(function(position){
         //     this.geoAvailable = true;
@@ -63,6 +88,10 @@ var app = {
         // });
         //
         // console.log('Camera: ' + navigator.camera);   // #DEBUG
+    },
+
+    preventDefault: function (e) {
+        e.preventDefault();
     }
 };
 
