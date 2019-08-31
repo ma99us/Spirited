@@ -208,25 +208,34 @@
 <br/>
 
 <div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <table border="0" width="100%">
-        <tr>
-            <td ng-show="cacheStatus" align="left">
-                <div class="d-none d-lg-block d-xl-block">
-                    Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
-                    <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
-                </div>
-            </td>
-            <td>
-                <div class="d-none d-lg-block d-xl-block">
-                    <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img class="qr-code" src="img/qrcode.png"></a>
-                </div>
-            </td>
-            <td align="right">
-                <button class="btn btn-sm" type="button" ng-click="clearPrefs()">
-                    Start Over
-                </button>
-            </td>
-        </tr>
-    </table>
+    <div class="col-1 align-items-sm-start mx-auto">
+        <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
+                aria-expanded="false"
+                aria-controls="infoDiv">
+            info...
+        </button>
+    </div>
+    <div class="col-9 align-items-sm-center mx-auto">
+        <div id="infoDiv" class="panel-collapse collapse in card card-body">
+            <table border="0" width="100%">
+                <tr>
+                    <td ng-show="cacheStatus" align="left">
+                        Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
+                        <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
+                    </td>
+                    <td align="right">
+                        <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img
+                                class="qr-code"
+                                src="img/qrcode.png"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-2 align-items-end mx-auto">
+        <button class="btn btn-outline-warning" type="button" ng-click="clearPrefs()">
+            Start Over
+        </button>
+    </div>
 </div>
 
