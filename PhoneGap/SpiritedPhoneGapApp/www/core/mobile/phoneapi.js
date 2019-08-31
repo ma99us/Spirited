@@ -22,7 +22,7 @@ angular.module('phoneapi', [])
 
             useCamera: function (successFunc, errorFunc) {
                 const diagnostic = getCordovaDiagnosticPlugin()
-                alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
+                //alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
                 if (!diagnostic) {
                     errorFunc('No Cordova');
                 } else {
@@ -53,7 +53,7 @@ angular.module('phoneapi', [])
 
             useLocation: function (successFunc, errorFunc) {
                 const diagnostic = getCordovaDiagnosticPlugin()
-                alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
+                //alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
                 if (!diagnostic) {
                     errorFunc('No Cordova');
                 } else {

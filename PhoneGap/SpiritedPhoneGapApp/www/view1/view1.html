@@ -16,7 +16,7 @@
         </button>
     </div>
     <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
-        <div class="text-center">
+        <div ng-if="isDeviceReady()" class="text-center">
             <button class="btn btn-outline-info" ng-click="captureUserLocation()">
                 <span ng-disabled="" ng-show="!busyLoc">Find nearby stores</span>
                 <span ng-show="busyLoc">Looking around...</span>
