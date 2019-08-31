@@ -208,28 +208,24 @@
 <br/>
 
 <div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <div class="col-1 align-items-sm-start mx-auto">
+    <div class="col-2 align-items-start mx-auto">
         <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
                 aria-expanded="false"
                 aria-controls="infoDiv">
             info...
         </button>
     </div>
-    <div class="col-9 align-items-sm-center mx-auto">
+    <div class="col-8 align-items-center mx-auto">
         <div id="infoDiv" class="panel-collapse collapse in card card-body">
-            <table border="0" width="100%">
-                <tr>
-                    <td ng-show="cacheStatus" align="left">
-                        Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
-                        <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
-                    </td>
-                    <td align="right">
-                        <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img
-                                class="qr-code"
-                                src="img/qrcode.png"></a>
-                    </td>
-                </tr>
-            </table>
+            <div ng-show="cacheStatus">
+                Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
+                <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
+            </div>
+            <div>
+                <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img
+                        class="qr-code"
+                        src="img/qrcode.png"></a>
+            </div>
         </div>
     </div>
     <div class="col-2 align-items-end mx-auto">
