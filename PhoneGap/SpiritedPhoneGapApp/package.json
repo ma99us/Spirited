@@ -20,6 +20,7 @@
     "bootstrap": "^4.2.1",
     "chart.js": "^2.7.3",
     "cordova-android": "^8.0.0",
+    "cordova-android-support-gradle-release": "^3.0.1",
     "cordova-browser": "^6.0.0",
     "cordova-ios": "^5.0.1",
     "cordova-plugin-barcodescanner": "^0.7.4",
@@ -83,7 +84,10 @@
       "cordova-plugin-barcodescanner": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-geolocation": {},
-      "cordova.plugins.diagnostic": {}
+      "cordova.plugins.diagnostic": {},
+      "cordova-android-support-gradle-release": {
+        "ANDROID_SUPPORT_VERSION": "27.1.1"
+      }
     },
     "platforms": [
       "ios",
