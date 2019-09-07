@@ -16,8 +16,8 @@
     <plugin name="cordova-plugin-device" source="npm" spec="~1.1.7" />
     <plugin name="cordova-plugin-device-orientation" source="npm" spec="~1.0.7" />
     <plugin name="cordova-plugin-dialogs" source="npm" spec="~1.2.1" />
-    <plugin name="cordova-plugin-file" source="npm" spec="~6.0.1" />
-    <plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.1" />
+    <!--<plugin name="cordova-plugin-file" source="npm" spec="~6.0.1" />-->
+    <!--<plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.1" />-->
     <plugin name="cordova-plugin-network-information" source="npm" spec="~1.2.1" />
     <plugin name="cordova-plugin-barcodescanner" source="npm" spec="~0.7.4" />
     <plugin name="cordova-plugin-geolocation" spec="~4.0.2" />
