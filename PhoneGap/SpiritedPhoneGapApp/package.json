@@ -77,9 +77,8 @@
       "cordova-plugin-camera": {},
       "cordova-plugin-geolocation": {},
       "cordova.plugins.diagnostic": {},
-      "cordova-android-support-gradle-release": {
-        "ANDROID_SUPPORT_VERSION": "27.1.1"
-      }
+      "cordova-android-support-gradle-release": {},
+      "cordova-plugin-compat": {}
     },
     "platforms": [
       "ios",
