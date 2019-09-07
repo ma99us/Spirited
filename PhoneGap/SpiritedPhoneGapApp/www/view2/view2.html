@@ -34,7 +34,7 @@
 <whisky-details sel-whisky="selWhisky" editable="true"></whisky-details>
 
 <p style="padding-left: 3em">
- <button ng-show="selWhisky" ng-disabled="busySimilarW" ng-click="getSimilarWhiskies(selWhisky)">Suggest Similar Whiskies</button>
+ <button ng-show="selWhisky" ng-disabled="busySimilarW" ng-click="findSimilarWhiskies(selWhisky)">Suggest Similar Whiskies</button>
 <ul>
     <h3 ng-show="similarWhiskies && similarWhiskies.length > 0">Similar tasting whiskies:</h3>
     <p ng-show="similarWhiskies.length == 0">Nothing tastes similar :-(</p>

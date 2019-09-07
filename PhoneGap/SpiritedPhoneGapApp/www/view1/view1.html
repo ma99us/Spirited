@@ -1,7 +1,7 @@
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
 
-<h3 style="text-align: center">Welcome to Spirited Whisky Search.</h3>
-<h4 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h4>
+<h3 style="text-align: center">Welcome To Spirits Search.</h3>
+<!--<h4 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h4>-->
 
 <br/>
 
@@ -9,10 +9,10 @@
 
 <div ng-show="!busy" id="selFavStores" class="align-items-center">
     <div style="text-align:center">
-        <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-primary'" type="button" data-toggle="collapse" data-target="#favStores"
+        <button ng-class="preferences && favStores.length ? 'btn btn-outline-info collapsed' : 'btn btn-primary collapsed'" type="button" data-toggle="collapse" data-target="#favStores"
                 aria-expanded="false"
                 aria-controls="favStores">
-            Select your preferred NB Liquor stores
+            <span class="if-collapsed ">Select</span><span class="if-not-collapsed">Hide</span> your preferred NB Liquor stores
         </button>
     </div>
     <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
@@ -51,16 +51,16 @@
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
     <h4 style="text-align: center;">
-        Select Whisky you know you like:</h4>
+        Name your poison:</h4>
+    <h5 ng-if="isDeviceReady()" style="text-align: center;">
+        <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan NB Liquor product barcode</button>
+    </h5>
+
     <h5 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
                                            ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
-                                           placeholder="start typing the name..."/>
+                                           placeholder="start typing a spirit name..."/>
     </h5>
-    <h5 ng-if="isDeviceReady()" style="text-align: center;">
-        <button class="btn btn-outline-primary" ng-click="scanBarcode();">Or scan the NB Liquor product barcode on the bottle</button>
-    </h5>
-
     <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 4 && !favWhisky">
         <div class="list-group align-items-center">
             <span ng-show="busyC">Looking...</span>
@@ -69,6 +69,19 @@
             </a>
             <span ng-show="allWhiskies.length >= 10">...</span>
             <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.length">--- no matches ---</h4>
+        </div>
+    </div>
+
+    <div ng-if="recentWhiskies.length" class="row-fluid summary col-lg-6 mx-auto">
+        <button id="recentViewsBtn" class="btn btn-sm collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
+                aria-expanded="false"
+                aria-controls="recentViews">
+            <span class="if-collapsed ">Show</span><span class="if-not-collapsed">Hide</span> Recent Searches
+        </button>
+        <div id="recentViews" class="panel-collapse collapse in card card-body list-group align-items-center">
+            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
+                <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+            </a>
         </div>
     </div>
 </div>
@@ -217,12 +230,12 @@
     </div>
     <div class="col-8 align-items-center mx-auto">
         <div id="infoDiv" class="panel-collapse collapse in card card-body">
-            <div ng-show="cacheStatus">
+            <div class="col-lg-5" ng-show="cacheStatus">
                 Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
                 <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
             </div>
-            <div>
-                <a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img
+            <div class="col-lg-5">
+                <a href="https://build.phonegap.com/apps/3683604/share">Get the Spirited App<img
                         class="qr-code"
                         src="img/qrcode.png"></a>
             </div>

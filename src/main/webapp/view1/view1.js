@@ -352,7 +352,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         };
 
         $scope.getSimilarWhiskies = function (whisky) {
-            $api.getSimilarWhiskies(whisky).then(function (data) {
+            $api.findSimilarWhiskies(whisky).then(function (data) {
                 $scope.message = undefined;
                 $scope.similarWhiskies = data.data.map(function (sw) {
                     sw.available = $scope.filterAvailability(sw.candidate).length > 0;
@@ -364,7 +364,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         };
 
         $scope.findWhisky = function (code) {
-            $api.findWhisky(code).then(function (data) {
+            $api.findWhiskyByCode(code).then(function (data) {
                 if (!data.data) {
                     alert('no such product :-(');
                     throw 'no such product :-(';

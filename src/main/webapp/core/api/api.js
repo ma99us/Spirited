@@ -62,7 +62,7 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            getSimilarWhiskies: function (whisky) {
+            findSimilarWhiskies: function (whisky) {
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/similar/' + whisky.id, {params: {}}).then(function (response) {
@@ -116,7 +116,7 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            findWhisky: function (code) {
+            findWhiskyByCode: function (code) {
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/find/' + code, {params: {}}).then(function (response) {

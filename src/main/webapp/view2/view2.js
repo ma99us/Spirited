@@ -127,7 +127,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
         $scope.getSimilarWhiskies = function(whisky){
             $scope.busySimilarW = true;
-            $api.getSimilarWhiskies(whisky).then(function (data) {
+            $api.findSimilarWhiskies(whisky).then(function (data) {
                 $scope.message = undefined;
                 $scope.similarWhiskies = data.data;
             }).catch(function (err) {

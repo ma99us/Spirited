@@ -127,7 +127,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
         $scope.getSimilarWhiskies = function(whisky){
             $scope.busySimilarW = true;
-            $api.getSimilarWhiskies(whisky).then(function (data) {
+            $api.findSimilarWhiskies(whisky).then(function (data) {
                 $scope.message = undefined;
                 $scope.similarWhiskies = data.data;
             }).catch(function (err) {
@@ -224,7 +224,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
             templateUrl: 'view2/whisky-row.html',
             controller: ['$scope', function ($scope) {
                 $scope.$watch('selWhisky', function (newValue, oldValue) {
-                    $scope.isSelected = $scope.selWhisky && ($scope.whisky.id === $scope.selWhisky.id);
+                    $scope.isSelected = $scope.selWhisky && $scope.selWhisky.id === $scope.whisky.id;
                     if($scope.isSelected){
                         $scope.rowStyle={'background-color':'CornFlowerBlue'};
                     }

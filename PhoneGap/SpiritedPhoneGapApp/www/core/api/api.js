@@ -29,10 +29,13 @@ angular.module('api', [])
 
             getAllStores: function () {
                 var deferred = $q.defer();
+                busy = true;
                 $http.get(hostAdr + 'api/store', {params: {}}).then(function (response) {
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
@@ -52,22 +55,24 @@ angular.module('api', [])
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/cache/rebuild', {params: {category: category || 'ALL', deep: true}}).then(function (response) {
-                    busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
 
-            getSimilarWhiskies: function (whisky) {
+            findSimilarWhiskies: function (whisky) {
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/similar/' + whisky.id, {params: {}}).then(function (response) {
-                    busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
@@ -76,10 +81,11 @@ angular.module('api', [])
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/like/' + name, {params: {}}).then(function (response) {
-                    busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
@@ -94,10 +100,11 @@ angular.module('api', [])
                     format: format || "short"
                 };
                 $http.get(hostAdr + 'api/whisky', {params: params}).then(function (response) {
-                    busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
@@ -106,22 +113,37 @@ angular.module('api', [])
                 var deferred = $q.defer();
                 busy = true;
                 $http.get(hostAdr + 'api/whisky/' + id, {params: {}}).then(function (response) {
-                    busy = false;
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },
 
-            findWhisky: function (code) {
+            findWhiskyByName: function (name) {
                 var deferred = $q.defer();
                 busy = true;
-                $http.get(hostAdr + 'api/whisky/find/' + code, {params: {}}).then(function (response) {
-                    busy = false;
+                $http.get(hostAdr + 'api/whisky/name/' + name, {params: {}}).then(function (response) {
                     validateResponse(deferred, response);
                 }, function(err) {
                     validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
+                });
+                return deferred.promise;
+            },
+
+            findWhiskyByCode: function (code) {
+                var deferred = $q.defer();
+                busy = true;
+                $http.get(hostAdr + 'api/whisky/code/' + code, {params: {}}).then(function (response) {
+                    validateResponse(deferred, response);
+                }, function(err) {
+                    validateResponse(deferred, err);
+                }).finally(function () {
+                    busy = false;
                 });
                 return deferred.promise;
             },

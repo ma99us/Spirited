@@ -23,7 +23,7 @@ public class WhiskyApi {
     @Inject
     private SuggestionsService suggestionsService;
 
-    @Path("/find/{code}")
+    @Path("/code/{code}")
     @GET
     public Response findWhiskyByCode(@PathParam("code") String code) {
         try {
@@ -35,11 +35,24 @@ public class WhiskyApi {
         }
     }
 
+    @Path("/name/{name}")
+    @GET
+    public Response findWhiskyByName(@PathParam("name") String name) {
+        try {
+            Whisky whisky = cacheService.getWhiskyService().findWhiskyByName(name);
+            cacheService.validateCache(whisky, CacheService.CacheOperation.CACHE_IF_NEEDED);
+            return Response.ok(whisky);
+        } catch (Exception e) {
+            return Response.fail(e);
+        }
+    }
+
     @Path("/like/{name}")
     @GET
-    public Response findWhiskiesLike(@PathParam("name") String name) {
+    public Response findWhiskiesLike(@PathParam("name") String name,
+                                     @QueryParam("maxCandidates") @DefaultValue("10") int maxCandidates) {
         try {
-            List<Whisky> whisky = cacheService.getWhiskyService().fuzzyFindWhiskiesByName(name);
+            List<Whisky> whisky = cacheService.getWhiskyService().fuzzyFindWhiskiesByName(name, maxCandidates);
             for (Whisky w : whisky) {
                 w.setCacheExternalUrl(null);        // from CacheItem
                 w.setCacheSpentMs(null);            // from CacheItem

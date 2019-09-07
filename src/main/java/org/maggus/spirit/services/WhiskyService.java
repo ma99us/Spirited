@@ -47,14 +47,24 @@ public class WhiskyService {
             em.detach(w);
             return w.clone();
         }).collect(Collectors.toList());
-//        resultList.forEach(w -> {
-//            em.detach(w);
-//        });
-//        return resultList;
     }
 
     public Whisky getWhisky(long id) throws Exception {
         return em.find(Whisky.class, id);
+    }
+
+    public Whisky findWhiskyByName(String name) throws Exception {
+        try {
+            if (name == null || name.isEmpty()) {
+                throw new NoResultException("Name can not be null");
+            }
+            TypedQuery<Whisky> q = em.createQuery("select w from Whisky w where w.name=:name", Whisky.class);
+            q.setParameter("name", name);
+            List<Whisky> resultList = q.getResultList();
+            return resultList != null && !resultList.isEmpty() ? resultList.get(0) : null;
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     public Whisky findWhiskyByCode(String productCode) throws Exception {
@@ -73,7 +83,7 @@ public class WhiskyService {
         }
     }
 
-    public List<Whisky> fuzzyFindWhiskiesByName(String name) throws Exception {
+    public List<Whisky> fuzzyFindWhiskiesByName(String name, int maxCandidates) throws Exception {
         if (name == null || name.isEmpty()) {
             throw new NoResultException("name can not be null");
         }
@@ -91,7 +101,6 @@ public class WhiskyService {
             diff.setStdDeviation(AbstractParser.fuzzyMatchNames(w.getName(), name));
             return diff;
         }).collect(Collectors.toMap(WhiskyDiff::getStdDeviation, WhiskyDiff::getCandidate, (oldValue, newValue) -> oldValue, TreeMap::new));
-        int maxCandidates = 10; // return at max that many candidates
         ArrayList<Whisky> whiskies = new ArrayList<>(maxCandidates);
         for (Map.Entry<Double, Whisky> entry : candidates.entrySet()) {
             if (maxCandidates-- <= 0) {
