@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.maggus.spirit" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.maggus.spirit" version="1.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SpiritedApp</name>
     <description>
-        SpiritedApp application for Spirited API service.
+        Find your new favorite poison.
     </description>
-    <author email="ma99us@gmail.com" href="gerdov.com">
+    <author email="ma99us@gmail.com" href="http://spiritsearch.ca">
         -=MaGGuS=-
     </author>
     <content src="index.html" />
@@ -65,6 +65,9 @@
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
             <string>This app requires location access to find stores nearby.</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="ITSAppUsesNonExemptEncryption">
+            <false/>
         </edit-config>
     </platform>
 </widget>

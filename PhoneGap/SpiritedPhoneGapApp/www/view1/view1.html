@@ -18,7 +18,7 @@
     <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
         <div ng-if="isDeviceReady()" class="text-center">
             <button class="btn btn-outline-info" ng-click="captureUserLocation()">
-                <span ng-disabled="" ng-show="!busyLoc">Find nearby stores</span>
+                <span ng-show="!busyLoc">Find nearby stores</span>
                 <span ng-show="busyLoc">Looking around...</span>
             </button>
         </div>
@@ -230,14 +230,22 @@
     </div>
     <div class="col-8 align-items-center mx-auto">
         <div id="infoDiv" class="panel-collapse collapse in card card-body">
-            <div class="col-lg-5" ng-show="cacheStatus">
+            <div ng-show="cacheStatus"  class="text-center">
                 Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
                 <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
             </div>
-            <div class="col-lg-5">
-                <a href="https://build.phonegap.com/apps/3683604/share">Get the Spirited App<img
+            <!--<div  class="text-center">-->
+                <!--<a href="https://build.phonegap.com/apps/3683604/share">Get the <img-->
+                        <!--class="qr-code"-->
+                        <!--src="img/qrcode.png"> SpiritedApp</a>-->
+            <!--</div>-->
+            <div  class="text-center">
+                <a href="http://onelink.to/myhrkb">Get the <img
                         class="qr-code"
-                        src="img/qrcode.png"></a>
+                        src="img/qrcode_onelink.png"> SpiritedApp</a>
+            </div>
+            <div class="text-center">
+                <a href="#/legal"><h4>Privacy Policy</h4></a>
             </div>
         </div>
     </div>

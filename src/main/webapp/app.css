@@ -34,3 +34,11 @@ p.footnote {
   position: absolute;
   bottom: 10px;
 }
+
+[data-toggle="collapse"].collapsed .if-not-collapsed {
+  display: none;
+}
+
+[data-toggle="collapse"]:not(.collapsed) .if-collapsed {
+  display: none;
+}

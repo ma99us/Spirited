@@ -28,6 +28,9 @@ angular.module('myApp', [
         //     requireBase: true
         // });
 
+        $routeProvider.when('/legal', {
+            templateUrl: 'privacy_policy.html'
+        });
         $routeProvider.otherwise({redirectTo: '/view1'});
 
         $sceDelegateProvider.resourceUrlWhitelist([
@@ -36,7 +39,8 @@ angular.module('myApp', [
             // Allow loading from third party domains.
             'http://gerdov.com/spirited/**',
             'http://192.168.2.19/spirited/**',
-            'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/**'
+            'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/**',
+            'http://spiritsearch.ca/**'
         ]);
 
         $httpProvider.interceptors.push('authInterceptor');
