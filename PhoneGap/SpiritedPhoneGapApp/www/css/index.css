@@ -115,3 +115,17 @@ h1 {
     display: none;
 }
 
+
+.background {
+    background-size: 100%;
+    background-repeat: repeat-x;
+    background-image: url(/img/promo_graphics.jpg);
+    background-position: top left;
+    background-attachment: fixed;
+    background-color: #dcd1cb;
+}
+
+.contrast {
+    color: #cbd5dc;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}

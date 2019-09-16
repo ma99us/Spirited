@@ -1,9 +1,12 @@
+<div style="background-color: #dcd1cb;">
 <h1 style="text-align: center">API Data</h1>
 <h3 ng-show="busy" style="text-align: center">Please wait...</h3>
 <p style="color:orangered; font-weight:bold;">{{message}}</p>
 
 <div>
-    <button ng-disabled="busy" ng-click="rebuildAllCache()">REBUILD ALL DATA!</button>
+    Rebuild Cached Data for:
+    <input type="text" ng-model="reCacheCategory" placeholder="ALL" class="text-transform: uppercase;" />
+    <button ng-disabled="busy" ng-click="rebuildAllCache(reCacheCategory.toUpperCase())">REBUILD!</button>
         <span ng-show="cacheStatus"> | Cache last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd  hh:mm:ss'}} in {{(cacheStatus.cacheSpentMs/1000).toFixed(1)}} secs </span>
         <span ng-show="lastRebuildTs"> | Rebuilt in {{lastRebuildTs}} secs </span>
         <span ng-show="cacheStatus.country && cacheStatus.region"> | {{cacheStatus.country}} Products, {{cacheStatus.region}} with Flavor Profiles</span>
@@ -61,4 +64,6 @@
     <p><b>GET</b> <b>/api/cache/status</b> ->      Response cacheStatus() - <i>Returns some information and statistics about last time cached data was re-built.</i></p>
     <p><b>GET</b> <b>/api/cache/rebuild</b> ->      Response rebuildAllCachedData() - <i>Clears and re-caches all data from third parties. Long operation, could take several minutes!</i></p>
 
+    <p><a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img class="qr-code" src="img/qrcode.png"></a></p>
+</div>
 </div>

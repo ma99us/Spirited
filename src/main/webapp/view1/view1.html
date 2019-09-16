@@ -1,11 +1,11 @@
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
 
-<h2 style="text-align: center">Welcome To Spirits Search.</h2>
+<h2 style="text-align: center" class="contrast">Welcome To Spirits Search.</h2>
 <!--<h3 ng-show="!busy" style="text-align: center">Let's find your new favorite Whisky!</h3>-->
 
 <br/>
 
-<h3 id="busy" ng-show="busy" style="text-align: center" class="text-info">Initializing. Please wait...</h3>
+<h3 id="busy" ng-show="busy" style="text-align: center" class="text-warning contrast">Initializing. Please wait...</h3>
 
 <div ng-show="!busy" id="selFavStores" class="align-items-center">
     <div style="text-align:center">
@@ -40,22 +40,23 @@
     </div>
     <div ng-if="preferences && favStores.length" class="card card-body col-lg-6 mx-auto" style="text-align: center">
         <span>{{favStores.length}} store(s) selected in <span ng-bind-html="favStoresCities"></span>, only their inventory will
-            be shown.</span>
+            be considered.</span>
     </div>
-    <div ng-if="preferences && !favStores.length" style="text-align: center">
-        No stores selected, all available inventory will be shown.
+    <div ng-if="preferences && !favStores.length" class="card card-body col-lg-6 mx-auto" style="text-align: center">
+        No preferred stores selected, all available inventory will be considered.
     </div>
 </div>
 
 <br/>
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
-    <h3 style="text-align: center;">
+    <h3 style="text-align: center;" class="contrast">
         Name your poison:</h3>
     <h4 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
                                            ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
-                                           placeholder="start typing a spirit name..."/>
+                                           placeholder="start typing a spirit name..."
+                                           autofocus />
     </h4>
     <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 4 && !favWhisky">
         <div class="list-group align-items-center">
@@ -103,7 +104,7 @@
 </div>
 
 <div ng-show="!busy" id="similarWhiskies" class="align-items-center">
-    <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
+    <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky" class="contrast">
         You may also like:
     </h3>
     <div class="col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
