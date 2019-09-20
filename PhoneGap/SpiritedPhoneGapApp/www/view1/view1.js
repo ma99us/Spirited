@@ -435,8 +435,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
         $scope.findWhiskyByCode = function (code) {
             $api.findWhiskyByCode(code).then(function (data) {
                 if (!data.data) {
-                    alert('no such product :-(');
-                    throw 'no such product :-(';
+                    alert('no such product "' + code + '" :-(');
+                    throw 'no such product "' + code + '" :-(';
                 }
                 $scope.log(undefined);
                 return $scope.selectFavWhisky(data.data);
