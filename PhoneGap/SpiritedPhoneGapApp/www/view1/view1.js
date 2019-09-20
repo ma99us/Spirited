@@ -46,7 +46,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'phoneapi'])
                             // saveHistory: true, // Android, save scan history (default false)
                             prompt : "Place a barcode inside the scan area", // Android
                             resultDisplayDuration: 0, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-                            formats : "UPC_A,UPC_E", // default: all but PDF_417 and RSS_EXPANDED
+                            formats : "UPC_A,UPC_E,EAN_8,EAN_13,ITF", // default: all but PDF_417 and RSS_EXPANDED
                             orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
                             disableAnimations : true, // iOS
                             disableSuccessBeep: false // iOS and Android

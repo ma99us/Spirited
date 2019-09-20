@@ -116,13 +116,13 @@ h1 {
 }
 
 
-.background {
-    background-size: 100%;
+.background .pane {
+    background-size: cover;
     background-repeat: repeat-x;
     background-image: url(img/promo_graphics.jpg);
     background-position: top left;
     background-attachment: fixed;
-    background-color: #dcd1cb;
+    /*background-color: #dcd1cb;*/
 }
 
 .contrast {
@@ -132,4 +132,7 @@ h1 {
 
 input[type=search]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
+}
+input[type=search] {
+    -webkit-appearance: none;
 }
