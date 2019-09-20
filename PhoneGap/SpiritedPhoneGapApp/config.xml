@@ -22,10 +22,11 @@
     <!--<plugin name="cordova-plugin-file" source="npm" spec="~6.0.1" />-->
     <!--<plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.1" />-->
     <plugin name="cordova-plugin-network-information" source="npm" spec="~1.2.1" />
-    <plugin name="cordova-plugin-barcodescanner" source="npm" spec="~0.7.4" />
+    <!--<plugin name="cordova-plugin-barcodescanner" source="npm" spec="~0.7.4" />-->
     <plugin name="cordova-plugin-geolocation" spec="~4.0.2" />
     <plugin name="cordova-plugin-camera" spec="~4.1.0"/>
     <plugin name="cordova.plugins.diagnostic" spec="~5.0.0" />
+    <plugin name="phonegap-plugin-barcodescanner" source="npm" spec="~8.1.0" />
     <platform name="android">
         <icon density="hdpi" src="www/res/icon/android/drawable-hdpi-icon.png" />
         <splash density="port-hdpi" src="www/res/screen/android/drawable-port-hdpi-screen.png" />
