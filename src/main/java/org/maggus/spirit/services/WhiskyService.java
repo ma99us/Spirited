@@ -76,7 +76,15 @@ public class WhiskyService {
             q.setParameter("productCode", productCode);
             return q.getSingleResult();
         } catch (NoResultException ex) {
-            return null;
+            try {
+                TypedQuery<Whisky> q = em.createQuery("select w from Whisky w where w.productCode LIKE :productCode", Whisky.class);
+                q.setParameter("productCode", "%" + productCode + "%");
+                return q.getSingleResult();
+            }
+            catch (Exception ex1){
+                log.warning("No such product; code = \"" + productCode + "\"; - " + ex1.getMessage());
+                return null;
+            }
         } catch (NonUniqueResultException ex) {
             log.warning("! multiple products with the same product code = \"" + productCode + "\". This should not happen!");
             return null;

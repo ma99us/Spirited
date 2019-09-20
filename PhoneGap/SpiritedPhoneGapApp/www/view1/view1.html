@@ -56,7 +56,7 @@
         <button ng-class="preferences && favStores.length ? 'btn btn-primary' : 'btn btn-outline-primary'" ng-click="scanBarcode();">Or scan NB Liquor product barcode</button>
     </h5>
 
-    <h5 style="text-align: center;"><input id="spiritNameCtrl" type="text" class="col-lg-6" ng-model="favWhiskyName"
+    <h5 style="text-align: center;"><input id="spiritNameCtrl" type="search" class="col-lg-6" ng-model="favWhiskyName"
                                            ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing a spirit name..."
