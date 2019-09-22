@@ -10,9 +10,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Spirited</title>
     <link rel=icon href=favicon.ico>
-    <meta name="description" content="AngularJS client for SpiritApi">
+    <meta name="description" content="Find your new favorite poison">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
@@ -20,7 +19,8 @@
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="lib/ekko-lightbox/dist/ekko-lightbox.css">
     <!-- end of framework styles -->
-    <link rel="stylesheet" href="app.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>Spirit Search</title>
 </head>
 <body class="background">
 <ul class="menu d-none d-lg-block d-xl-block" ng-controller="IndexCtrl">
@@ -53,38 +53,12 @@
 <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="lib/ekko-lightbox/dist/ekko-lightbox.min.js"></script>
 <!-- end of framework libraries -->
+    <script type="text/javascript" src="js/index.js"></script>
 <script src="app.js"></script>
 <script src="view1/view1.js"></script>
 <script src="view2/view2.js"></script>
 <script src="core/api/api.js"></script>
 <script src="core/localstorage/localstorage.js"></script>
 <script src="core/geolocation/geolocation.js"></script>
-<script type="text/javascript">
-        function preventDefault(e) {
-            e.preventDefault();
-        };
-        var lightbox = null;
-    // enable 'lightbox' data-toggle links
-    $(document).on('click', '[data-toggle="lightbox"]', function (event) {
-        event.preventDefault();
-            $(this).ekkoLightbox({
-                wrapping: false, alwaysShowClose: true,
-                onShown: function () {
-                    console.log('Popup shown'); // #DEBUG
-                    lightbox =this;
-                    $('body').bind('touchmove', preventDefault);
-                },
-                onNavigate: function (direction, itemIndex) {
-                    console.log('Popup navigating ' + direction + '. Current item: ' + itemIndex);  // #DEBUG
-                },
-                onHidden: function (direction, itemIndex) {
-                    console.log('Popup hidden');    // #DEBUG
-                    lightbox =null;
-                    $('body').unbind('touchmove', preventDefault);
-                    $('#selectedWhiskyModalCenter').css('overflow', 'auto');
-                }
-            });
-        });
-</script>
 </body>
 </html>

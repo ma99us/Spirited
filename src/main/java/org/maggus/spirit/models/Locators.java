@@ -15,7 +15,9 @@ public class Locators {
         IR("Ireland"),
         JP("Japan"),
         SA("South Africa"),
-        US("USA", "US", "America", "US of A");
+        US("USA", "US", "America", "US of A"),
+        INTERNATIONAL("International")
+        ;
 
         private final String[] type;
 

@@ -13,21 +13,31 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         $scope.allStores = [];
         $scope.allWhiskies = [];
         $scope.dispQuantity = 10;
+        $scope.recentWhiskies = [];
         $scope.paramProduct = $routeParams.prod;
 
+        $scope.log = function (msg) {
+            if (msg && typeof msg === 'object') {
+                $scope.message = JSON.stringify(msg);
+            } else {
+                $scope.message = msg
+            }
+        };
+
+
         $scope.onFavWhiskyNameChange = function (newVal) {
-            if(newVal.length >=4){
+            if (newVal.length >= 4) {
                 $scope.busyC = true;
                 $scope.clearFavWhisky();
                 $scope.allWhiskies = [];
-                $scope.getAllWhiskies(newVal).finally(function(){
+                $scope.getAllWhiskies(newVal).finally(function () {
                     $scope.busyC = false;
                 });
             }
         };
 
         $scope.captureUserLocation = function () {
-            $scope.message = undefined;
+            $scope.log(undefined);
             $scope.busyLoc = true;
             geolocation.getCurrentPosition().then(function (geo) {
                 return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
@@ -44,7 +54,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     }
                 })
                 .catch(function (err) {
-                    $scope.message = err;
+                        $scope.log(err);
+                    alert("Location unavailable");
                 })
                 .finally(function () {
                     $scope.busyLoc = false;
@@ -103,14 +114,31 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.dispQuantity = 10;
         };
 
+        $scope.storeRecentSearch = function(whisky) {
+            if (!$scope.recentWhiskies.find(function (el) {
+                return whisky.id === el.id;
+            })) {
+                $scope.recentWhiskies.unshift(whisky);
+                $scope.recentWhiskies = $scope.recentWhiskies.slice(0, 10);
+            }
+            // store new preferences
+            $scope.favWhiskyName = whisky.name;
+            if ($scope.preferences) {
+                $scope.preferences.favWhiskyName = $scope.favWhiskyName;
+                $scope.preferences.recentWhiskyNames = $scope.recentWhiskies.map(function (w) {
+                   return w.name;
+                });
+                $scope.savePrefs($scope.preferences);
+            }
+        };
+
         $scope.selectFavWhisky = function (w) {
             $scope.clearFavWhisky();
             $scope.favWhisky = w;
-            $scope.favWhiskyName = w.name;
-            if ($scope.preferences) {
-                $scope.preferences.favWhiskyName = $scope.favWhiskyName;
-                $scope.savePrefs($scope.preferences);
-            }
+            // add to recent searches
+            $('#recentViews').collapse('hide');   // always hide recent searches panel
+            $scope.storeRecentSearch(w);
+            // update product data
             $scope.busyW = true;
             $scope.fpData = undefined;
             return $scope.getFavWhisky(w.id).then(function () {
@@ -169,7 +197,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                     $scope.fpColors.push(color);
                 });
                 let width = $('#barDiv')[0].clientWidth;
-                $scope.fpStyle = {'width': width+'px', 'height': width/1.7+'px'};
+                $scope.fpStyle = {'width': width + 'px', 'height': width / 1.7 + 'px'};
             }
         };
 
@@ -216,7 +244,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
                 });
             }
             let width = $('#chartDiv')[0].clientWidth;
-            $scope.selFpStyle = {'width': width+'px', 'height': width/1.4+'px'};
+            $scope.selFpStyle = {'width': width + 'px', 'height': width / 1.4 + 'px'};
         };
 
         $scope.filterAvailability = function (whisky) {
@@ -256,78 +284,91 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         };
 
         $scope.loadPrefs = function () {
-            let prefs = localstorage.getObject("spirited", {});
-            if (prefs.favStoreNames && $scope.allStores) {
+            $scope.preferences = localstorage.getObject("spirited", {});
+            if ($scope.preferences.favStoreNames && $scope.allStores) {
                 $scope.allStores.forEach(function (s) {
-                    if (prefs.favStoreNames.indexOf(s.name) >= 0) {
+                    if ($scope.preferences.favStoreNames.indexOf(s.name) >= 0) {
                         $scope.favStores.push(s);   // select
                         //$scope.toggleStoreSelection(s);
                     }
                 });
                 $scope.onSelectedStoresChanged();   // update all post-store selection
             }
-            if($scope.paramProduct){
-                $scope.getAllWhiskies($scope.paramProduct).then(function(){
-                    let candidate = $scope.pickOneProduct($scope.allWhiskies, $scope.paramProduct);
-                    $scope.selectFavWhisky(candidate).then(function () {
-                        $scope.showWhisky($scope.favWhisky);
-                    });
+
+            let promises = [];
+            if($scope.preferences.recentWhiskyNames) {
+                $scope.preferences.recentWhiskyNames.forEach(function (name) {
+                    promises.push($api.findWhiskyByName(name).then(function (data) {
+                        if (data.data) {
+                            $scope.recentWhiskies.push(data.data);
+                        }
+                    }));
                 });
             }
-            else if (prefs.favWhiskyName) {
-                $scope.getAllWhiskies(prefs.favWhiskyName).then(function(){
-                    let candidate = $scope.pickOneProduct($scope.allWhiskies, prefs.favWhiskyName);
-                    $scope.selectFavWhisky(candidate);
+            $q.all(promises)
+                .then(function () {
+                    if ($scope.preferences.favWhiskyName) {
+                        $api.findWhiskyByName($scope.preferences.favWhiskyName).then(function (data) {
+                            if (data.data) {
+                                $scope.selectFavWhisky(data.data);
+                                //$scope.favWhisky = data.data;
+                            }
+                        });
+                    }
+                    else{
+                        let deferred = $q.defer();
+                        deferred.resolve();
+                        return deferred.promise;
+                    }
                 });
-            }
-            $scope.preferences = prefs;
         };
 
         $scope.clearPrefs = function () {
-            $scope.savePrefs({});
-            $scope.preferences = {};
-            $scope.favStores = [];
+            $scope.clearFavWhisky();
+            $scope.recentWhiskies = [];
             $scope.favWhiskyName = undefined;
-            $scope.clearFavWhisky()
+            $scope.favStores = [];
+            $scope.preferences = {};
+            $scope.savePrefs($scope.preferences);
         };
 
         //// API ////
 
         $scope.getCacheStatus = function () {
             return $api.getCacheStatus().then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.cacheStatus = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getAllStores = function () {
             return $api.getAllStores().then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.allStores = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getAllWhiskies = function (name) {
             return $api.findWhiskiesLike(name).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.allWhiskies = data.data;
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
         $scope.getFavWhisky = function (id) {
             return $api.getWhisky(id).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 if ($scope.favWhisky && $scope.favWhisky.id === data.data.id) {
                     $scope.favWhisky = data.data;
                 }
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
@@ -341,60 +382,65 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             }
             else {
                 return $api.getWhisky(whisky.id).then(function (data) {
-                    $scope.message = undefined;
+                    $scope.log(undefined);
                     if ($scope.selectedWhisky && $scope.selectedWhisky.id === data.data.id) {
                         $scope.selectedWhisky = data.data;
                     }
                 }).catch(function (err) {
-                    $scope.message = err;
+                    $scope.log(err);
                 });
             }
         };
 
         $scope.getSimilarWhiskies = function (whisky) {
             $api.findSimilarWhiskies(whisky).then(function (data) {
-                $scope.message = undefined;
+                $scope.log(undefined);
                 $scope.similarWhiskies = data.data.map(function (sw) {
                     sw.available = $scope.filterAvailability(sw.candidate).length > 0;
                     return sw;
                 });
             }).catch(function (err) {
-                $scope.message = err;
+                $scope.log(err);
             });
         };
 
-        $scope.findWhisky = function (code) {
+        $scope.findWhiskyByCode = function (code) {
             $api.findWhiskyByCode(code).then(function (data) {
                 if (!data.data) {
-                    alert('no such product :-(');
-                    throw 'no such product :-(';
+                    alert('no such product "' + code + '" :-(');
+                    throw 'no such product "' + code + '" :-(';
                 }
-                $scope.message = undefined;
+                $scope.log(undefined);
                 return $scope.selectFavWhisky(data.data);
-            }). then(function () {
+            }).then(function () {
                 $scope.showWhisky($scope.favWhisky);
             })
-            .catch(function (err) {
-                $scope.message = err;
-            });
+                .catch(function (err) {
+                    $scope.log(err);
+                });
         };
 
         //// initialization:
-
-        $scope.busy = true;
-        $scope.getCacheStatus()
-            .then(function () {
-                return $scope.getAllStores();
-            })
-            .then(function () {
-                return $scope.loadPrefs();
-            })
-            .catch(function(err){
-                $scope.message = err;
-            })
-            .finally(function () {
-                $scope.busy = false;
-            });
+        try {
+            $scope.busy = true;
+            $scope.getCacheStatus()
+                .then(function () {
+                    return $scope.getAllStores();
+                })
+                .then(function () {
+                    return $scope.loadPrefs();
+                })
+                .catch(function(err){
+                    $scope.log(err);
+                })
+                .finally(function () {
+                    $scope.busy = false;
+                });
+        }
+        catch (err) {
+            $scope.log(err);
+            $scope.busy = false;
+        }
     }])
     .directive('addressLink', function () {
         return {

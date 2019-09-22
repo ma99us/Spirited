@@ -44,6 +44,8 @@ public class AnblParser extends AbstractParser {
         IRELAND_BLENDS(BASE_URL.getUrl() + "/blended-3"),
         // Japan
         JAPAN_BLENDS(BASE_URL.getUrl() + "/japan-1"),
+        // International
+        INTERNATIONAL_W(BASE_URL.getUrl() + "/international-whisky-1"),
         // USA
         USA_RYE(BASE_URL.getUrl() + "/rye-1"),
         USA_BOURBON(BASE_URL.getUrl() + "/bourbon"),
@@ -143,6 +145,9 @@ public class AnblParser extends AbstractParser {
         // load Japan
         wcs.add(new WhiskyCategory(CacheUrls.JAPAN_BLENDS.name(), CacheUrls.JAPAN_BLENDS.getUrl(),
                 Locators.Country.JP.toString(), null, Locators.SpiritType.BLENDED.toString()));
+        // load International
+        wcs.add(new WhiskyCategory(CacheUrls.INTERNATIONAL_W.name(), CacheUrls.INTERNATIONAL_W.getUrl(),
+                Locators.Country.INTERNATIONAL.toString(), null, null));
         // load American
         wcs.add(new WhiskyCategory(CacheUrls.USA_RYE.name(), CacheUrls.USA_RYE.getUrl(),
                 Locators.Country.US.toString(), null, Locators.SpiritType.RYE.toString()));

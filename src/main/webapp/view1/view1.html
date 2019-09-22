@@ -17,7 +17,7 @@
     </div>
     <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
         <div class="text-center">
-            <button class="btn btn-outline-info" ng-click="captureUserLocation()">
+            <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-info'" ng-click="captureUserLocation()">
                 <span ng-show="!busyLoc">Find nearby stores</span>
                 <span ng-show="busyLoc">Looking around...</span>
             </button>
@@ -52,7 +52,7 @@
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
     <h3 style="text-align: center;" class="contrast">
         Name your poison:</h3>
-    <h4 style="text-align: center;"><input type="text" class="col-lg-6" ng-model="favWhiskyName"
+    <h4 style="text-align: center;"><input id="spiritNameCtrl" type="search" class="col-lg-6" ng-model="favWhiskyName"
                                            ng-model-options="{debounce: 1000}"
                                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
                                            placeholder="start typing a spirit name..."
@@ -73,7 +73,7 @@
         <button id="recentViewsBtn" class="btn btn-sm collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
                 aria-expanded="false"
                 aria-controls="recentViews">
-            <span class="if-collapsed ">Show</span><span class="if-not-collapsed">Hide</span> Recent Searches
+            <span class="contrast"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> Recent Searches</span>
         </button>
         <div id="recentViews" class="panel-collapse collapse in card card-body list-group align-items-center">
             <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
@@ -218,15 +218,15 @@
 <br/>
 
 <div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <div class="col-2 align-items-start mx-auto">
+    <div class="col-2 align-items-start mx-auto no-h-padding">
         <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
                 aria-expanded="false"
                 aria-controls="infoDiv">
-            info...
+            More info...
         </button>
     </div>
-    <div class="col-8 align-items-center mx-auto">
-        <div id="infoDiv" class="panel-collapse collapse in card card-body">
+    <div class="col-8 align-items-center mx-auto no-h-padding">
+        <div id="infoDiv" class="panel-collapse collapse in card card-body" style="padding: 0.25rem">
             <div ng-show="cacheStatus"  class="text-center">
                 Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
                 <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
@@ -237,17 +237,16 @@
                         <!--src="img/qrcode.png"> SpiritedApp</a>-->
             <!--</div>-->
             <div  class="text-center">
-                <a href="http://onelink.to/myhrkb">Get the <img
-                        class="qr-code"
-                        src="img/qrcode_onelink.png"> SpiritedApp</a>
+                <h4><a href="http://onelink.to/myhrkb">Get the SpiritedApp</a>
+                <img class="qr-code" src="img/qrcode_onelink.png"></h4>
             </div>
             <div class="text-center">
                 <a href="#/legal"><h4>Privacy Policy</h4></a>
             </div>
         </div>
     </div>
-    <div class="col-2 align-items-end mx-auto">
-        <button class="btn btn-outline-warning" type="button" ng-click="clearPrefs()">
+    <div class="col-2 align-items-end mx-auto no-h-padding">
+        <button class="btn btn-outline-warning" type="reset" ng-click="clearPrefs()">
             Start Over
         </button>
     </div>

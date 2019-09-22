@@ -44,15 +44,25 @@ p.footnote {
 }
 
 .background {
-    background-size: 100%;
-    background-repeat: repeat-x;
-    background-image: url(img/promo_graphics.jpg);
-    background-position: top left;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left center;
     background-attachment: fixed;
+    background-image: url(../img/promo_graphics.jpg);
     background-color: #dcd1cb;
 }
 
 .contrast {
     color: #cbd5dc;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+input[type=search]::-webkit-search-cancel-button {
+    /* not working because of iOS bug */
+    -webkit-appearance: searchfield-cancel-button;
+}
+
+.no-h-padding {
+    padding-left: 0px;
+    padding-right: 0px;
 }
