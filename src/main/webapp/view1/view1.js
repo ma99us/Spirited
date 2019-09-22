@@ -270,20 +270,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             $scope.dispQuantity += 10;
         };
 
-        $scope.pickOneProduct = function (products, name) {
-            products.forEach(function (w) {
-                if (name === w.name) {
-                    return w;
-                }
-            });
-            return products[0] || null;
-        };
-
         $scope.savePrefs = function (prefs) {
             localstorage.setObject("spirited", prefs || $scope.preferences);
         };
 
         $scope.loadPrefs = function () {
+            let deferred = $q.defer();
             $scope.preferences = localstorage.getObject("spirited", {});
             if ($scope.preferences.favStoreNames && $scope.allStores) {
                 $scope.allStores.forEach(function (s) {
@@ -307,20 +299,27 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
             }
             $q.all(promises)
                 .then(function () {
-                    if ($scope.preferences.favWhiskyName) {
-                        $api.findWhiskyByName($scope.preferences.favWhiskyName).then(function (data) {
+                    const favProd = $scope.paramProduct || $scope.preferences.favWhiskyName;
+                    if (favProd) {
+                        $api.findWhiskyByName(favProd).then(function (data) {
                             if (data.data) {
                                 $scope.selectFavWhisky(data.data);
-                                //$scope.favWhisky = data.data;
                             }
-                        });
+                        })
+                            .then(function () {
+                                if ($scope.paramProduct && $scope.favWhisky) {
+                                    $scope.showWhisky($scope.favWhisky);
+                                }
+                            })
+                            .finally(function () {
+                                deferred.resolve();
+                            });
                     }
-                    else{
-                        let deferred = $q.defer();
+                    else {
                         deferred.resolve();
-                        return deferred.promise;
                     }
                 });
+            return deferred.promise;
         };
 
         $scope.clearPrefs = function () {

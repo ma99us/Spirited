@@ -1,5 +1,22 @@
 /* app css stylesheet */
 
+body:after {
+    content: "";
+    position: fixed; /* stretch a fixed position to the whole screen */
+    overflow-y: scroll;
+    top: 0;
+    height: 100vh; /* fix for mobile browser address bar appearing disappearing */
+    left: 0;
+    right: 0;
+    z-index: -1; /* needed to keep in the background */
+    background: url(../img/promo_graphics.jpg) top center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #dcd1cb;
+}
+
 .menu {
   list-style: none;
   border-bottom: 0.1em solid black;
@@ -41,15 +58,6 @@ p.footnote {
 
 [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
   display: none;
-}
-
-.background {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: left top;
-    background-attachment: fixed;
-    background-image: url(../img/promo_graphics.jpg);
-    background-color: #dcd1cb;
 }
 
 .contrast {
