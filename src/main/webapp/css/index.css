@@ -46,7 +46,7 @@ p.footnote {
 .background {
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: left top;
     background-attachment: fixed;
     background-image: url(../img/promo_graphics.jpg);
     background-color: #dcd1cb;
