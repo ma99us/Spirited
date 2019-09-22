@@ -85,38 +85,38 @@ public class Locators {
         }
     }
 
-    public static enum Spirit {
-        WHISKY("Whisky", "Whiskey"),
-        VODKA("Vodka", "Flavored vodka"),
-        RUM("Rum", "Dark rum", "Flavored rum", "Gold rum", "Amber rum", "White rum", "Spiced rum"),
-        COGNAC("Cognac"),
-        GIN("Gin", "Distilled gin", "Dry gin");
-
-        private final String[] type;
-
-        Spirit(String... type) {
-            this.type = type;
-        }
-
-        public String toString() {
-            return type[0];
-        }
-
-        public static Spirit parse(String str) {
-            for (Spirit s : Spirit.values()) {
-                if (Arrays.stream(s.type).anyMatch(t -> t.equalsIgnoreCase(str))) {
-                    return s;
-                }
-            }
-            return null;
-        }
-
-        public static boolean equals(String obj1, String obj2) {
-            Spirit c1 = Spirit.parse(obj1);
-            Spirit c2 = Spirit.parse(obj2);
-            return c1 != null && c1.equals(c2);
-        }
-    }
+//    public static enum Spirit {
+//        WHISKY("Whisky", "Whiskey"),
+//        VODKA("Vodka", "Flavored vodka"),
+//        RUM("Rum", "Dark rum", "Flavored rum", "Gold rum", "Amber rum", "White rum", "Spiced rum"),
+//        COGNAC("Cognac"),
+//        GIN("Gin", "Distilled gin", "Dry gin");
+//
+//        private final String[] type;
+//
+//        Spirit(String... type) {
+//            this.type = type;
+//        }
+//
+//        public String toString() {
+//            return type[0];
+//        }
+//
+//        public static Spirit parse(String str) {
+//            for (Spirit s : Spirit.values()) {
+//                if (Arrays.stream(s.type).anyMatch(t -> t.equalsIgnoreCase(str))) {
+//                    return s;
+//                }
+//            }
+//            return null;
+//        }
+//
+//        public static boolean equals(String obj1, String obj2) {
+//            Spirit c1 = Spirit.parse(obj1);
+//            Spirit c2 = Spirit.parse(obj2);
+//            return c1 != null && c1.equals(c2);
+//        }
+//    }
 
     public static enum SpiritType {
         WHISKY("Whisky"),

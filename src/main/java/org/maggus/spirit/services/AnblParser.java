@@ -147,7 +147,7 @@ public class AnblParser extends AbstractParser {
                 Locators.Country.JP.toString(), null, Locators.SpiritType.BLENDED.toString()));
         // load International
         wcs.add(new WhiskyCategory(CacheUrls.INTERNATIONAL_W.name(), CacheUrls.INTERNATIONAL_W.getUrl(),
-                Locators.Country.INTERNATIONAL.toString(), null, null));
+                Locators.Country.INTERNATIONAL.toString(), null, Locators.SpiritType.WHISKY.toString()));
         // load American
         wcs.add(new WhiskyCategory(CacheUrls.USA_RYE.name(), CacheUrls.USA_RYE.getUrl(),
                 Locators.Country.US.toString(), null, Locators.SpiritType.RYE.toString()));
