@@ -8,16 +8,32 @@ body {
     -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
     -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
-    background-color: #dcd1cb;
     font-family: system-ui, -apple-system, -apple-system-font, 'Segoe UI', 'Roboto', sans-serif;
     font-size: 12px;
-    height: 100%;
+    /*height: 100%;*/
     margin: 0px;
     padding: 0px;
     /* Padding to avoid the "unsafe" areas behind notches in the screen */
     padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-right, 0px);
     text-transform: uppercase;
     width: 100%;
+}
+
+body:after {
+    content: "";
+    position: fixed; /* stretch a fixed position to the whole screen */
+    overflow-y: scroll;
+    top: 0;
+    height: 100vh; /* fix for mobile browser address bar appearing disappearing */
+    left: 0;
+    right: 0;
+    z-index: -1; /* needed to keep in the background */
+    background: url(../img/promo_graphics.jpg) top center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #dcd1cb;
 }
 
 ul.stores {
@@ -37,15 +53,6 @@ p.footnote {
 
 [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
     display: none;
-}
-
-.background {
-    background-size: 100%;
-    background-repeat: repeat-x;
-    background-position: left top;
-    background-attachment: fixed;
-    background-image: url(../img/promo_graphics.jpg);
-    background-color: #dcd1cb;
 }
 
 .contrast {
