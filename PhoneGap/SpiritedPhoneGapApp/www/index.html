@@ -19,59 +19,60 @@
 -->
 <html lang="en" ng-app="myApp" class="no-js">
 
-    <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="utf-8"/>
     <meta name="description" content="Mobile app frontend for spiritsearch.ca website">
-        <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-        <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: file: 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *; font-src 'self' data:" />
-        <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src * data: gap: file: 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src *; font-src 'self' data:"/>
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+    <!--
+    Customize this policy to fit your own app's needs. For more guidance, see:
+        https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+    Some notes:
+        * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+        * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+        * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+            * Enable inline JS: add 'unsafe-inline' to default-src
+    -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
 
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="lib/ekko-lightbox/dist/ekko-lightbox.css">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>SpiritedApp</title>
-    </head>
-    <body class="background">
-    <div ng-view></div>
+</head>
+<body class="background">
+<div ng-view></div>
 
-    <!--Cordova/PhoneGap-->
-    <script type="text/javascript" src="cordova.js"></script>
+<!--Cordova/PhoneGap-->
+<script type="text/javascript" src="cordova.js"></script>
 
-    <!--AngularJS-->
-    <script src="lib/angular/angular.min.js"></script>
-    <script src="lib/angular-route/angular-route.js"></script>
-    <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
-    <script src="lib/chart.js/dist/Chart.min.js"></script>
-    <script src="lib/angular-chart.js/angular-chart.js"></script>
-    <script src="lib/angular-filter/dist/angular-filter.min.js"></script>
-    <!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
-    <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
-    <script src="lib/jquery/dist/jquery.slim.min.js"></script>
-    <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="lib/ekko-lightbox/dist/ekko-lightbox.min.js"></script>
-    <!-- end of framework libraries -->
-    <script type="text/javascript" src="js/index.js"></script>
-    <script src="app.js"></script>
-    <script src="view1/view1.js"></script>
-    <script src="view2/view2.js"></script>
-    <script src="core/api/api.js"></script>
-    <script src="core/localstorage/localstorage.js"></script>
-    <script src="core/geolocation/geolocation.js"></script>
-    <script src="core/mobile/phoneapi.js"></script>
-    </body>
+<!--AngularJS-->
+<script src="lib/angular/angular.min.js"></script>
+<script src="lib/angular-route/angular-route.js"></script>
+<script src="lib/angular-resource/angular-resource.js"></script>
+<script src="lib/angular-sanitize/angular-sanitize.js"></script>
+<script src="lib/chart.js/dist/Chart.min.js"></script>
+<script src="lib/angular-chart.js/angular-chart.js"></script>
+<script src="lib/angular-filter/dist/angular-filter.min.js"></script>
+<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+<script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+<script src="lib/jquery/dist/jquery.slim.min.js"></script>
+<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/ekko-lightbox/dist/ekko-lightbox.min.js"></script>
+<!-- end of framework libraries -->
+<script type="text/javascript" src="js/index.js"></script>
+<script src="app.js"></script>
+<script src="view1/view1.js"></script>
+<script src="view2/view2.js"></script>
+<script src="core/api/api.js"></script>
+<script src="core/localstorage/localstorage.js"></script>
+<script src="core/geolocation/geolocation.js"></script>
+<script src="core/mobile/phoneapi.js"></script>
+</body>
 </html>
