@@ -21,7 +21,7 @@
     Fuzzy Search: <input type="text" ng-model="searchTxt" placeholder="search whisky" />
 <ul>
     <li ng-repeat="w in filteredWhisky = (whisky | fuzzyBy: 'name': search)">
-        <whisky-row whisky="w" sel-whisky="selWhisky" ng-click="selectWhisky(w)"></whisky-row> - <button ng-click="deleteWhisky(w)">X</button>
+        <whisky-row whisky="w" sel-whisky="selWhisky" ng-click="selectWhisky(w)" to-show="volume,price,type"></whisky-row> - <button ng-click="deleteWhisky(w)">X</button>
     </li>
     <p ng-hide="filteredWhisky.length">--- no data ---</p>
 </ul>
@@ -64,6 +64,6 @@
     <p><b>GET</b> <b>/api/cache/status</b> ->      Response cacheStatus() - <i>Returns some information and statistics about last time cached data was re-built.</i></p>
     <p><b>GET</b> <b>/api/cache/rebuild</b> ->      Response rebuildAllCachedData() - <i>Clears and re-caches all data from third parties. Long operation, could take several minutes!</i></p>
 
-    <p><a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img class="qr-code" src="img/qrcode.png"></a></p>
+    <p><a href="https://build.phonegap.com/apps/3624905/builds">Get the Spirited App<img class="qr-code" src="img/qrcode_onelink.png"></a></p>
 </div>
 </div>

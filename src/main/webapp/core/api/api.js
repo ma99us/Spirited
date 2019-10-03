@@ -78,23 +78,12 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            findWhiskiesLike: function (name) {
-                var deferred = $q.defer();
-                busy = true;
-                $http.get(hostAdr + 'api/whisky/like/' + name, {params: {}}).then(function (response) {
-                    validateResponse(deferred, response);
-                }, function(err) {
-                    validateResponse(deferred, err);
-                }).finally(function () {
-                    busy = false;
-                });
-                return deferred.promise;
-            },
-
-            getAllWhiskies: function (resultsPerPage, pageNumber, sortBy, format) {
+            getWhiskies: function (name, type, resultsPerPage, pageNumber, sortBy, format) {
                 var deferred = $q.defer();
                 busy = true;
                 let params = {
+                    name: name,
+                    type: type,
                     resultsPerPage: resultsPerPage,
                     pageNumber: pageNumber,
                     sortBy: sortBy,

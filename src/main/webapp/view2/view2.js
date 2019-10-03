@@ -139,13 +139,17 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
         $scope.getAllWhiskies = function (resultsPerPage, pageNumber, sortBy) {
             let ts0 = new Date().getTime();
-            $api.getAllWhiskies(resultsPerPage || $scope.resultsPerPage, pageNumber || $scope.pageNumber, sortBy || $scope.sortBy).then(function (data) {
-                $scope.message = undefined;
-                $scope.whisky = data.data;
-                $scope.resultsPerPage = data.metaData.resultsPerPage;
-                $scope.pageNumber = data.metaData.pageNumber;
-                $scope.sortBy = data.metaData.sortBy;
-                $scope.totalResults = data.metaData.totalResults;
+            $api.getWhiskies(null, null,
+                resultsPerPage || $scope.resultsPerPage,
+                pageNumber || $scope.pageNumber,
+                sortBy || $scope.sortBy,
+                "medium").then(function (data) {
+                    $scope.message = undefined;
+                    $scope.whisky = data.data;
+                    $scope.resultsPerPage = data.metaData.resultsPerPage;
+                    $scope.pageNumber = data.metaData.pageNumber;
+                    $scope.sortBy = data.metaData.sortBy;
+                    $scope.totalResults = data.metaData.totalResults;
             }).catch(function (err) {
                 $scope.message = err;
             }).finally(function () {
@@ -210,31 +214,6 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
                     }
                 });
-            }
-        };
-    })
-    .directive('whiskyRow', function () {
-        return {
-            restrict: 'E',
-            scope: {
-                whisky: '<',
-                onClick: '&?',
-                selWhisky: '<?'
-            },
-            templateUrl: 'view2/whisky-row.html',
-            controller: ['$scope', function ($scope) {
-                $scope.$watch('selWhisky', function (newValue, oldValue) {
-                    $scope.isSelected = $scope.selWhisky && ($scope.whisky.id === $scope.selWhisky.id);
-                    if($scope.isSelected){
-                        $scope.rowStyle={'background-color':'CornFlowerBlue'};
-                    }
-                    else{
-                        $scope.rowStyle={}
-                    }
-                }, true);
-            }],
-            link: function (scope, elem, attrs) {
-
             }
         };
     })
