@@ -69,3 +69,34 @@ input[type=search]::-webkit-search-cancel-button {
     padding-left: 0px;
     padding-right: 0px;
 }
+
+.up {
+    width: 0px;
+    height: 0px;
+    border-bottom: 10px solid black;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: none;
+}
+.mid {
+    margin-left:7px;
+    width: 2px;
+    height: 180px;
+    background-color:black;
+}
+.down{
+    width: 0px;
+    height: 0px;
+    border-top: 10px solid black;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: none;
+}
+.top-note {
+    text-transform: uppercase;
+    font-weight: lighter;
+    font-size: x-small;
+}
+.list-group-item {
+    padding: 0.25rem 0.5rem;
+}

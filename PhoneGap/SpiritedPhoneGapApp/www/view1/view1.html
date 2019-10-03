@@ -1,13 +1,10 @@
-<p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
-
 <h3 style="text-align: center" class="contrast">Welcome To Spirit Search.</h3>
-<!--<h4 ng-show="!busy" style="text-align: center">Let's find your new favorite Poison!</h4>-->
-
-<br/>
-
+<h6 ng-show="!busy" style="text-align: center" class="contrast">The Maritimes Liquor Database.</h6>
 <h5 id="busy" ng-show="busy" style="text-align: center" class="text-warning contrast">Initializing. Please wait...</h5>
-
+<p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
+<br/>
 <div ng-show="!busy" id="selFavStores" class="align-items-center">
+    <div class="card card-body col-lg-6 mx-auto">
     <div style="text-align:center">
         <button ng-class="preferences && favStores.length ? 'btn btn-outline-info collapsed' : 'btn btn-primary collapsed'" type="button" data-toggle="collapse" data-target="#favStores"
                 aria-expanded="false"
@@ -15,7 +12,7 @@
             <span class="if-collapsed ">Select</span><span class="if-not-collapsed">Hide</span> your preferred NB Liquor stores
         </button>
     </div>
-    <div id="favStores" class="panel-collapse collapse in card card-body col-lg-6 mx-auto">
+    <div id="favStores" class="panel-collapse collapse in card card-body">
         <div ng-if="isDeviceReady()" class="text-center">
             <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-info'" ng-click="captureUserLocation()">
                 <span ng-show="!busyLoc">Find nearby stores</span>
@@ -38,61 +35,116 @@
             </ul>
         </div>
     </div>
-    <div ng-if="preferences && favStores.length" class="card card-body col-lg-6 mx-auto" style="text-align: center">
+    <div ng-if="preferences && favStores.length" class="card card-body" style="text-align: center">
         <span>{{favStores.length}} store(s) selected in <span ng-bind-html="favStoresCities"></span>, only their inventory will
             be considered.</span>
     </div>
-    <div ng-if="preferences && !favStores.length" class="card card-body col-lg-6 mx-auto" style="text-align: center">
+    <div ng-if="preferences && !favStores.length" class="card card-body" style="text-align: center">
         No preferred stores selected, all available inventory will be considered.
+    </div>
     </div>
 </div>
 
 <br/>
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
-    <h4 style="text-align: center;" class="contrast">
+    <div class="card card-body col-lg-6 mx-auto">
+    <h4 style="text-align: center;">
         Name your poison:</h4>
     <h5 ng-if="isDeviceReady()" style="text-align: center;">
         <button ng-class="preferences && favStores.length ? 'btn btn-primary' : 'btn btn-outline-primary'" ng-click="scanBarcode();">Or scan NB Liquor product barcode</button>
     </h5>
-
-    <h5 style="text-align: center;"><input id="spiritNameCtrl" type="search" class="col-lg-6" ng-model="favWhiskyName"
-                                           ng-model-options="{debounce: 1000}"
-                                           ng-change="onFavWhiskyNameChange(favWhiskyName)"
-                                           placeholder="start typing a spirit name..."
-                                           autofocus />
-    </h5>
-    <div class="card card-body col-lg-6 mx-auto" ng-if="favWhiskyName.length >= 4 && !favWhisky">
-        <div class="list-group align-items-center">
-            <span ng-show="busyC">Looking...</span>
-            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in allWhiskies">
-                <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
-            </a>
-            <span ng-show="allWhiskies.length >= 10">...</span>
-            <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.length">--- no matches ---</h4>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="byname-tab" data-toggle="tab" data-target="#byname" href="" role="tab"
+                   aria-controls="byname" aria-selected="true">Search by Name</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="bytype-tab" data-toggle="tab" data-target="#bytype" href="" role="tab"
+                   aria-controls="bytype" aria-selected="false">Search by Type</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="byname" role="tabpanel" aria-labelledby="byname-tab">
+                <div class="input-group mb-3">
+                    <input style="font-size: x-large; font-weight: bolder" id="spiritNameCtrl" type="search" class="form-control" aria-label="spirit name" aria-describedby="basic-addon2"
+                           ng-model="favWhiskyName"
+                           ng-model-options="{debounce: 800}"
+                           ng-change="onFavWhiskyNameChange(favWhiskyName)"
+                           placeholder="liquor name..."
+                           autofocus/>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"
+                                ng-click="onFavWhiskyNameChange(favWhiskyName, true)">
+                            >
+                        </button>
+                    </div>
+                </div>
+                <div id="searchView" class="list-group align-items-center collapse" ng-show="favWhiskyName">
+                    <span ng-show="busyC">Looking...</span>
+                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                       ng-repeat="w in allWhiskies.whiskies">
+                        <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+                    </a>
+                    <button class="btn btn-outline-info" style="width: 100%" type="button"
+                            ng-show="allWhiskies.whiskies.length < allWhiskies.totalResults"
+                            ng-click="showMoreWhiskies()">({{allWhiskies.whiskies.length}} out of {{allWhiskies.totalResults}}) Show more...
+                    </button>
+                    <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches ---</h4>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="bytype" role="tabpanel" aria-labelledby="bytype-tab">
+                <div class="input-group mb-3">
+                    <input style="font-size: x-large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"
+                           ng-model="favWhiskyType"
+                           ng-model-options="{debounce: 800}"
+                           ng-change="onFavTypeChange(favWhiskyType)"
+                           placeholder="liquor type or feature..."
+                           autofocus/>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"
+                                ng-click="onFavTypeChange(favWhiskyType)">
+                            >
+                        </button>
+                    </div>
+                </div>
+                <div id="browseView" class="list-group align-items-center collapse" ng-show="favWhiskyType">
+                    <span ng-show="busyC">Looking...</span>
+                    <span style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></span>
+                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                       ng-repeat="w in browseWhiskies.whiskies">
+                        <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
+                    </a>
+                    <button class="btn btn-outline-info" style="width: 100%" type="button"
+                            ng-show="browseWhiskies.whiskies.length < browseWhiskies.totalResults"
+                            ng-click="browseMoreWhiskies()">({{browseWhiskies.whiskies.length}} out of {{browseWhiskies.totalResults}}) Show more...
+                    </button>
+                    <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no matches ---</h4>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div ng-if="recentWhiskies.length" class="row-fluid summary col-lg-6 mx-auto">
-        <button id="recentViewsBtn" class="btn btn-sm collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
-                aria-expanded="false"
-                aria-controls="recentViews">
-            <span class="contrast"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> Recent Searches</span>
-        </button>
-        <div id="recentViews" class="panel-collapse collapse in card card-body list-group align-items-center">
-            <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
-                <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
-            </a>
+        <div ng-if="recentWhiskies.length">
+            <button id="recentViewsBtn" class="btn btn-sm collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
+                    aria-expanded="false"
+                    aria-controls="recentViews">
+                <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> recent picks</span>
+            </button>
+            <div id="recentViews" class="panel-collapse collapse in card-body list-group align-items-center">
+                <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
+                    <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
+<br/>
+
 <div ng-show="!busy" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
     <div class="card card-body col-lg-6 mx-auto">
         <div class="list-group align-items-center">
-            <a href="" ng-click="showWhisky(favWhisky)" class="list-group-item list-group-item-info" style="width: 100%">
-                <whisky-row whisky="favWhisky"></whisky-row>
-                <span ng-show="favWhisky.available" class="text-info"> - available</span>
+            <a href="" ng-click="showWhisky(favWhisky)" class="btn btn-outline-primary" style="width: 100%">
+                    <span class="justify-content-start"><whisky-row whisky="favWhisky" available="favWhisky.available"></whisky-row></span>
             </a>
         </div>
         <p>{{favWhisky.description}}</p>
@@ -108,21 +160,21 @@
 </div>
 
 <div ng-show="!busy" id="similarWhiskies" class="align-items-center">
-    <h4 style="text-align: center" ng-show="similarWhiskies.length && favWhisky" class="contrast">
+    <div class="card card-body col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
+    <h4 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
         You may also like:
     </h4>
-    <div class="col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
         <span style="text-align: right">Sorted: <i>most similar first</i></span>
         <div class="list-group align-items-center">
-            <a href="" ng-click="showWhisky(wd.candidate)" ng-class="wd.candidate.id == selectedWhisky.id ? 'list-group-item list-group-item-info' : 'list-group-item'" style="width: 100%" ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
-                <div class="d-flex justify-content-between">
-                <span class="justify-content-start"><whisky-row whisky="wd.candidate" sel-whisky="selWhisky"></whisky-row> <span ng-show="wd.available" class="text-info"> - available</span></span>
-                <span class="justify-content-end"> - <b><i>{{wd.maxDiffFlavor}}</i></b></span>
+            <a href="" ng-click="showWhisky(wd.candidate)" ng-class="wd.candidate.id == selectedWhisky.id ? 'list-group-item list-group-item-info' : 'list-group-item'" style="width: 100%; margin-top: auto; margin-bottom: auto;" ng-repeat="wd in similarWhiskies | limitTo: dispQuantity">
+                <div class="d-flex justify-content-between" style="margin-top: auto; margin-bottom: auto;">
+                <span class="justify-content-start" style="margin-top: auto; margin-bottom: auto;"><whisky-row whisky="wd.candidate" sel-whisky="selWhisky" available="wd.available"></whisky-row></span>
+                <span class="justify-content-end" style="margin-top: auto; margin-bottom: auto; white-space: nowrap;"> - <b><i>{{wd.maxDiffFlavor}}</i></b></span>
                 </div>
             </a>
         </div>
         <button class="btn btn-outline-info" style="width: 100%" type="button"
-                ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">Show more...
+                ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">({{dispQuantity}} out of {{similarWhiskies.length}}) Show more...
         </button>
     </div>
     <!--<h4 style="text-align: center" ng-if="!similarWhiskies.length && favWhisky">Nothing tastes similar :-(</h4>-->
@@ -221,32 +273,56 @@
 
 <br/>
 
-<div ng-show="!busy" class="navbar navbar-default navbar-fixed-bottom">
-    <div class="col-2 align-items-start mx-auto no-h-padding">
-        <button class="btn btn-outline-dark"  style="padding: 0px" type="button" data-toggle="collapse" data-target="#infoDiv"
-                aria-expanded="false"
-                aria-controls="infoDiv">
-            More info...
-        </button>
-    </div>
-    <div class="col-8 align-items-center mx-auto no-h-padding">
-        <div id="infoDiv" class="panel-collapse collapse in card card-body" style="padding: 0.25rem">
-            <div ng-show="cacheStatus"  class="text-center">
-                Last updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd hh:mm:ss'}}
-                <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
-            </div>
-            <div  class="text-center">
-                <h4><a href="http://onelink.to/myhrkb">Get the SpiritedApp</a>
-                <img class="qr-code" src="img/qrcode_onelink.png"></h4>
-            </div>
+<div ng-show="!busy" class="card card-body col-lg-6 mx-auto">
+    <div class="row">
+        <div class="align-items-lg-start">
+            <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
+                    aria-expanded="false"
+                    aria-controls="infoDiv">
+                More info...
+            </button>
+        </div>
+        <div class="card-body" style="padding: 0.25rem; margin: auto;">
             <div class="text-center">
-                <a href="#/legal"><h4>Privacy Policy</h4></a>
+                <h7 style="margin: auto;"><a href="http://spiritsearch.ca" target="_blank">
+                    <img width="35" height="24" src="img/www.png" border="0" alt="web">
+                    spiritsearch.ca
+                </a></h7>
             </div>
         </div>
+        <div class="align-items-lg-end">
+            <button class="btn btn-outline-warning" type="reset" ng-click="clearPrefs()">
+                Start Over
+            </button>
+        </div>
     </div>
-    <div class="col-2 align-items-end mx-auto no-h-padding">
-        <button class="btn btn-outline-warning" style="padding: 0px" type="reset" ng-click="clearPrefs()">
-            Start Over
-        </button>
+    <div class="row">
+        <div id="infoDiv" class="panel-collapse collapse in card card-body" style="padding: 0.25rem">
+            <div class="text-center">
+                <h6>Scan the barcode to download our mobile app <a href="http://onelink.to/myhrkb" target="_blank">SpiritedApp
+                    <a href="https://apps.apple.com/us/app/spiritedapp/id1479304841" target="_blank">
+                        <img width="24" height="24" src="img/apple.png" border="0" alt="iOS"></a>
+                    <a href="https://play.google.com/store/apps/details?id=org.maggus.spirit" target="_blank">
+                        <img width="24" height="24" src="img/android.png" border="0" alt="Android"></a>
+                </a></h6>
+            </div>
+            <div class="text-center">
+                <img class="qr-code" src="img/qrcode_onelink.png">
+            </div>
+            <div class="text-center">
+                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ma99us@gmail.com&lc=CA&item_name=
+        Donation+to+SpiritedApp+and+Spiritsearch+website&no_note=0&cn=&currency_code=CAD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted"
+                   class="btn btn-info" role="button" target="_blank">Want to help out? Please donate.
+                    <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" border="0"
+                         alt="PayPal Logo"></a>
+            </div>
+            <div class="text-center">
+                <a href="#/legal"><h5>Privacy Policy</h5></a>
+            </div>
+            <div ng-show="cacheStatus" class="text-center">
+                Data updated at {{cacheStatus.cacheLastUpdatedMs | date:'yyyy/MM/dd HH:mm'}}
+                <span ng-show="cacheStatus.country"> <br> Found {{cacheStatus.country}} Spirits</span>
+            </div>
+        </div>
     </div>
 </div>
