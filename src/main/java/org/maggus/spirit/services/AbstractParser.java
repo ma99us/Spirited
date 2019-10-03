@@ -113,7 +113,13 @@ abstract class AbstractParser {
                 String tag2 = iter2.next();
                 int dist = ld.apply(tag1, tag2);
                 if ((double) dist / tag1.length() <= 0.2) {   // 'exact' match
-                    likeness += -tag1.length() * 2; // exact matches "worth" a lot of likeness
+                    int multi = 1;
+                    if (tag1.length() >= 4 && dist == 0) {
+                        multi = 4;  // longer exact matches "worth" a lot of likeness
+                    } else if (dist == 0) {
+                        multi = 2;  // exact matches "worth" a bit more of likeness
+                    }
+                    likeness += -tag1.length() * multi;
                     iter1.remove();
                     iter2.remove();
                     break;

@@ -47,13 +47,18 @@ public class WhiskyApi {
         }
     }
 
+    @Deprecated
     @Path("/like/{name}")
     @GET
     public Response findWhiskiesLike(@PathParam("name") String name,
                                      @QueryParam("maxCandidates") @DefaultValue("10") int maxCandidates) {
         try {
-            List<Whisky> whisky = cacheService.getWhiskyService().fuzzyFindWhiskiesByName(name, maxCandidates);
-            for (Whisky w : whisky) {
+            QueryMetadata meta = new QueryMetadata();
+            meta.setSortBy("name");
+            meta.setPageNumber(1);
+            meta.setResultsPerPage(maxCandidates);
+            List<Whisky> whiskies = cacheService.getWhiskyService().getWhiskies(name, null, meta);
+            for (Whisky w : whiskies) {
                 w.setCacheExternalUrl(null);        // from CacheItem
                 w.setCacheSpentMs(null);            // from CacheItem
                 w.setCacheLastUpdatedMs(null);      // from CacheItem
@@ -65,7 +70,9 @@ public class WhiskyApi {
                 w.setAlcoholContent(null);
                 w.setDescription(null);
             }
-            return Response.ok(whisky);
+            Response resp = Response.ok(whiskies);
+            resp.setMetaData(meta);
+            return resp;
         } catch (Exception e) {
             return Response.fail(e);
         }
@@ -98,31 +105,37 @@ public class WhiskyApi {
     }
 
     @GET
-    public Response getAllWhiskies(@QueryParam("resultsPerPage") @DefaultValue("100") int resultsPerPage,
-                                   @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
-                                   @QueryParam("sortBy") @DefaultValue("name") String sortBy,
-                                   @QueryParam("format") @DefaultValue("short") String format) {
+    public Response getWhiskies(@QueryParam("name") @DefaultValue("") String name,
+                                @QueryParam("type") @DefaultValue("") String type,
+                                @QueryParam("resultsPerPage") @DefaultValue("10") int resultsPerPage,
+                                @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
+                                @QueryParam("sortBy") @DefaultValue("name") String sortBy,
+                                @QueryParam("format") @DefaultValue("short") String format) {
         try {
-            QueryMetadata metaData = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(metaData);
+            QueryMetadata meta = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(name, type, meta);
             if (!"long".equalsIgnoreCase(format)) { // strip some additional info to make response smaller
                 for (Whisky w : allWhiskies) {
+                    // medium format
                     w.setCacheExternalUrl(null);        // from CacheItem
                     w.setCacheSpentMs(null);            // from CacheItem
                     w.setCacheLastUpdatedMs(null);      // from CacheItem
                     w.setFlavorProfile(null);
                     w.setQuantities(null);
                     if (!"medium".equalsIgnoreCase(format)) {
+                        // short format
                         w.setCountry(null);
                         w.setRegion(null);
-                        w.setType(null);
+                        if(type == null || type.isEmpty()) {
+                            w.setType(null);    // do not reset result's Type if 'type' was part of the initial query
+                        }
                         w.setAlcoholContent(null);
                         w.setDescription(null);
                     }
                 }
             }
             Response resp = Response.ok(allWhiskies);
-            resp.setMetaData(metaData);
+            resp.setMetaData(meta);
             return resp;
         } catch (Exception e) {
             return Response.fail(e);

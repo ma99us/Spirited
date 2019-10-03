@@ -275,8 +275,8 @@ public class AnblParser extends AbstractParser {
                 Integer qty = getSafeElementInteger(el.select("td.warehouseQty > span"));
                 whisky.setStoreQuantity(new WarehouseQuantity(store, address, city, qty));
             }
-            if (!Locators.SpiritType.isWhisky(whisky.getType()) && type != null) {
-                whisky.setType(type);   // set auto-parsed type only for everything but whisky
+            if (type != null) {
+                whisky.setType(type);
             }
             whisky.setProductCode(prodCode);
             whisky.setAlcoholContent(alcoholContent);
@@ -300,25 +300,25 @@ public class AnblParser extends AbstractParser {
         return false;
     }
 
-    private String parseProductType(Elements elms, String rootType) {
+    private String parseProductType(Elements elms, String customType) {
         List<String> types = new ArrayList<String>();
-        if (rootType != null) {
-            types.add(rootType);
-        }
-        String text = getSafeElementText(elms.last());
-        if (text != null && !text.isEmpty()) {
+        boolean hasCustomType = false;
+        for (Element el : elms) {
+            String text = getSafeElementText(el);
+            if (types.contains(text)
+                    || "ANBL".equalsIgnoreCase(text)
+                    || "Catalog".equalsIgnoreCase(text)
+                    || "Spirits".equalsIgnoreCase(text)) {
+                continue;
+            }
+            if (customType != null && Locators.SpiritType.hasType(text, customType)) {
+                hasCustomType = true;
+            }
             types.add(text);
         }
-//        for (Element el : elms) {
-//            String text = getSafeElementText(el);
-//            if ("ANBL".equalsIgnoreCase(text) || "Catalog".equalsIgnoreCase(text)) {
-//                continue;
-//            }
-//            if (rootType != null && rootType.equalsIgnoreCase(text)) {
-//                continue;
-//            }
-//            types.add(text);
-//        }
+        if (!hasCustomType) {
+            types.add(0, customType);
+        }
         return types.stream().collect(Collectors.joining(", "));
     }
 
