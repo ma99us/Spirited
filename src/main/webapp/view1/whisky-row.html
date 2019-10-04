@@ -1,0 +1,13 @@
+<div ng-style="rowStyle" style="display:inline-block; white-space: nowrap; margin-top: auto; margin-bottom: auto;">
+    <div style="display:inline-block; vertical-align:middle;">
+        <img ng-if="whisky.thumbnailUrl" ng-src="{{whisky.thumbnailUrl}}" style="max-width: 40px; max-height: 60px;">
+    </div>
+    <div style="display:inline-block; vertical-align:middle; white-space: initial; width: calc(100% - 40px);">
+        <span ng-if="whisky.type && toShow.includes('type')" class="text-info top-note">{{whisky.type}}<br/></span>
+        <a ng-if="onClick" href="" ng-click="onClick({w: whisky})">{{whisky.name}}</a>
+        <span ng-if="!onClick"><b>{{whisky.name}}</b></span>
+        <span ng-if="whisky.unitVolumeMl && toShow.includes('volume')"><i><span ng-if="whisky.qtyPerContainer > 1">{{whisky.qtyPerContainer}}X</span>{{whisky.unitVolumeMl}}ml</i></span>
+        <span ng-if="whisky.unitPrice && toShow.includes('price')"> - {{whisky.unitPrice | currency}}</span>
+        <span ng-if="available && toShow.includes('available')" class="text-info"> - available</span>
+    </div>
+</div>

@@ -225,7 +225,7 @@ public class DistillerParser extends AbstractParser {
                     if (country != null && !Locators.Country.equals(country, itemCountry)) {
                         likeness += 0.5;  // mismatch country is a big deal
                     }
-                    if (type != null && !Locators.SpiritType.equals(type, itemType)) {
+                    if (type != null && !Locators.SpiritType.hasType(type, itemType)) {
                         if (Locators.Country.equals("United Kingdom", itemCountry)) {
                             likeness += 0.4;  // mismatch type is quite a big deal, but only for Scotch
                         } else {

@@ -6,7 +6,6 @@ import org.maggus.spirit.models.FlavorProfile;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.WhiskyDiff;
 
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public class SuggestionsService {
         try {
             log.info("Looking for similar whiskies for \"" + whisky.getName() + "\"; maxDeviation=" + maxDeviation);
             long t0 = System.currentTimeMillis();
-            List<Whisky> allWhisky = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
+            List<Whisky> allWhisky = cacheService.getWhiskyService().getWhiskies(null, null, new QueryMetadata());
             //log.info("allWhisky size " + allWhisky.size());     // #DEBUG
             Map<Double, WhiskyDiff> candidates = allWhisky.parallelStream()
                     .filter(w -> w.getFlavorProfile() != null)

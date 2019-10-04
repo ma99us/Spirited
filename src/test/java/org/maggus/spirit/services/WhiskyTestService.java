@@ -50,19 +50,19 @@ public class WhiskyTestService {
 //        assertNotNull(whiskyService);
 
 //        WhiskyService whiskyService = new WhiskyService("spirited-test");
-//        int sizeBefore = whiskyService.getAllWhiskies().size();
+//        int sizeBefore = whiskyService.getWhiskies().size();
 //
 //        whiskyService.insertWhisky(new Whisky("Glenlivet Founders Reserve", "330ml", 5500, true));
 //        whiskyService.insertWhisky(new Whisky("Glenfiddich Special Reserve 12 YO", "500ml", 7000, true));
 //        whiskyService.insertWhisky(new Whisky("Glen Moray Speyside Sherry Cask Finish Single Malt", "750ml", 12000, true));
 //
-//        List<Whisky> list = whiskyService.getAllWhiskies();
+//        List<Whisky> list = whiskyService.getWhiskies();
 //        assertEquals("List.size()", sizeBefore + 3, list.size());
 //
 //        for (Whisky whisky : list) {
 //            whiskyService.deleteWhisky(whisky);
 //        }
 //
-//        assertEquals("WhiskyService.getAllWhiskies()", 0, whiskyService.getAllWhiskies().size());
+//        assertEquals("WhiskyService.getWhiskies()", 0, whiskyService.getWhiskies().size());
     }
 }

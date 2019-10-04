@@ -1,9 +1,10 @@
 {
   "name": "Spirited",
+  "displayName": "spiritsearch.ca",
   "private": true,
   "version": "0.0.1",
-  "description": "AngularJS client for SpiritApi",
-  "repository": "https://github.com/angular/angular-seed",
+  "description": "The Maritimes Liquor Database.",
+  "repository": "https://github.com/ma99us/Spirited",
   "license": "MIT",
   "dependencies": {
     "angular": "^1.7.5",

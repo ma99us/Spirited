@@ -6,20 +6,9 @@ angular.module('myApp', [
     'ngSanitize',
     'angular.filter',
     'myApp.view1',
-    'myApp.view2',
     'api',
     'geolocation'
 ])
-    .service('authInterceptor', function ($q) {
-        var service = this;
-
-        service.responseError = function (response) {
-            if (response.status == 401) {
-                window.location = "#/view1";
-            }
-            return $q.reject(response);
-        };
-    })
     .config(['$locationProvider', '$routeProvider', '$sceDelegateProvider', '$httpProvider', function ($locationProvider, $routeProvider, $sceDelegateProvider, $httpProvider) {
         //$locationProvider.hashPrefix('!');
         $locationProvider.hashPrefix('');
@@ -42,18 +31,9 @@ angular.module('myApp', [
             'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/**',
             'http://spiritsearch.ca/**'
         ]);
-
-        $httpProvider.interceptors.push('authInterceptor');
-
     }])
     .controller('IndexCtrl', ['$scope', function ($scope) {
-
-        $scope.$on('$routeChangeSuccess', function (scope, next, current) {
-            let path = next.$$route.originalPath;
-            $scope.menuView1Style = "/view1" === path ? {'background-color': 'CornFlowerBlue', color: 'black'} : {};
-            $scope.menuView2Style = "/view2" === path ? {'background-color': 'CornFlowerBlue', color: 'black'} : {};
-        });
-
+        // no-op
     }])
     .run(function (localstorage) {
         // console.log("Spirited started");

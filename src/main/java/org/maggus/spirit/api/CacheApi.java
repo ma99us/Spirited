@@ -4,7 +4,6 @@ import lombok.extern.java.Log;
 import org.maggus.spirit.models.Locators;
 import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.WhiskyCategory;
-import org.maggus.spirit.services.AnblParser;
 import org.maggus.spirit.services.CacheService;
 
 import javax.inject.Inject;
@@ -25,7 +24,7 @@ public class CacheApi {
     @GET
     public Response getCacheStatus() {
         try {
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getAllWhiskies(new QueryMetadata());
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(null, null, new QueryMetadata());
             int wCount = allWhiskies != null ? allWhiskies.size() : 0;
             int fpCount = allWhiskies != null ? (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count() : 0;
             int fpPerc = wCount > 0 ? (int) ((double) fpCount / wCount * 100) : 0;

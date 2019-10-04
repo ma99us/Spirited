@@ -119,7 +119,7 @@ public class Locators {
 //    }
 
     public static enum SpiritType {
-        WHISKY("Whisky"),
+        WHISKY("Whisky", "Whiskey", "Scotch"),
         // Whisky sub-types
         S_M("Single malt", "Single grain", "Peated Single Malt"),
         BLENDED("Blended", "Blended grain", "Blended malt", "Peated blend", "Peated blended malt", "Canadian", "Single Pot Still"),
@@ -141,7 +141,7 @@ public class Locators {
 
         private final String[] type;
 
-        private static SpiritType[] allWhiskyTypes = {WHISKY, S_M, BLENDED, FLAVOURED, BOURBON, RYE};
+//        private static SpiritType[] allWhiskyTypes = {WHISKY, S_M, BLENDED, FLAVOURED, BOURBON, RYE};
 
         SpiritType(String... type) {
             this.type = type;
@@ -160,15 +160,17 @@ public class Locators {
             return null;
         }
 
-        public static boolean equals(String obj1, String obj2) {
-            SpiritType c1 = SpiritType.parse(obj1);
-            SpiritType c2 = SpiritType.parse(obj2);
-            return c1 != null && c1.equals(c2);
+        public static boolean hasType(String type, String tryType) {
+            return type.toUpperCase().contains(tryType.toUpperCase());
         }
 
         public static boolean isWhisky(String type) {
-            SpiritType wType = parse(type);
-            return wType != null && Arrays.asList(allWhiskyTypes).contains(wType);
+            for (String t : WHISKY.type) {
+                if (hasType(type, t)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
