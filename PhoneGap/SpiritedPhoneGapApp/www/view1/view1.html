@@ -200,26 +200,21 @@
                         selectedWhisky.alcoholContent.toFixed(1)) : ''}}</span></h6>
                 </div>
                 <div class="row">
-                    <table border="0">
-                        <tr>
-                            <td valign="top">
-                                <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
-                                   data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400"
-                                   data-height="600">
-                                    <img class="img-fluid" style="max-width: 200px; max-height: 300px;"
-                                         ng-src="{{selectedWhisky.thumbnailUrl}}">
-                                </a>
-                                <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
-                                    <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
-                                    {{selectedWhisky.unitVolumeMl}} ml</p>
-                                <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
-                                    | currency}}</strong></p>
-                            </td>
-                            <td valign="top">
-                                {{selectedWhisky.description}}
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="col-5" style="padding-left: 0.25rem; padding-right: 0.25rem">
+                        <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
+                           data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400" data-height="600">
+                            <img style="float: left; max-width: 100%" ng-src="{{selectedWhisky.thumbnailUrl}}">
+                        </a>
+                        <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
+                            <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
+                            {{selectedWhisky.unitVolumeMl}}ml
+                        </p>
+                        <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
+                            | currency}}</strong></p>
+                    </div>
+                    <div class="col-7" style="padding-left: 0.25rem; padding-right: 0.25rem">
+                        {{selectedWhisky.description}}
+                    </div>
                 </div>
                 <div class="row">
                     <div id="chartDiv" class="col-12 align-items-center mx-auto">

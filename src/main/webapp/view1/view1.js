@@ -1,11 +1,35 @@
 'use strict';
 
-angular.module('myApp.view1', ['ngRoute', 'localstorage'])
+angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
 
-    .config(['$routeProvider', function ($routeProvider) {
+    .config(['$routeProvider', 'ChartJsProvider', function ($routeProvider, ChartJsProvider) {
         $routeProvider.when('/view1', {
             templateUrl: 'view1/view1.html',
             controller: 'View1Ctrl'
+        });
+
+        ChartJsProvider.setOptions({
+            chartColors: ['#13b7c6', '#0c818e', '#1be0ea'],
+            showTooltips: true,
+            responsive: false
+        });
+        ChartJsProvider.setOptions('scales', {
+            xAxes: [{
+                ticks: {
+                    display: true,
+                    autoSkip: false
+                },
+                gridLines: {
+                    display: false,
+                }
+            }],
+            yAxes: [{
+                display: false,
+                ticks: {
+                    max: 100,
+                    beginAtZero:true,
+                }
+            }]
         });
     }])
     .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', '$routeParams', function ($scope, $q, localstorage, $api, geolocation, $routeParams) {
@@ -506,13 +530,12 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage'])
         // active tab change listener
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             $scope.activeTab = e.target.id; // newly activated tab
-
-            // if($scope.activeTab === 'byname-tab' && $scope.favWhiskyName.length >= 4) {
-            //     $scope.onFavWhiskyNameChange($scope.favWhiskyName);
-            // }
-            // else if($scope.activeTab === 'bytype-tab' && $scope.favWhiskyType.length > 0) {
-            //     $scope.onFavTypeChange($scope.favWhiskyType);
-            // }
+            if($scope.activeTab === 'byname-tab') {
+                $("#spiritNameCtrl").focus();
+            }
+            else if($scope.activeTab === 'bytype-tab') {
+                $("#spiritTypeCtrl").focus();
+            }
         });
 
         //// initialization:

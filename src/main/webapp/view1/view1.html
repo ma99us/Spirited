@@ -107,7 +107,7 @@
                 </div>
                 <div id="browseView" class="list-group align-items-center collapse" ng-show="favWhiskyType">
                     <span ng-show="busyC">Looking...</span>
-                    <span style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></span>
+                    <div style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></div>
                     <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
                        ng-repeat="w in browseWhiskies.whiskies">
                         <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
@@ -197,26 +197,21 @@
                         selectedWhisky.alcoholContent.toFixed(1)) : ''}}</span></h6>
                 </div>
                 <div class="row">
-                    <table border="0">
-                        <tr>
-                            <td valign="top">
-                                <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
-                                   data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400"
-                                   data-height="600">
-                                    <img class="img-fluid" style="max-width: 200px; max-height: 300px;"
-                                         ng-src="{{selectedWhisky.thumbnailUrl}}">
-                                </a>
-                                <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
-                                    <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
-                                    {{selectedWhisky.unitVolumeMl}} ml</p>
-                                <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
-                                    | currency}}</strong></p>
-                            </td>
-                            <td valign="top">
-                                {{selectedWhisky.description}}
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="col-5" style="padding-left: 0.25rem; padding-right: 0.25rem">
+                        <a ng-if="selectedWhisky.thumbnailUrl" href="{{selectedWhisky.thumbnailUrl}}"
+                           data-toggle="lightbox" data-title="{{selectedWhisky.name}}" data-width="400" data-height="600">
+                            <img style="float: left; max-width: 100%" ng-src="{{selectedWhisky.thumbnailUrl}}">
+                        </a>
+                        <p class="text-center lead" ng-show="selectedWhisky.unitVolumeMl">
+                            <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
+                            {{selectedWhisky.unitVolumeMl}}ml
+                        </p>
+                        <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
+                            | currency}}</strong></p>
+                    </div>
+                    <div class="col-7" style="padding-left: 0.25rem; padding-right: 0.25rem">
+                        {{selectedWhisky.description}}
+                    </div>
                 </div>
                 <div class="row">
                     <div id="chartDiv" class="col-12 align-items-center mx-auto">
@@ -273,10 +268,10 @@
 <div ng-show="!busy" class="card card-body col-lg-6 mx-auto">
     <div class="row">
         <div class="align-items-lg-start">
-            <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
+            <button class="btn btn-outline-dark collapsed" type="button" data-toggle="collapse" data-target="#infoDiv"
                     aria-expanded="false"
                     aria-controls="infoDiv">
-                More info...
+                <span><span class="if-collapsed ">More</span><span class="if-not-collapsed">Less</span> info...</span>
             </button>
         </div>
         <div class="card-body" style="padding: 0.25rem; margin: auto;">
