@@ -67,7 +67,7 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="byname" role="tabpanel" aria-labelledby="byname-tab">
                 <div class="input-group mb-3">
-                    <input style="font-size: x-large; font-weight: bolder" id="spiritNameCtrl" type="search" class="form-control" aria-label="spirit name" aria-describedby="basic-addon2"
+                    <input style="font-size: large; font-weight: bolder" id="spiritNameCtrl" type="search" class="form-control" aria-label="spirit name" aria-describedby="basic-addon2"
                            ng-model="favWhiskyName"
                            ng-model-options="{debounce: 800}"
                            ng-change="onFavWhiskyNameChange(favWhiskyName)"
@@ -95,7 +95,7 @@
             </div>
             <div class="tab-pane fade" id="bytype" role="tabpanel" aria-labelledby="bytype-tab">
                 <div class="input-group mb-3">
-                    <input style="font-size: x-large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"
+                    <input style="font-size: large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"
                            ng-model="favWhiskyType"
                            ng-model-options="{debounce: 800}"
                            ng-change="onFavTypeChange(favWhiskyType)"
@@ -274,24 +274,22 @@
 <br/>
 
 <div ng-show="!busy" class="card card-body col-lg-6 mx-auto">
-    <div class="row">
+    <div class="row" style="white-space: nowrap">
         <div class="align-items-lg-start">
-            <button class="btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#infoDiv"
+            <button class="btn btn-outline-dark" style="padding: 0.15rem" type="button" data-toggle="collapse" data-target="#infoDiv"
                     aria-expanded="false"
                     aria-controls="infoDiv">
                 More info...
             </button>
         </div>
-        <div class="card-body" style="padding: 0.25rem; margin: auto;">
-            <div class="text-center">
-                <h7 style="margin: auto;"><a href="http://spiritsearch.ca" target="_blank">
-                    <img width="35" height="24" src="img/www.png" border="0" alt="web">
-                    spiritsearch.ca
-                </a></h7>
-            </div>
+        <div class="card-body text-center" style="padding: 0.25rem; margin: auto; white-space: nowrap;">
+            <h7 style="margin: auto;"><a href="http://spiritsearch.ca" target="_blank">
+                <img width="35" height="24" src="img/www.png" border="0" alt="web">
+                spiritsearch.ca
+            </a></h7>
         </div>
         <div class="align-items-lg-end">
-            <button class="btn btn-outline-warning" type="reset" ng-click="clearPrefs()">
+            <button class="btn btn-outline-warning" style="padding: 0.15rem" type="reset" ng-click="clearPrefs()">
                 Start Over
             </button>
         </div>
