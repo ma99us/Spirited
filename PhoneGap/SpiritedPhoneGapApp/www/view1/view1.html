@@ -110,7 +110,7 @@
                 </div>
                 <div id="browseView" class="list-group align-items-center collapse" ng-show="favWhiskyType">
                     <span ng-show="busyC">Looking...</span>
-                    <span style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></span>
+                    <div style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></div>
                     <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
                        ng-repeat="w in browseWhiskies.whiskies">
                         <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
@@ -274,17 +274,17 @@
 <br/>
 
 <div ng-show="!busy" class="card card-body col-lg-6 mx-auto">
-    <div class="row" style="white-space: nowrap">
+    <div class="row" style="padding: 0.05rem;">
         <div class="align-items-lg-start">
-            <button class="btn btn-outline-dark" style="padding: 0.15rem" type="button" data-toggle="collapse" data-target="#infoDiv"
+            <button class="btn btn-outline-dark collapsed" style="padding: 0.15rem" type="button" data-toggle="collapse" data-target="#infoDiv"
                     aria-expanded="false"
                     aria-controls="infoDiv">
-                More info...
+                <span><span class="if-collapsed ">More</span><span class="if-not-collapsed">Less</span> info...</span>
             </button>
         </div>
-        <div class="card-body text-center" style="padding: 0.25rem; margin: auto; white-space: nowrap;">
+        <div class="card-body text-center" style="padding: 0.15rem; margin: auto; white-space: nowrap;">
             <h7 style="margin: auto;"><a href="http://spiritsearch.ca" target="_blank">
-                <img width="35" height="24" src="img/www.png" border="0" alt="web">
+                <img width="33" height="24" src="img/www.png" border="0" alt="web">
                 spiritsearch.ca
             </a></h7>
         </div>
