@@ -34,6 +34,8 @@
     <platform name="ios">
         <icon src="www/res/icon/ios/icon-1024.png" width="1024" height="1024"/>
         <icon src="www/res/icon/ios/icon-72@2x.png" width="144" height="144"/>
+        <icon src="www/res/icon/ios/icon.png" width="57" height="57"/>
+        <icon src="www/res/icon/ios/icon@2x.png" width="114" height="114"/>
         <!--  Storyboard  -->
         <splash src="www/res/screen/ios/Default~iphone.png"/>
         <splash src="www/res/screen/ios/Default-Landscape~ipad.png"/>
