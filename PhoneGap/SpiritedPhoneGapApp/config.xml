@@ -32,6 +32,7 @@
         <splash density="land" src="www/res/screen/android/splash-land-hdpi.png"/>
     </platform>
     <platform name="ios">
+        <icon src="www/res/icon/ios/icon-1024.png" width="1024" height="1024"/>
         <icon src="www/res/icon/ios/icon-72@2x.png" width="144" height="144"/>
         <!--  Storyboard  -->
         <splash src="www/res/screen/ios/Default~iphone.png"/>
