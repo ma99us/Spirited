@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.maggus.spirit" version="1.0.3"
-        android-versionCode="103"
-        ios-CFBundleVersion="1.0.3"
+<widget id="org.maggus.spirit" version="1.0.4"
+        android-versionCode="104"
+        ios-CFBundleVersion="1.0.4"
         xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SpiritedApp</name>
     <description>
@@ -64,7 +64,7 @@
             <string>This app requires camera access to scan barcodes.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>This app requires location access to find stores nearby.</string>
+            <string>This app requires location access to find liquor stores nearby.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="ITSAppUsesNonExemptEncryption">
             <false/>
