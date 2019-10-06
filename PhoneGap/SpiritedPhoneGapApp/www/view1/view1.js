@@ -67,20 +67,43 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             return phoneapi.isDeviceReady();
         }, function (newValue) {
             if (newValue && cordova) {
-                alert('Checking Version');
-                cordova.getAppVersion.getAppName(function (name) {
-                    alert(name);
-                });
-                cordova.getAppVersion.getVersionCode(function (version) {
-                    alert(version);
-                });
+                //alert('Checking Version');
+                // cordova.getAppVersion.getAppName(function (name) {
+                //     //alert(name);
+                // });
+                // cordova.getAppVersion.getVersionCode(function (version) {
+                //     //alert(version);
+                // });
                 cordova.getAppVersion.getVersionNumber(function (version) {
                     $scope.version = version;
                     log('App version: ' + $scope.version);
-                    alert(version);
+                    //alert(version);
                 });
             }
         });
+
+        $scope.shareWhisky = function(whisky) {
+            // this is the complete list of currently supported params you can pass to the plugin (all optional)
+            var options = {
+                message: 'Share this', // not supported on some apps (Facebook, Instagram)
+                subject: whisky.name, // fi. for email
+                files: ['', ''], // an array of filenames either locally or remotely
+                url: 'http://spiritsearch.ca?prod=' + whisky.name,
+                chooserTitle: 'Pick an app', // Android only, you can override the default share sheet title
+                //appPackageName: 'com.apple.social.facebook' // Android only, you can provide id of the App you want to share with
+            };
+
+            var onSuccess = function(result) {
+                console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+                console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+            };
+
+            var onError = function(msg) {
+                console.log("Sharing failed with message: " + msg);
+            };
+
+            window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+        };
 
         $scope.scanBarcode = function () {
             phoneapi.useCamera(function () {
