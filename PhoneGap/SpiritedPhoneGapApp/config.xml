@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.maggus.spirit" version="1.0.4"
-        android-versionCode="104"
-        ios-CFBundleVersion="1.0.4"
+<widget id="org.maggus.spirit" version="1.0.5"
+        android-versionCode="105"
+        ios-CFBundleVersion="1.0.5"
         xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SpiritedApp</name>
     <description>

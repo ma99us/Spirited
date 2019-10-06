@@ -1,7 +1,7 @@
 {
   "name": "org.maggus.spirit",
   "displayName": "SpiritedApp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The Maritimes Liquor Database.",
   "main": "index.js",
   "keywords": [
