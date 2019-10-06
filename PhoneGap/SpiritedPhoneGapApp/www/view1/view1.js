@@ -63,6 +63,16 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
         };
 
         $scope.isDeviceReady = phoneapi.isDeviceReady;  // function
+        $scope.$watch(function () {
+            return phoneapi.isDeviceReady();
+        }, function (newValue) {
+            if (newValue && cordova) {
+                cordova.getAppVersion.getVersionNumber().then(function (version) {
+                    $scope.version = version;
+                    log('App version: ' + $scope.version);
+                });
+            }
+        });
 
         $scope.scanBarcode = function () {
             phoneapi.useCamera(function () {

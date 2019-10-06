@@ -21,7 +21,7 @@ angular.module('phoneapi', [])
             },
 
             useCamera: function (successFunc, errorFunc) {
-                const diagnostic = getCordovaDiagnosticPlugin()
+                const diagnostic = getCordovaDiagnosticPlugin();
                 //alert('deviceReady=' + $window.app.deviceReady + '; diagnostic=' + diagnostic + '; $window.cordova.plugins.diagnostic=' + $window.cordova.plugins.diagnostic);   //#TEST
                 if (!diagnostic) {
                     errorFunc('No Cordova');
