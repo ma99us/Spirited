@@ -40,7 +40,8 @@ angular.module('myApp', [
             'http://gerdov.com/spirited/**',
             'http://192.168.2.19/spirited/**',
             'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/**',
-            'http://spiritsearch.ca/**'
+            'http://spiritsearch.ca/**',
+            'https://www.googletagmanager.com/**'
         ]);
 
         $httpProvider.interceptors.push('authInterceptor');
