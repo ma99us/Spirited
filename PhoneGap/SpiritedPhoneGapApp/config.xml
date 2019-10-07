@@ -51,6 +51,7 @@
     <allow-intent href="mailto:*"/>
     <allow-intent href="geo:*"/>
     <platform name="android">
+        <allow-intent href="market:*"/>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application"
                      xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:usesCleartextTraffic="true"/>
@@ -60,7 +61,9 @@
         <!--<uses-feature android:name="android.hardware.camera" />-->
         <!--<uses-feature android:name="android.hardware.camera.autofocus" />-->
         <!--</config-file>-->
-        <allow-intent href="market:*"/>
+        <feature name="SocialSharing">
+            <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
+        </feature>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*"/>
@@ -74,5 +77,8 @@
         <edit-config file="*-Info.plist" mode="merge" target="ITSAppUsesNonExemptEncryption">
             <false/>
         </edit-config>
+        <feature name="SocialSharing">
+            <param name="ios-package" value="SocialSharing" />
+        </feature>
     </platform>
 </widget>
