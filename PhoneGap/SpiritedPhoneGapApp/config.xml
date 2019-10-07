@@ -23,6 +23,7 @@
     <plugin name="cordova.plugins.diagnostic" spec="~5.0.0"/>
     <plugin name="phonegap-plugin-barcodescanner" source="npm" spec="~8.1.0"/>
     <plugin name="cordova-plugin-app-version" source="npm" spec="~0.1.9"/>
+    <plugin name="cordova-plugin-x-socialsharing" source="npm" spec="~5.6.0"/>
     <platform name="android">
         <preference name="SplashMaintainAspectRatio" value="true"/>
         <preference name="SplashShowOnlyFirstTime" value="true"/>
