@@ -67,18 +67,25 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             return phoneapi.isDeviceReady();
         }, function (newValue) {
             if (newValue && cordova) {
-                //alert('Checking Version');
-                // cordova.getAppVersion.getAppName(function (name) {
-                //     //alert(name);
-                // });
-                // cordova.getAppVersion.getVersionCode(function (version) {
-                //     //alert(version);
-                // });
-                cordova.getAppVersion.getVersionNumber(function (version) {
-                    $scope.version = version;
-                    log('App version: ' + $scope.version);
-                    //alert(version);
-                });
+                try {
+                    //alert('Checking Version');
+                    // cordova.getAppVersion.getAppName(function (name) {
+                    //     //alert(name);
+                    // });
+                    // cordova.getAppVersion.getVersionCode(function (version) {
+                    //     //alert(version);
+                    // });
+                    cordova.getAppVersion.getVersionNumber(function (version) {
+                        $scope.version = version;
+                        log('App version: ' + $scope.version);
+                        //alert(version);
+                    }, function (err) {
+                        alert("getVersionNumber failed with message: " + err);
+                    });
+                }
+                catch (e) {
+                    alert("getVersionNumber error: " + e);
+                }
             }
         });
 
