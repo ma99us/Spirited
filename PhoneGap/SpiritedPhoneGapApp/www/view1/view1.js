@@ -104,7 +104,11 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                 alert("Sharing failed with message: " + msg);
             };
 
-            window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+            try {
+                window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+            } catch (e) {
+                alert("Sharing error: " + e);
+            }
         };
 
         $scope.scanBarcode = function () {
