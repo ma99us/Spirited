@@ -95,7 +95,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                 $filter('currency')(whisky.unitPrice), // not supported on some apps (Facebook, Instagram)
                 subject: 'Found on SpiritedApp: ' + whisky.name, // fi. for email
                 files: [whisky.thumbnailUrl], // an array of filenames either locally or remotely
-                url: 'http://spiritsearch.ca/spirited/#/view1?prod=' + whisky.name,
+                url: 'http://spiritsearch.ca/spirited/#/view1?prod=' + encodeURI(whisky.name),
                 chooserTitle: 'Share with...', // Android only, you can override the default share sheet title
                 //appPackageName: 'com.apple.social.facebook' // Android only, you can provide id of the App you want to share with
             };
