@@ -32,7 +32,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             }]
         });
     }])
-    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', '$routeParams', 'phoneapi', function ($scope, $q, localstorage, $api, geolocation, $routeParams, phoneapi) {
+    .controller('View1Ctrl', ['$scope', '$q', '$filter', 'localstorage', '$api', 'geolocation', '$routeParams', 'phoneapi', function ($scope, $q, $filter, localstorage, $api, geolocation, $routeParams, phoneapi) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = {
@@ -77,43 +77,41 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     // });
                     cordova.getAppVersion.getVersionNumber(function (version) {
                         $scope.version = version;
-                        log('App version: ' + $scope.version);
-                        //alert(version);
+                        $scope.log('App version: ' + $scope.version);
                     }, function (err) {
-                        alert("getVersionNumber failed with message: " + err);
+                        //$scope.log("getVersionNumber failed with message: " + err);
                     });
                 }
                 catch (e) {
-                    alert("getVersionNumber error: " + e);
+                    //$scope.log("getVersionNumber error: " + e);
                 }
             }
         });
 
-        $scope.shareWhisky = function(whisky) {
+        $scope.shareWhisky = function (whisky) {
             // this is the complete list of currently supported params you can pass to the plugin (all optional)
-            var options = {
-                message: 'Share this', // not supported on some apps (Facebook, Instagram)
-                subject: whisky.name, // fi. for email
-                files: ['', ''], // an array of filenames either locally or remotely
-                url: 'http://spiritsearch.ca?prod=' + whisky.name,
-                chooserTitle: 'Pick an app', // Android only, you can override the default share sheet title
+            let options = {
+                message: whisky.name + ' - ' + whisky.unitVolumeMl + 'ml - ' +
+                $filter('currency')(whisky.unitPrice), // not supported on some apps (Facebook, Instagram)
+                subject: 'Found on SpiritedApp: ' + whisky.name, // fi. for email
+                files: [whisky.thumbnailUrl], // an array of filenames either locally or remotely
+                url: 'http://spiritsearch.ca/spirited/#/view1?prod=' + whisky.name,
+                chooserTitle: 'Share with...', // Android only, you can override the default share sheet title
                 //appPackageName: 'com.apple.social.facebook' // Android only, you can provide id of the App you want to share with
             };
 
-            var onSuccess = function(result) {
-                console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
-                console.log("Shared to app: " + result.app); // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
-                alert("Shared completed=" + result.completed + " app:" + result.app);
-            };
-
-            var onError = function(msg) {
-                console.log("Sharing failed with message: " + msg);
-                alert("Sharing failed with message: " + msg);
-            };
-
             try {
-                window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError);
+                window.plugins.socialsharing.shareWithOptions(options, function (result) {
+                    // result.completed; // On Android apps mostly return false even while it's true
+                    // result.app; // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+                    //$scope.log("Shared completed=" + result.completed + " app:" + result.app);
+                    //alert("Shared completed=" + result.completed + " app:" + result.app);
+                }, function (msg) {
+                    //$scope.log("Sharing failed with message: " + msg);
+                    alert("Sharing failed with message: " + msg);
+                });
             } catch (e) {
+                //$scope.log("Sharing error: " + e);
                 alert("Sharing error: " + e);
             }
         };
@@ -192,7 +190,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
 
         $scope.captureUserLocation = function () {
             phoneapi.useLocation(function () {
-                $scope.log(undefined);
+                $scope.log();
                 $scope.busyLoc = true;
                 geolocation.getCurrentPosition().then(function (geo) {
                     return geolocation.getNearbyCities(geo.coords.latitude, geo.coords.longitude);
