@@ -69,16 +69,9 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             if (newValue && cordova) {
                 //phoneapi.showToast("Device ready"); // #TEST
                 try {
-                    //alert('Checking Version');
-                    // cordova.getAppVersion.getAppName(function (name) {
-                    //     //alert(name);
-                    // });
-                    // cordova.getAppVersion.getVersionCode(function (version) {
-                    //     //alert(version);
-                    // });
                     cordova.getAppVersion.getVersionNumber(function (version) {
                         $scope.version = version;
-                        $scope.log('App version: ' + $scope.version);
+                        //$scope.log('App version: ' + $scope.version);
                     }, function (err) {
                         //$scope.log("getVersionNumber failed with message: " + err);
                     });
@@ -105,8 +98,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     // result.completed; // On Android apps mostly return false even while it's true
                     // result.app; // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
                     //$scope.log("Shared completed=" + result.completed + " app:" + result.app);
-                    alert("Shared completed=" + result.completed + " app:" + result.app);   // #TEST
-                    phoneapi.showToast("Shared", "success");
+                    //alert("Shared completed=" + result.completed + " app:" + result.app);   // #TEST
+                    //phoneapi.showToast("Shared", "success");
                 }, function (err) {
                     //alert("Sharing failed with message: " + msg);
                     phoneapi.showToast("Sharing failed: " + err, "error");
