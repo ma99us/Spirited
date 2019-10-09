@@ -64,6 +64,9 @@
         <feature name="SocialSharing">
             <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
         </feature>
+        <feature name="Toast">
+            <param name="android-package" value="nl.xservices.plugins.Toast" />
+        </feature>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*"/>
@@ -79,6 +82,9 @@
         </edit-config>
         <feature name="SocialSharing">
             <param name="ios-package" value="SocialSharing" />
+        </feature>
+        <feature name="Toast">
+            <param name="ios-package" value="Toast" />
         </feature>
     </platform>
 </widget>
