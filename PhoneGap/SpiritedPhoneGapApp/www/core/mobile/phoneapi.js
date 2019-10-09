@@ -82,16 +82,18 @@ angular.module('phoneapi', [])
                 let duration = "short";
                 let backgroundColor = "#333333";
                 let textColor = "#FFFFFF";
+                let opacity = 0.8;
                 if(type === 'error'){
                     duration = "long";
                     backgroundColor = "#DE3B3B";
+                    opacity = 1.0;
                 }
                 else if(type === 'warning'){
-                    duration = "short";
+                    duration = "long";
                     backgroundColor = "#FF9B21";
+                    opacity = 1.0;
                 }
                 else if(type === 'success'){
-                    duration = "short";
                     backgroundColor = "#6AA482";
                 }
                 try {
@@ -100,16 +102,16 @@ angular.module('phoneapi', [])
                         duration: duration, // "short" - 2000 ms
                         position: "center",
                         styling: {
-                            opacity: 0.8, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
+                            opacity: opacity, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
                             backgroundColor: backgroundColor, // make sure you use #RRGGBB. Default #333333
                             textColor: '#FFFFFF', // Ditto. Default #FFFFFF
-                            textSize: 14, // Default is approx. 13.
+                            textSize: 16, // Default is approx. 13.
                             cornerRadius: 16, // minimum is 0 (square). iOS default 20, Android default 100
                             horizontalPadding: 20, // iOS default 16, Android default 50
                             verticalPadding: 16 // iOS default 12, Android default 30
                         }
                     }, function (result) {
-                        alert("Toast success: " + result.event + "; " + result.message); // #TEST
+                        //alert("Toast success: " + result.event + "; " + result.message); // #TEST
                     }, function (err) {
                         //alert("Toast failed: " + err);
                         let t = type ? (type.toUpperCase() + ": ") : "";

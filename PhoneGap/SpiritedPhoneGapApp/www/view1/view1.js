@@ -105,11 +105,11 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     // result.completed; // On Android apps mostly return false even while it's true
                     // result.app; // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
                     //$scope.log("Shared completed=" + result.completed + " app:" + result.app);
-                    //alert("Shared completed=" + result.completed + " app:" + result.app);
-                    phoneapi.showToast("Share successfully", "success");
-                }, function (msg) {
+                    alert("Shared completed=" + result.completed + " app:" + result.app);   // #TEST
+                    phoneapi.showToast("Shared", "success");
+                }, function (err) {
                     //alert("Sharing failed with message: " + msg);
-                    phoneapi.showToast("Sharing failed: " + msg, "error");
+                    phoneapi.showToast("Sharing failed: " + err, "error");
                 });
             } catch (e) {
                 //$scope.log("Sharing error: " + e);
