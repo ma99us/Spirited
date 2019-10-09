@@ -91,11 +91,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
         $scope.shareWhisky = function (whisky) {
             // this is the complete list of currently supported params you can pass to the plugin (all optional)
             let options = {
-                message: whisky.name + ' - ' + whisky.unitVolumeMl + 'ml - ' +
-                $filter('currency')(whisky.unitPrice), // not supported on some apps (Facebook, Instagram)
+                message: $scope.getSpiritedWhiskyName(whisky), // not supported on some apps (Facebook, Instagram)
                 subject: 'Found on SpiritedApp: ' + whisky.name, // fi. for email
                 files: [whisky.thumbnailUrl], // an array of filenames either locally or remotely
-                url: 'http://spiritsearch.ca/spirited/#/view1?prod=' + encodeURI(whisky.name),
+                url: $scope.getSpiritedUrl(whisky),
                 chooserTitle: 'Share with...', // Android only, you can override the default share sheet title
                 //appPackageName: 'com.apple.social.facebook' // Android only, you can provide id of the App you want to share with
             };
@@ -106,13 +105,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     // result.app; // On Android result.app since plugin version 5.4.0 this is no longer empty. On iOS it's empty when sharing is cancelled (result.completed=false)
                     //$scope.log("Shared completed=" + result.completed + " app:" + result.app);
                     //alert("Shared completed=" + result.completed + " app:" + result.app);
+                    phoneapi.showToast("Share successfully", "success");
                 }, function (msg) {
-                    //$scope.log("Sharing failed with message: " + msg);
-                    alert("Sharing failed with message: " + msg);
+                    //alert("Sharing failed with message: " + msg);
+                    phoneapi.showToast("Sharing failed with message: " + msg, "error");
                 });
             } catch (e) {
                 //$scope.log("Sharing error: " + e);
-                alert("Sharing error: " + e);
+                //alert("Sharing error: " + e);
+                phoneapi.showToast("Sharing error: " + e, "error");
             }
         };
 
@@ -123,13 +124,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                             if (result.cancelled) {
                                 //alert("Scanning cancelled");
                             } else if (!result.text) {
-                                alert("Scanning failed: no data");
+                                //alert("Scanning failed: no data");
+                                phoneapi.showToast("Scanning failed: no data", "warning");
                             } else {
                                 $scope.findWhiskyByCode(result.text);
                             }
                         },
                         function (error) {
-                            alert("Scanning failed: " + error);
+                            //alert("Scanning failed: " + error);
+                            phoneapi.showToast("Scanning failed: " + error, "error");
                         },
                         {
                             // preferFrontCamera : true, // iOS and Android
@@ -150,9 +153,21 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     if (err === 'No Cordova') {
                         $scope.findWhiskyByCode('5000277003457');     // #TEST
                     } else {
-                        alert("Camera unavailable");
+                        //alert("Camera unavailable");
+                        phoneapi.showToast("Camera unavailable", "error");
                     }
                 });
+        };
+
+        $scope.getSpiritedWhiskyName = function(whisky) {
+            let res = whisky.name;
+            res += whisky.unitVolumeMl ? (' - ' + whisky.unitVolumeMl + 'ml') : '';
+            res += whisky.unitPrice ? (' - ' + $filter('currency')(whisky.unitPrice)) : '';
+            return res;
+        };
+
+        $scope.getSpiritedUrl = function(whisky) {
+            return 'http://spiritsearch.ca/spirited/#/view1?prod=' + encodeURI(whisky.name);
         };
 
         $scope.onFavWhiskyNameChange = function (newVal, force) {
@@ -208,6 +223,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     })
                     .catch(function (err) {
                         $scope.log(err);
+                        phoneapi.showToast("Location unavailable: " + err, "warning");
                     })
                     .finally(function () {
                         $scope.busyLoc = false;
@@ -220,7 +236,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                         $('#favStores').collapse('hide');
                     }
                 } else {
-                    alert("Location unavailable");
+                    //alert("Location unavailable");
+                    phoneapi.showToast("Location unavailable", "error");
                 }
             });
 
@@ -619,7 +636,8 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
         $scope.findWhiskyByCode = function (code) {
             $api.findWhiskyByCode(code).then(function (data) {
                 if (!data.data) {
-                    alert('no such product "' + code + '" :-(');
+                    //alert('no such product "' + code + '" :-(');
+                    phoneapi.showToast('no such product "' + code + '" :-(', "warning");
                     throw 'no such product "' + code + '" :-(';
                 }
                 $scope.log();

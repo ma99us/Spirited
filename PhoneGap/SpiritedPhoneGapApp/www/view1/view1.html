@@ -216,11 +216,6 @@
                         {{selectedWhisky.description}}
                     </div>
                 </div>
-                <div class="col-12 text-center">
-                    <button class="btn btn-outline-info" style="padding: 0.15rem" type="button" ng-click="shareWhisky(favWhisky)">
-                        Share
-                    </button>
-                </div>
                 <div class="row">
                     <div id="chartDiv" class="col-12 align-items-center mx-auto">
                         <canvas ng-if="!busySW && selectedWhisky.flavorProfile && selectedWhisky.id !== favWhisky.id && selFpData" id="selBar"
@@ -239,8 +234,14 @@
                         <h4 ng-if="busySW">Loading...</h4>
                     </div>
                 </div>
+                <div class="col-12 text-center">
+                    <button class="btn btn-outline-info" style="padding: 0.15rem" type="button" ng-click="shareWhisky(favWhisky)">
+                        <img width="30" height="30" src="img/social_share.png" border="0" alt="Share with...">
+                    </button>
+                </div>
                 <div class="row">
                     <div class="col-12 align-items-center mx-auto">
+                        <hr/>
                         <div ng-show="!busySW && selectedAvailableQty.length">
                             <h5 class="text-center">Available at:</h5>
                             <table width="100%" border="0" ng-if="selectedAvailableQty.length">

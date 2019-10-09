@@ -76,6 +76,38 @@ angular.module('phoneapi', [])
                         errorFunc('Error occurred: ' + error);
                     });
                 }
+            },
+
+            showToast: function (message, type) {
+                let duration = "short";
+                let backgroundColor = "#333333";
+                let textColor = "#FFFFFF";
+                if(type === 'error'){
+                    duration = "long";
+                    backgroundColor = "#DE3B3B";
+                }
+                else if(type === 'warning'){
+                    duration = "short";
+                    backgroundColor = "#FF9B21";
+                }
+                else if(type === 'success'){
+                    duration = "short";
+                    backgroundColor = "#6AA482";
+                }
+                window.plugins.toast.showWithOptions({
+                    message: message,
+                    duration: duration, // "short" - 2000 ms
+                    position: "center",
+                    styling: {
+                        opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
+                        backgroundColor: backgroundColor, // make sure you use #RRGGBB. Default #333333
+                        textColor: '#FFFF00', // Ditto. Default #FFFFFF
+                        textSize: 14, // Default is approx. 13.
+                        cornerRadius: 16, // minimum is 0 (square). iOS default 20, Android default 100
+                        horizontalPadding: 20, // iOS default 16, Android default 50
+                        verticalPadding: 16 // iOS default 12, Android default 30
+                    }
+                });
             }
         };
     }]);
