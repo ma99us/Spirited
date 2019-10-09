@@ -67,6 +67,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             return phoneapi.isDeviceReady();
         }, function (newValue) {
             if (newValue && cordova) {
+                phoneapi.showToast("Device ready"); // #TEST
                 try {
                     //alert('Checking Version');
                     // cordova.getAppVersion.getAppName(function (name) {
@@ -108,7 +109,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                     phoneapi.showToast("Share successfully", "success");
                 }, function (msg) {
                     //alert("Sharing failed with message: " + msg);
-                    phoneapi.showToast("Sharing failed with message: " + msg, "error");
+                    phoneapi.showToast("Sharing failed: " + msg, "error");
                 });
             } catch (e) {
                 //$scope.log("Sharing error: " + e);
