@@ -100,7 +100,7 @@ angular.module('phoneapi', [])
                         duration: duration, // "short" - 2000 ms
                         position: "center",
                         styling: {
-                            opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
+                            opacity: 0.8, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
                             backgroundColor: backgroundColor, // make sure you use #RRGGBB. Default #333333
                             textColor: '#FFFFFF', // Ditto. Default #FFFFFF
                             textSize: 14, // Default is approx. 13.
@@ -108,14 +108,18 @@ angular.module('phoneapi', [])
                             horizontalPadding: 20, // iOS default 16, Android default 50
                             verticalPadding: 16 // iOS default 12, Android default 30
                         }
-                    }, function () {
-                        alert("Toast success"); // #TEST
+                    }, function (result) {
+                        alert("Toast success: " + result.event + "; " + result.message); // #TEST
                     }, function (err) {
-                        alert("Toast failed: " + err);
+                        //alert("Toast failed: " + err);
+                        let t = type ? (type.toUpperCase() + ": ") : "";
+                        alert(t + message);
                     });
                 }
                 catch (e) {
-                    alert("Toast error: " + e);
+                    //alert("Toast error: " + e);
+                    let t = type ? (type.toUpperCase() + ": ") : "";
+                    alert(t + message);
                 }
             }
         };

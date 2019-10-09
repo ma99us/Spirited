@@ -67,7 +67,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             return phoneapi.isDeviceReady();
         }, function (newValue) {
             if (newValue && cordova) {
-                phoneapi.showToast("Device ready"); // #TEST
+                //phoneapi.showToast("Device ready"); // #TEST
                 try {
                     //alert('Checking Version');
                     // cordova.getAppVersion.getAppName(function (name) {
