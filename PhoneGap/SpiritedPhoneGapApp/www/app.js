@@ -26,10 +26,9 @@ angular.module('myApp', [
             // Allow same origin resource loads.
             'self',
             // Allow loading from third party domains.
-            'http://gerdov.com/spirited/**',
-            'http://192.168.2.19/spirited/**',
+            'http://spiritsearch.ca/**',
             'https://3lspo5qztd.execute-api.us-west-2.amazonaws.com/prod/**',
-            'http://spiritsearch.ca/**'
+            'https://www.googletagmanager.com/**'
         ]);
     }])
     .controller('IndexCtrl', ['$scope', function ($scope) {

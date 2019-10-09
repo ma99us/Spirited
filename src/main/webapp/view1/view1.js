@@ -32,7 +32,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             }]
         });
     }])
-    .controller('View1Ctrl', ['$scope', '$q', 'localstorage', '$api', 'geolocation', '$routeParams', function ($scope, $q, localstorage, $api, geolocation, $routeParams) {
+    .controller('View1Ctrl', ['$scope', '$q', '$filter', 'localstorage', '$api', 'geolocation', '$routeParams', function ($scope, $q, $filter, localstorage, $api, geolocation, $routeParams) {
         $scope.favStores = [];
         $scope.allStores = [];
         $scope.allWhiskies = {
@@ -52,6 +52,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
         $scope.dispQuantity = 10;
         $scope.recentWhiskies = [];
         $scope.paramProduct = $routeParams.prod;
+        $scope.paramFooter = $routeParams.footer;
         $scope.activeTab = 'byname-tab';
 
         $scope.log = function (msg) {
@@ -60,6 +61,25 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             } else {
                 $scope.message = msg
             }
+        };
+
+        $scope.scrollToDonate = function() {
+            $('#infoDiv').collapse('show');
+            //var height = $('#dono').offset().top;
+            let height = $(document).height();
+            $("html, body").animate({scrollTop: height}, "slow");
+        };
+
+        $scope.getSpiritedWhiskyName = function(whisky) {
+            let res = whisky.name;
+            res += whisky.unitVolumeMl ? (' - ' + whisky.unitVolumeMl + 'ml') : '';
+            res += whisky.unitPrice ? (' - ' + $filter('currency')(whisky.unitPrice)) : '';
+            return res;
+        };
+
+        $scope.getSpiritedUrl = function(whisky) {
+            // $location.absUrl().split('?')[0]  // for site should work
+            return 'http://spiritsearch.ca/spirited/#/view1?prod=' + encodeURI(whisky.name);
         };
 
         $scope.onFavWhiskyNameChange = function (newVal, force) {
@@ -184,12 +204,14 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
         };
 
         $scope.clearFavWhisky = function () {
-            $scope.favWhisky = undefined;
-            $scope.fpData = undefined;
-            $scope.similarWhiskies = undefined;
-            $scope.selectedWhisky = undefined;
-            $scope.selectedAvailableQty = undefined;
-            $scope.selFpData = undefined;
+            $scope.favWhisky = null;
+            $scope.fpData = null;
+            $scope.similarWhiskies = null;
+            $scope.selectedWhisky = null;
+            $scope.selectedWhiskySpiritedUrl = null;
+            $scope.selectedWhiskySpiritedName = null;
+            $scope.selectedAvailableQty = null;
+            $scope.selFpData = null;
             $scope.dispQuantity = 10;
         };
 
@@ -235,8 +257,11 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             $scope.selFpData = undefined;
             $scope.selectedAvailableQty = undefined;
             $scope.selectedWhisky = w;
+            $scope.selectedWhiskySpiritedUrl = $scope.getSpiritedUrl(w);
+            $scope.selectedWhiskySpiritedName = $scope.getSpiritedWhiskyName(w);
             $('#selectedWhiskyModalCenter').modal('show');
             $('#selectedWhiskyModalCenter').on('shown.bs.modal', function () {
+                $(".sharethis-inline-share-buttons").show().children().show();
                 $scope.getSelWhisky($scope.selectedWhisky).then(function () {
                     $scope.selectedAvailableQty = $scope.filterAvailability($scope.selectedWhisky);
                     $scope.buildSimilarFPChart($scope.selectedWhisky, $scope.favWhisky);
@@ -397,7 +422,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             $q.all(promises)
                 .then(function () {
                     const favProd = $scope.paramProduct || $scope.preferences.favWhiskyName;
-                    if (favProd) {
+                    if (favProd && !$scope.paramFooter) {   // do not show any whisky if we are in 'footer' mode
                         $api.findWhiskyByName(favProd).then(function (data) {
                             if (data.data) {
                                 $scope.selectFavWhisky(data.data);
@@ -552,6 +577,10 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             })
             .finally(function () {
                 $scope.busy = false;
+
+                if($scope.paramFooter) {
+                    $scope.scrollToDonate();
+                }
             });
     }])
     .directive('whiskyRow', function () {

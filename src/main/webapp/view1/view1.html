@@ -231,8 +231,16 @@
                         <h4 ng-if="busySW">Loading...</h4>
                     </div>
                 </div>
+                <div class="col-12 text-center">
+                    <div class="sharethis-inline-share-buttons" style="display: inline-block"
+                         data-url="{{selectedWhiskySpiritedUrl}}"
+                         data-title="Found on spiritsearch.ca: {{selectedWhisky.name}}"
+                         data-image="{{selectedWhisky.thumbnailUrl}}"
+                         data-description="{{selectedWhiskySpiritedName}}"></div>
+                </div>
                 <div class="row">
                     <div class="col-12 align-items-center mx-auto">
+                        <hr/>
                         <div ng-show="!busySW && selectedAvailableQty.length">
                             <h5 class="text-center">Available at:</h5>
                             <table width="100%" border="0" ng-if="selectedAvailableQty.length">
@@ -265,27 +273,25 @@
 
 <br/>
 
-<div ng-show="!busy" class="card card-body col-lg-6 mx-auto">
-    <div class="row">
+<div ng-show="!busy || paramFooter" class="card card-body col-lg-6 mx-auto">
+    <div class="row" style="padding: 0.05rem;">
         <div class="align-items-lg-start">
-            <button class="btn btn-outline-dark collapsed" type="button" data-toggle="collapse" data-target="#infoDiv"
+            <button class="btn btn-outline-dark collapsed" style="padding: 0.15rem" type="button" data-toggle="collapse" data-target="#infoDiv"
                     aria-expanded="false"
                     aria-controls="infoDiv">
-                <span><span class="if-collapsed ">More</span><span class="if-not-collapsed">Less</span> info...</span>
+                <span><span class="if-collapsed ">More</span><span class="if-not-collapsed">Less</span> info</span>
             </button>
         </div>
-        <div class="card-body" style="padding: 0.25rem; margin: auto;">
-            <div class="text-center">
+        <div class="card-body text-center" style="padding: 0.15rem; margin: auto; white-space: nowrap;">
                 <h6 style="margin: auto;"><a href="http://onelink.to/myhrkb" target="_blank">SpiritedApp
                     <a href="https://apps.apple.com/us/app/spiritedapp/id1479304841" target="_blank">
                         <img width="24" height="24" src="img/apple.png" border="0" alt="iOS"></a>
                     <a href="https://play.google.com/store/apps/details?id=org.maggus.spirit" target="_blank">
                         <img width="24" height="24" src="img/android.png" border="0" alt="Android"></a>
                 </a></h6>
-            </div>
         </div>
         <div class="align-items-lg-end">
-            <button class="btn btn-outline-warning" type="reset" ng-click="clearPrefs()">
+            <button class="btn btn-outline-warning" style="padding: 0.15rem" type="reset" ng-click="clearPrefs()">
                 Start Over
             </button>
         </div>
@@ -293,17 +299,23 @@
     <div class="row">
         <div id="infoDiv" class="panel-collapse collapse in card card-body" style="padding: 0.25rem">
             <div class="text-center">
-                <h5>Scan the barcode to download our mobile app</h5>
+                <h5>Scan the barcode to download our mobile app <a href="http://onelink.to/myhrkb" target="_blank">SpiritedApp</a></h5>
             </div>
             <div class="text-center">
                 <img class="qr-code" src="img/qrcode_onelink.png">
             </div>
             <div class="text-center">
-                <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ma99us@gmail.com&lc=CA&item_name=
-        Donation+to+SpiritedApp+and+Spiritsearch+website&no_note=0&cn=&currency_code=CAD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted"
-                   class="btn btn-info" role="button" target="_blank">Want to help out? Please donate.
-                    <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" border="0"
-                         alt="PayPal Logo"></a>
+                <a id="dono" href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ma99us@gmail.com&lc=CA&item_name=
+        Donation+to+support+SpiritedApp+and+spiritsearch.ca+development&no_note=0&cn=&currency_code=CAD&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted"
+                   class="btn btn-info" role="button" target="_blank">
+                    <div style="display:inline-block; white-space: nowrap;">
+                    <div style="display:inline-block; vertical-align:middle; white-space: initial; width: calc(100% - 80px);">
+                        Consider donating to support our work</div>
+                    <div style="display:inline-block; vertical-align:middle;">
+                        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" border="0" alt="PayPal Logo">
+                    </div>
+                    </div>
+                </a>
             </div>
             <div class="text-center">
                 <a href="#/legal"><h5>Privacy Policy</h5></a>
