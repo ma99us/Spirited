@@ -31,7 +31,7 @@
                     >
                     {{s.address}}
                 </li>
-                <span ng-hide="allStores.length > 0">--- no data ---</span>
+                <h6 ng-hide="allStores.length > 0">--- no data ---</h6>
             </ul>
         </div>
     </div>
@@ -100,8 +100,8 @@
                                 ng-click="showMoreWhiskies()">({{allWhiskies.whiskies.length}} out of
                             {{allWhiskies.totalResults}}) Show more...
                         </button>
-                        <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches
-                            ---</h4>
+                        <h6 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches
+                            ---</h6>
                     </div>
                 </div>
             </div>
@@ -143,8 +143,8 @@
                                 ng-click="browseMoreWhiskies()">({{browseWhiskies.whiskies.length}} out of
                             {{browseWhiskies.totalResults}}) Show more...
                         </button>
-                        <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no
-                            matches ---</h4>
+                        <h6 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no
+                            matches ---</h6>
                     </div>
                 </div>
             </div>
