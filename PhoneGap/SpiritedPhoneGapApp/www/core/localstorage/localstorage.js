@@ -19,13 +19,23 @@ angular.module('localstorage', [])
                 }
             },
 
-            copyToClipboard: function (str) {
-                const el = document.createElement('input');
-                el.value = str;
-                document.body.appendChild(el);
-                el.select();
+            copyToClipboard: function (text_to_share) {
+                // create temp element
+                var copyElement = document.createElement("span");
+                copyElement.appendChild(document.createTextNode(text_to_share));
+                copyElement.id = 'tempCopyToClipboard';
+                angular.element(document.body.append(copyElement));
+
+                // select the text
+                var range = document.createRange();
+                range.selectNode(copyElement);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+
+                // copy & cleanup
                 document.execCommand('copy');
-                document.body.removeChild(el);
+                window.getSelection().removeAllRanges();
+                copyElement.remove();
             }
         }
     }]);

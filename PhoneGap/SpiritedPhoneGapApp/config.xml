@@ -87,5 +87,11 @@
         <feature name="Toast">
             <param name="ios-package" value="Toast" />
         </feature>
+        <feature name="CDVWKWebViewEngine">
+            <param name="ios-package" value="CDVWKWebViewEngine" />
+        </feature>
+        <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <preference name="AllowBackForwardNavigationGestures" value="true" />
+        <preference name="Allow3DTouchLinkPreview" value="false" />
     </platform>
 </widget>

@@ -39,15 +39,26 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
 
+    <!-- include html -->
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        $(function(){
+            $("#platform").load("platform.html");
+        });
+    </script>
+    <!-- Frameworks -->
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
     <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="lib/ekko-lightbox/dist/ekko-lightbox.css">
+    <!-- end of framework styles -->
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>SpiritedApp</title>
 </head>
 <body>
 <div ng-view></div>
+<div id="platform"></div>
+<script type="text/javascript" src="js/platform.js"></script>
 
 <!--Cordova/PhoneGap-->
 <script type="text/javascript" src="cordova.js"></script>
@@ -61,7 +72,6 @@
 <script src="lib/angular-chart.js/dist/angular-chart.min.js"></script>
 <script src="lib/angular-filter/dist/angular-filter.min.js"></script>
 <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
-<script src="lib/jquery/dist/jquery.slim.min.js"></script>
 <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="lib/ekko-lightbox/dist/ekko-lightbox.min.js"></script>
 <!-- end of framework libraries -->
@@ -72,10 +82,6 @@
 <script src="core/localstorage/localstorage.js"></script>
 <script src="core/geolocation/geolocation.js"></script>
 <script src="core/mobile/phoneapi.js"></script>
-
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149474047-1"></script>
-<script type="text/javascript" src="js/platform.js"></script>
 
 </body>
 </html>

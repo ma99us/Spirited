@@ -161,6 +161,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
         };
 
         $scope.getSpiritedUrl = function(whisky) {
+            // $location.absUrl().split('?')[0]  // for site should work
             return 'http://spiritsearch.ca/spirited/#/view1?prod=' + encodeURI(whisky.name);
         };
 
@@ -191,7 +192,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
             $scope.busyC = true;
             $scope.clearBrowseWhiskies();
             $scope.browseWhiskies.sortBy = sortBy;
-            $('#browseView').collapse('show');
+            //$('#browseView').collapse('show');
             $scope.getWhiskies(null, $scope.favWhiskyType, $scope.browseWhiskies).finally(function () {
                 $scope.busyC = false;
             });
@@ -300,12 +301,14 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
         };
 
         $scope.clearFavWhisky = function () {
-            $scope.favWhisky = undefined;
-            $scope.fpData = undefined;
-            $scope.similarWhiskies = undefined;
-            $scope.selectedWhisky = undefined;
-            $scope.selectedAvailableQty = undefined;
-            $scope.selFpData = undefined;
+            $scope.favWhisky = null;
+            $scope.fpData = null;
+            $scope.similarWhiskies = null;
+            $scope.selectedWhisky = null;
+            $scope.selectedWhiskySpiritedUrl = null;
+            $scope.selectedWhiskySpiritedName = null;
+            $scope.selectedAvailableQty = null;
+            $scope.selFpData = null;
             $scope.dispQuantity = 10;
         };
 
@@ -317,9 +320,9 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js', 'phoneapi'
                 $scope.recentWhiskies = $scope.recentWhiskies.slice(0, 10);
             }
             // store new preferences
-            $scope.favWhiskyName = whisky.name;
+            //$scope.favWhiskyName = whisky.name;
             if ($scope.preferences) {
-                $scope.preferences.favWhiskyName = $scope.favWhiskyName;
+                $scope.preferences.favWhiskyName = whisky.name;
                 $scope.preferences.recentWhiskyNames = $scope.recentWhiskies.map(function (w) {
                    return w.name;
                 });
