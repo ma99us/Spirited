@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.maggus.spirit" version="1.0.6"
-        android-versionCode="106"
-        ios-CFBundleVersion="1.0.6"
+<widget id="org.maggus.spirit" version="1.0.7"
+        android-versionCode="107"
+        ios-CFBundleVersion="1.0.7"
         xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>SpiritedApp</name>
     <description>
@@ -25,6 +25,7 @@
     <plugin name="cordova-plugin-app-version" source="npm" spec="~0.1.9"/>
     <plugin name="cordova-plugin-x-socialsharing" source="npm" spec="~5.6.0"/>
     <plugin name="cordova-plugin-x-toast" source="npm" spec="~2.7.2"/>
+    <plugin name="cordova-plugin-wkwebview-engine" source="npm" spec="~1.2.1"/>
     <platform name="android">
         <preference name="SplashMaintainAspectRatio" value="true"/>
         <preference name="SplashShowOnlyFirstTime" value="true"/>
