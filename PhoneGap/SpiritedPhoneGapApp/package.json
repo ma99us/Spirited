@@ -1,7 +1,7 @@
 {
   "name": "org.maggus.spirit",
   "displayName": "SpiritedApp",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The Maritimes Liquor Database.",
   "main": "index.js",
   "keywords": [
@@ -27,13 +27,13 @@
     "cordova-plugin-x-socialsharing": "^5.6.0",
     "cordova-plugin-x-toast": "^2.7.2",
     "cordova.plugins.diagnostic": "^5.0.1",
-    "phonegap-plugin-barcodescanner": "^8.1.0"
+    "phonegap-plugin-barcodescanner": "^8.1.0",
     "bootstrap": "^4.2.1",
     "chart.js": "^2.7.3",
     "ekko-lightbox": "^5.3.0",
     "es6-promise-plugin": "^4.2.2",
     "html5-boilerplate": "0.0.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.3.1"
   },
   "devDependencies": {
     "cordova-plugin-whitelist": "1",
