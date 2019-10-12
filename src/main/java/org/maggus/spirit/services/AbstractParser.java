@@ -114,10 +114,13 @@ abstract class AbstractParser {
                 int dist = ld.apply(tag1, tag2);
                 if ((double) dist / tag1.length() <= 0.2) {   // 'exact' match
                     int multi = 1;
-                    if (tag1.length() >= 4 && dist == 0) {
+                    if (tag1.length() >= 5 && dist == 0) {
                         multi = 4;  // longer exact matches "worth" a lot of likeness
-                    } else if (dist == 0) {
+                    }
+                    if (tag1.length() >= 3 && dist == 0) {
                         multi = 2;  // exact matches "worth" a bit more of likeness
+                    } else if (tag1.length() < 3) {
+                        multi = 0;  // exact matches of really short words do not matter
                     }
                     likeness += -tag1.length() * multi;
                     iter1.remove();

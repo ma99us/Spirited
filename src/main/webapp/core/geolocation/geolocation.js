@@ -35,7 +35,8 @@ angular.module('geolocation', [])
 
         function tryIPinfoGeolocation() {
             var deferred = $q.defer();
-            $http.get('https://ipinfo.io/geo', {params: {token: '9134fd98c24203'}}).then(function (response) {
+            $http.get('https://ipinfo.io/geo', {params: {token: '9134fd98c24203'}})
+                .then(function (response) {
                 if (response && response.status != 200) {
                     let message = 'Http error: (' + response.status + ') ' + response.statusText;
                     deferred.reject(message);

@@ -63,6 +63,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             }
         };
 
+        $scope.copyToClipboard = function(str) {
+            localstorage.copyToClipboard(str);
+            $('a[data-toggle="tooltip"]').tooltip({
+                animated: 'fade',
+                placement: 'bottom',
+                trigger: 'click'
+            });
+        };
+
         $scope.scrollToDonate = function() {
             $('#infoDiv').collapse('show');
             //var height = $('#dono').offset().top;
@@ -109,7 +118,7 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
             $scope.busyC = true;
             $scope.clearBrowseWhiskies();
             $scope.browseWhiskies.sortBy = sortBy;
-            $('#browseView').collapse('show');
+            //$('#browseView').collapse('show');
             $scope.getWhiskies(null, $scope.favWhiskyType, $scope.browseWhiskies).finally(function () {
                 $scope.busyC = false;
             });
@@ -223,9 +232,9 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
                 $scope.recentWhiskies = $scope.recentWhiskies.slice(0, 10);
             }
             // store new preferences
-            $scope.favWhiskyName = whisky.name;
+            //$scope.favWhiskyName = whisky.name;
             if ($scope.preferences) {
-                $scope.preferences.favWhiskyName = $scope.favWhiskyName;
+                $scope.preferences.favWhiskyName = whisky.name;
                 $scope.preferences.recentWhiskyNames = $scope.recentWhiskies.map(function (w) {
                    return w.name;
                 });

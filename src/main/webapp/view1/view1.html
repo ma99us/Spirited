@@ -16,7 +16,7 @@
         <div class="text-center">
             <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-info'" ng-click="captureUserLocation()">
                 <span ng-show="!busyLoc">Find nearby stores</span>
-                <span ng-show="busyLoc">Looking around...</span>
+                <h6 ng-show="busyLoc">Looking around...</h6>
             </button>
         </div>
         <div class="row">
@@ -31,7 +31,7 @@
                     >
                     {{s.address}}
                 </li>
-                <span ng-hide="allStores.length > 0">--- no data ---</span>
+                <h6 ng-hide="allStores.length > 0">--- no data ---</h6>
             </ul>
         </div>
     </div>
@@ -49,8 +49,7 @@
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
     <div class="card card-body col-lg-6 mx-auto">
-        <h3 style="text-align: center;">
-            Name your poison:</h3>
+        <h3 style="text-align: center;">Find your spirit:</h3>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="byname-tab" data-toggle="tab" data-target="#byname" href="" role="tab"
@@ -77,17 +76,29 @@
                         </button>
                     </div>
                 </div>
-                <div id="searchView" class="list-group align-items-center collapse" ng-show="favWhiskyName">
-                    <span ng-show="busyC">Looking...</span>
-                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
-                       ng-repeat="w in allWhiskies.whiskies">
-                        <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
-                    </a>
-                    <button class="btn btn-outline-info" style="width: 100%" type="button"
-                            ng-show="allWhiskies.whiskies.length < allWhiskies.totalResults"
-                            ng-click="showMoreWhiskies()">({{allWhiskies.whiskies.length}} out of {{allWhiskies.totalResults}}) Show more...
+                <div class="card" style="border: 0">
+                    <button ng-show="favWhiskyName && (busyC || allWhiskies.whiskies.length)" id="searchViewBtn"
+                            class="btn btn-outline-dark slim collapsed"
+                            type="button" data-toggle="collapse" data-target="#searchView"
+                            aria-expanded="false"
+                            aria-controls="searchView">
+                        <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
                     </button>
-                    <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches ---</h4>
+                    <div ng-show="favWhiskyName" id="searchView" class="list-group align-items-center collapse">
+                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                           ng-repeat="w in allWhiskies.whiskies">
+                            <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+                        </a>
+                        <h6 ng-show="busyC">Looking...</h6>
+                        <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
+                                type="button"
+                                ng-show="allWhiskies.whiskies.length < allWhiskies.totalResults"
+                                ng-click="showMoreWhiskies()">({{allWhiskies.whiskies.length}} out of
+                            {{allWhiskies.totalResults}}) Show more...
+                        </button>
+                        <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches
+                            ---</h4>
+                    </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="bytype" role="tabpanel" aria-labelledby="bytype-tab">
@@ -105,31 +116,47 @@
                         </button>
                     </div>
                 </div>
-                <div id="browseView" class="list-group align-items-center collapse" ng-show="favWhiskyType">
-                    <span ng-show="busyC">Looking...</span>
-                    <div style="width: 100%" class="text-right" ng-show="!busyC && browseWhiskies.whiskies.length"><sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by></div>
-                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
-                       ng-repeat="w in browseWhiskies.whiskies">
-                        <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
-                    </a>
-                    <button class="btn btn-outline-info" style="width: 100%" type="button"
-                            ng-show="browseWhiskies.whiskies.length < browseWhiskies.totalResults"
-                            ng-click="browseMoreWhiskies()">({{browseWhiskies.whiskies.length}} out of {{browseWhiskies.totalResults}}) Show more...
+                <div class="card" style="border: 0">
+                    <button ng-show="favWhiskyType && (busyC || browseWhiskies.whiskies.length)" id="browseViewBtn"
+                            class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse"
+                            data-target="#browseView"
+                            aria-expanded="false"
+                            aria-controls="browseView">
+                        <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
                     </button>
-                    <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no matches ---</h4>
+                    <div ng-show="favWhiskyType" id="browseView" class="list-group align-items-center collapse">
+                        <div ng-show="busyC || browseWhiskies.whiskies.length" style="width: 100%" class="text-right">
+                            <sort-by sort-by="browseWhiskies.sortBy" on-sort="onSortBy(sortBy)"></sort-by>
+                        </div>
+                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                           ng-repeat="w in browseWhiskies.whiskies">
+                            <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
+                        </a>
+                        <h6 ng-show="busyC">Looking...</h6>
+                        <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
+                                type="button"
+                                ng-show="browseWhiskies.whiskies.length < browseWhiskies.totalResults"
+                                ng-click="browseMoreWhiskies()">({{browseWhiskies.whiskies.length}} out of
+                            {{browseWhiskies.totalResults}}) Show more...
+                        </button>
+                        <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no
+                            matches ---</h4>
+                    </div>
                 </div>
             </div>
         </div>
         <div ng-if="recentWhiskies.length">
-            <button id="recentViewsBtn" class="btn btn-sm collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
-                    aria-expanded="false"
-                    aria-controls="recentViews">
-                <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> recent picks</span>
-            </button>
-            <div id="recentViews" class="panel-collapse collapse in card-body list-group align-items-center">
-                <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
-                    <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
-                </a>
+            <div class="card" style="border: 0">
+                <button id="recentViewsBtn" class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse" data-target="#recentViews"
+                        aria-expanded="false"
+                        aria-controls="recentViews">
+                    <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> recent picks</span>
+                </button>
+                <div id="recentViews" class="panel-collapse collapse in list-group align-items-center">
+                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
+                        <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -170,7 +197,7 @@
                 </div>
             </a>
         </div>
-        <button class="btn btn-outline-info" style="width: 100%" type="button"
+        <button class="btn btn-outline-info more-btn" style="width: 100%" type="button"
                 ng-show="dispQuantity < similarWhiskies.length" ng-click="showMoreCandidates()">({{dispQuantity}} out of {{similarWhiskies.length}}) Show more...
         </button>
     </div>
@@ -232,6 +259,8 @@
                     </div>
                 </div>
                 <div class="col-12 text-center">
+                    <a href="" data-toggle="tooltip" title="Link copied" ng-click="copyToClipboard(selectedWhiskySpiritedUrl)">
+                        <img src="img/clipboard.png" border="0" alt="Share product link"></a>
                     <div class="sharethis-inline-share-buttons" style="display: inline-block"
                          data-url="{{selectedWhiskySpiritedUrl}}"
                          data-title="Found on spiritsearch.ca: {{selectedWhisky.name}}"
@@ -276,13 +305,13 @@
 <div ng-show="!busy || paramFooter" class="card card-body col-lg-6 mx-auto">
     <div class="row" style="padding: 0.05rem;">
         <div class="align-items-lg-start">
-            <button class="btn btn-outline-dark collapsed" style="padding: 0.15rem" type="button" data-toggle="collapse" data-target="#infoDiv"
+            <button class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse" data-target="#infoDiv"
                     aria-expanded="false"
                     aria-controls="infoDiv">
                 <span><span class="if-collapsed ">More</span><span class="if-not-collapsed">Less</span> info</span>
             </button>
         </div>
-        <div class="card-body text-center" style="padding: 0.15rem; margin: auto; white-space: nowrap;">
+        <div class="card-body slim text-center" style="margin: auto; white-space: nowrap;">
                 <h6 style="margin: auto;"><a href="http://onelink.to/myhrkb" target="_blank">SpiritedApp
                     <a href="https://apps.apple.com/us/app/spiritedapp/id1479304841" target="_blank">
                         <img width="24" height="24" src="img/apple.png" border="0" alt="iOS"></a>
@@ -291,7 +320,7 @@
                 </a></h6>
         </div>
         <div class="align-items-lg-end">
-            <button class="btn btn-outline-warning" style="padding: 0.15rem" type="reset" ng-click="clearPrefs()">
+            <button class="btn btn-outline-warning slim" type="reset" ng-click="clearPrefs()">
                 Start Over
             </button>
         </div>
