@@ -16,6 +16,7 @@
     "angular-chart.js": "^1.1.1",
     "chart.js":"^2.8.0",
     "html5-boilerplate": "0.0.1",
+    "popper.js":"^1.15.0",
     "bootstrap": "^4.2.1",
     "jquery":"^3.3.1",
     "ekko-lightbox":"^5.3.0"
@@ -35,7 +36,7 @@
     "postinstall": "npm run copy-libs",
     "update-deps": "npm update",
     "postupdate-deps": "npm run copy-libs",
-    "copy-libs": "cpx \"node_modules/{angular,angular-*,html5-boilerplate/dist,bootstrap/dist,jquery/dist,chart.js/dist,ekko-lightbox/dist}/**/*\" webapp/lib -C",
+    "copy-libs": "cpx \"node_modules/{angular,angular-*,html5-boilerplate/dist,popper.js/dist,bootstrap/dist,jquery/dist,chart.js/dist,ekko-lightbox/dist}/**/*\" webapp/lib -C",
     "prestart": "npm install",
     "start": "http-server -a localhost -p 8000 -c-1 ./webapp",
     "pretest": "npm install",
