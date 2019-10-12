@@ -21,8 +21,7 @@
     "chart.js": "^2.7.3",
     "cordova-android": "^8.1.0",
     "cordova-android-support-gradle-release": "^3.0.1",
-    "cordova-browser": "^6.0.0",
-    "cordova-ios": "^4.5.5",
+    "cordova-ios": "^5.0.1",
     "cordova-plugin-app-version": "^0.1.9",
     "cordova-plugin-camera": "^4.1.0",
     "cordova-plugin-geolocation": "^4.0.2",
@@ -95,7 +94,6 @@
       "cordova-plugin-wkwebview-engine": {}
     },
     "platforms": [
-      "browser",
       "android",
       "ios"
     ]
