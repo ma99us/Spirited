@@ -28,6 +28,9 @@ public class CacheService {
     private DistillerParser dstlrParser;
 
     @Inject
+    private SpiritCharacterParser characterParser;
+
+    @Inject
     private WhiskyService whiskyService;
 
     @Inject
@@ -105,7 +108,8 @@ public class CacheService {
                 log.info("Loading details for " + whiskies.size() + " products...");
                 whiskies.parallelStream().forEach(w -> {
                     loadProductDetails(w);
-                    if (Locators.SpiritType.isWhisky(w.getType())) {
+                    w.setSpiritCharacter(characterParser.extractSpiritCharacter(w.getDescription(), Locators.SpiritType.getType(w.getType())));
+                    if (Locators.SpiritType.hasType(w.getType(), Locators.SpiritType.WHISKY)) {
                         findFlavorProfileForWhisky(w);
                     }
                 });
@@ -259,7 +263,8 @@ public class CacheService {
         if (whisky != null && (reCache == CacheOperation.RE_CACHE || (reCache == CacheOperation.CACHE_IF_NEEDED && isCacheInvalid))) {
             log.info("* updating cache for Whisky: " + whisky + "; reCache=" + reCache + "; isCacheInvalid=" + isCacheInvalid + "; whisky.getCacheLastUpdatedMs: " + whisky.getCacheLastUpdatedMs() + " < " + (System.currentTimeMillis() - CACHE_TIMEOUT));      // #TEST
             loadProductDetails(whisky);
-            if (Locators.SpiritType.isWhisky(whisky.getType())) {
+            whisky.setSpiritCharacter(characterParser.extractSpiritCharacter(whisky.getDescription(), Locators.SpiritType.getType(whisky.getType())));
+            if (Locators.SpiritType.hasType(whisky.getType(), Locators.SpiritType.WHISKY)) {
                 findFlavorProfileForWhisky(whisky);
             }
             updateWhiskyCache(whisky);

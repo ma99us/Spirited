@@ -275,7 +275,7 @@ public class AnblParser extends AbstractParser {
                 Integer qty = getSafeElementInteger(el.select("td.warehouseQty > span"));
                 whisky.setStoreQuantity(new WarehouseQuantity(store, address, city, qty));
             }
-            if (type != null) {
+            if (type != null && !type.isEmpty()) {
                 whisky.setType(type);
             }
             whisky.setProductCode(prodCode);
@@ -316,7 +316,7 @@ public class AnblParser extends AbstractParser {
             }
             types.add(text);
         }
-        if (!hasCustomType) {
+        if (!hasCustomType && customType != null && !customType.contains(",")) {
             types.add(0, customType);
         }
         return types.stream().collect(Collectors.joining(", "));

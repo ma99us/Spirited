@@ -134,7 +134,7 @@ public class Locators {
         GIN("Gin"),
         MOONSHINE("Moonshine"),
         VINE("Vine"),
-        BEER("Beer"),
+        BEER("Beer", "Ale", "Pilsner", "Lager", "Porter", "Stout", "IPA", "Witbier", "Bitter", "Saison", "APA"),
         CIDER("Cider")
         //TODO: add more types here
         ;
@@ -161,16 +161,36 @@ public class Locators {
         }
 
         public static boolean hasType(String type, String tryType) {
-            return type.toUpperCase().contains(tryType.toUpperCase());
+            String[] types = type.split(", ");
+            String[] tryTypes = tryType.split(", ");
+            for (String t1 : types) {
+                for (String t2 : tryTypes) {
+                    if (t1.toUpperCase().contains(t2.toUpperCase())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
-        public static boolean isWhisky(String type) {
-            for (String t : WHISKY.type) {
+        public static boolean hasType(String type, SpiritType tryType) {
+            for (String t : tryType.type) {
                 if (hasType(type, t)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        public static SpiritType getType(String type) {
+            String[] types = type.split(",");
+            for (String t : types) {
+                SpiritType st = parse(t.trim());
+                if (st != null) {
+                    return st;
+                }
+            }
+            return null;
         }
     }
 

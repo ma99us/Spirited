@@ -44,6 +44,12 @@ p.footnote {
 input[type=search]::-webkit-search-cancel-button {
     /* not working because of iOS bug */
     -webkit-appearance: searchfield-cancel-button;
+
+}
+
+input[type=search] {
+    box-shadow: 0 0 5px #5fbfce;
+    border: 1px solid #5fbfce;
 }
 
 .no-h-padding {

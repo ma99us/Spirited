@@ -3,15 +3,13 @@ package org.maggus.spirit.services;
 import lombok.extern.java.Log;
 import org.maggus.spirit.api.QueryMetadata;
 import org.maggus.spirit.models.FlavorProfile;
+import org.maggus.spirit.models.Locators;
 import org.maggus.spirit.models.Whisky;
-import org.maggus.spirit.models.WhiskyDiff;
+import org.maggus.spirit.models.SpiritDiff;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -22,42 +20,54 @@ public class SuggestionsService {
     @Inject
     private CacheService cacheService;
 
-    public List<WhiskyDiff> findSimilarWhiskies(final Whisky whisky, Double maxDeviation) throws Exception {
+    @Inject
+    private SpiritCharacterParser spiritCharacterParser;
+
+    public List<SpiritDiff> findSimilarSpirits(final Whisky whisky, int maxCandidates) throws Exception {
         try {
-            log.info("Looking for similar whiskies for \"" + whisky.getName() + "\"; maxDeviation=" + maxDeviation);
+            log.info("Looking for similar spirits for \"" + whisky.getName() + "\"; maxCandidates=" + maxCandidates);
             long t0 = System.currentTimeMillis();
+            final Set<SpiritCharacterParser.SpiritCharacters.Character> spiritCharacters = spiritCharacterParser.getSpiritCharacters(
+                    whisky.getSpiritCharacter(), Locators.SpiritType.getType(whisky.getType()));
             List<Whisky> allWhisky = cacheService.getWhiskyService().getWhiskies(null, null, new QueryMetadata());
             //log.info("allWhisky size " + allWhisky.size());     // #DEBUG
-            Map<Double, WhiskyDiff> candidates = allWhisky.parallelStream()
-                    .filter(w -> w.getFlavorProfile() != null)
+            Map<Double, SpiritDiff> candidates = allWhisky.parallelStream()
                     .map(w -> {
-                        WhiskyDiff diff = new WhiskyDiff(w);
-                        diff.setStdDeviation(calcDifference(whisky.getFlavorProfile(), w.getFlavorProfile(), diff));
+                        SpiritDiff diff = new SpiritDiff(w);
+                        if (whisky.getFlavorProfile() != null && w.getFlavorProfile() != null) {
+                            diff.setStdDeviation(calcFlavorProfileDifference(whisky.getFlavorProfile(), w.getFlavorProfile(), diff));
+                        } else if (spiritCharacters != null && !spiritCharacters.isEmpty()) {
+                            diff.setStdDeviation(calcCharacterDifference(spiritCharacters, w.getSpiritCharacter(), diff));
+                        } else {
+                            diff.setStdDeviation(Double.MAX_VALUE);
+                        }
                         return diff;
-                    }).collect(Collectors.toMap(WhiskyDiff::getStdDeviation, d -> d, (oldValue, newValue) -> oldValue, TreeMap::new));
+                    })
+                    .filter(wd -> {
+                        if(whisky.equals(wd.getCandidate())){
+                            return false;
+                        }
+                        if(wd.getStdDeviation() == Double.MAX_VALUE){
+                            return false;
+                        }
+                        return true;
+                    })
+                    .collect(Collectors.toMap(SpiritDiff::getStdDeviation, d -> d, (oldValue, newValue) -> oldValue, TreeMap::new));
             //log.info("candidates size " + candidates.size());     // #DEBUG
-            List<WhiskyDiff> res = new ArrayList<>();
-            for (WhiskyDiff wd : candidates.values()) {
-                //log.info("wd " + wd.getCandidate().getName() + "; deviation=" + wd.getStdDeviation());     // #DEBUG
-                if (whisky.equals(wd.getCandidate())) {
-                    continue;   // no not suggest the original whisky, and the worst matches
-                }
-                if ((maxDeviation != null && wd.getStdDeviation() > maxDeviation) || (wd.getStdDeviation() == Double.MAX_VALUE)) {
-                    break;
-                }
-                res.add(wd);
-                //log.info("candidate " + wd.getCandidate().getName() + "; deviation=" + wd.getStdDeviation());     // #DEBUG
+            List<SpiritDiff> res = new ArrayList<>(candidates.values());
+            if (res.size() > maxCandidates) {
+                res = res.subList(0, maxCandidates);
             }
             long dt = System.currentTimeMillis() - t0;
-            log.info("Found " + res.size() + " similar whiskies in " + (dt) + " ms");
+            log.info("Found " + res.size() + " similar spirits in " + (dt) + " ms");
             return res;
         } catch (Exception ex) {
-            log.log(Level.SEVERE, "Failed to find similar whisky", ex);
+            log.log(Level.SEVERE, "Failed to find similar spirit", ex);
             throw ex;
         }
     }
 
-    private double calcDifference(FlavorProfile originalFp, FlavorProfile candidateFp, WhiskyDiff diff) {
+    private double calcFlavorProfileDifference(FlavorProfile originalFp, FlavorProfile candidateFp, SpiritDiff diff) {
         if(originalFp == null || candidateFp == null){
             return Double.MAX_VALUE;
         }
@@ -76,10 +86,11 @@ public class SuggestionsService {
         totalDiff += difSq(originalFp.getTart(), candidateFp.getTart(), diff, "tart");
         totalDiff += difSq(originalFp.getFruity(), candidateFp.getFruity(), diff, "fruity");
         totalDiff += difSq(originalFp.getFloral(), candidateFp.getFloral(), diff, "floral");
-        return Math.sqrt(totalDiff / 14.0);
+        double res = Math.sqrt(totalDiff / 14.0);
+        return res < 20.0 ? res : Double.MAX_VALUE;
     }
 
-    private double difSq(Integer i1, Integer i2, WhiskyDiff diff, String flavor) {
+    private double difSq(Integer i1, Integer i2, SpiritDiff diff, String flavor) {
         double l1 = i1 != null ? (double) i1 : 0;
         double l2 = i2 != null ? (double) i2 : 0;
         double d = l1 - l2;
@@ -89,5 +100,45 @@ public class SuggestionsService {
             diff.setMaxDiffFlavor((d > 0 ? "Less" : "More") + " " + flavor);
         }
         return Math.pow(d, 2);
+    }
+
+    private double calcCharacterDifference(Set<SpiritCharacterParser.SpiritCharacters.Character> originalChars, String candidateChars, SpiritDiff diff) {
+        if(originalChars == null || originalChars.isEmpty() || candidateChars == null || candidateChars.isEmpty()){
+            return Double.MAX_VALUE;
+        }
+        final Set<SpiritCharacterParser.SpiritCharacters.Character> candidateCharacters = spiritCharacterParser.getSpiritCharacters(
+                candidateChars, Locators.SpiritType.getType(diff.getCandidate().getType()));
+        if(candidateCharacters == null || candidateCharacters.isEmpty()){
+            return Double.MAX_VALUE;
+        }
+
+        Set<SpiritCharacterParser.SpiritCharacters.Character> common = originalChars.stream().filter(candidateCharacters::contains).collect(Collectors.toSet());
+        Set<SpiritCharacterParser.SpiritCharacters.Character> originalDiff = originalChars.stream().filter(item -> !candidateCharacters.contains(item)).collect(Collectors.toSet());
+        Set<SpiritCharacterParser.SpiritCharacters.Character> candidateDiff = candidateCharacters.stream().filter(item -> !originalChars.contains(item)).collect(Collectors.toSet());
+
+        double totalMatch = 0;
+        int totalMatchNum = 0;
+        // common
+        for(SpiritCharacterParser.SpiritCharacters.Character character : common) {
+            totalMatch += Math.pow(character.getWeight(), 2);
+            totalMatchNum++;
+        }
+        totalMatch = totalMatchNum > 0 ? Math.sqrt(totalMatch / totalMatchNum) : 0;
+
+        double totalDiff = 0;
+        int totalDiffNum = 0;
+        // original has, candidate does not
+        for(SpiritCharacterParser.SpiritCharacters.Character character : originalDiff) {
+            totalDiff += difSq(character.getWeight(), 0, diff, character.toString());
+            totalDiffNum++;
+        }
+        // candidate has, original does not
+        for(SpiritCharacterParser.SpiritCharacters.Character character : candidateDiff) {
+            totalDiff += difSq(0, character.getWeight(), diff, character.toString());
+            totalDiffNum++;
+        }
+        totalDiff = totalDiffNum > 0 ? Math.sqrt(totalDiff / totalDiffNum) : 0;
+
+        return totalMatch > totalDiff ? -totalMatch + totalDiff : Double.MAX_VALUE;
     }
 }

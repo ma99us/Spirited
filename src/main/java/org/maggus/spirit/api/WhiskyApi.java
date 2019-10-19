@@ -2,7 +2,7 @@ package org.maggus.spirit.api;
 
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Whisky;
-import org.maggus.spirit.models.WhiskyDiff;
+import org.maggus.spirit.models.SpiritDiff;
 import org.maggus.spirit.services.CacheService;
 import org.maggus.spirit.services.SuggestionsService;
 
@@ -81,11 +81,11 @@ public class WhiskyApi {
     @Path("/similar/{id}")
     @GET
     public Response getSimilarWhiskies(@PathParam("id") long id,
-                                       @QueryParam("maxDeviation") @DefaultValue("20.0") double maxDeviation) {
+                                       @QueryParam("maxCandidates") @DefaultValue("10") int maxCandidates) {
         try {
             Whisky whisky = cacheService.getWhiskyService().getWhisky(id);
-            List<WhiskyDiff> similarWhiskies = suggestionsService.findSimilarWhiskies(whisky, maxDeviation);
-            for (WhiskyDiff wd : similarWhiskies) {
+            List<SpiritDiff> similarWhiskies = suggestionsService.findSimilarSpirits(whisky, maxCandidates);
+            for (SpiritDiff wd : similarWhiskies) {
                 wd.getCandidate().setCacheExternalUrl(null);        // from CacheItem
                 wd.getCandidate().setCacheSpentMs(null);            // from CacheItem
                 wd.getCandidate().setCacheLastUpdatedMs(null);      // from CacheItem

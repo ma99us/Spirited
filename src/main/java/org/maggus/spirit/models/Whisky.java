@@ -37,6 +37,7 @@ public class Whisky extends CacheItem implements Cloneable {
     private Set<WarehouseQuantity> quantities = new HashSet<>();
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private FlavorProfile flavorProfile;
+    private String spiritCharacter;
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         super();
@@ -97,6 +98,8 @@ public class Whisky extends CacheItem implements Cloneable {
         //
         if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
         if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
+        if(w.getSpiritCharacter() != null) {
+            setSpiritCharacter(w.getSpiritCharacter());};
     }
 
     @Override

@@ -10,15 +10,9 @@
                 <p style="font-weight:bold;"><label>Name:</label><input ng-readonly="!editable" id="name" type="text"
                                                                         size="30" dl-enter-key="onEnter(whisky)"
                                                                         ng-model="whisky.name"/></p>
-                <p><label>Type:</label>
-                    <!--<select ng-readonly="!editable" id="typeSelect" name="type" ng-model="whisky.type">-->
-                        <!--<option value="Single malt">Single malt</option>-->
-                        <!--<option value="Blended">Blended</option>-->
-                    <!--</select>-->
-                    <input ng-readonly="!editable" id="type" type="text"
-                           size="30"
-                           dl-enter-key="onEnter(whisky)"
-                           ng-model="whisky.type"/>
+                <p><label>Type:</label><input ng-readonly="!editable" id="type" type="text" size="30"
+                                              dl-enter-key="onEnter(whisky)"
+                                              ng-model="whisky.type"/>
                 </p>
                 <p><label>Country:</label><input ng-readonly="!editable" id="country" type="text"
                                                  dl-enter-key="onEnter(whisky)"
@@ -40,6 +34,9 @@
                 <p><label>Description:</label><textarea ng-readonly="!editable" id="description"
                                                         dl-enter-key="onEnter(whisky)"
                                                         ng-model="whisky.description" rows="5" cols="50"></textarea></p>
+                <p><label>Character:</label><input ng-readonly="!editable" id="character" type="text" size="30"
+                                                   dl-enter-key="onEnter(whisky)"
+                                                   ng-model="whisky.spiritCharacter"/></p>
                 <p><label>Thumbnail URL:</label><input ng-readonly="!editable" size="50" id="thumbnailUrl" type="url"
                                                        dl-enter-key="onEnter(whisky)" ng-model="whisky.thumbnailUrl"/>
                 </p>

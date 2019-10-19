@@ -1,50 +1,8 @@
-<h2 style="text-align: center" class="contrast">Welcome To Spirit Search.</h2>
+<!--<h2 style="text-align: center" class="contrast">Welcome To Spirit Search.</h2>-->
+<h2 style="text-align: center"><img src="img/top_logo.png" border="0" alt="Spirit Search"></h2>
 <h5 ng-show="!busy" style="text-align: center" class="contrast">The Maritimes Liquor Database.</h5>
 <h3 id="busy" ng-show="busy" style="text-align: center" class="text-warning contrast">Initializing. Please wait...</h3>
 <p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
-<br/>
-<div ng-show="!busy" id="selFavStores" class="align-items-center">
-    <div class="card card-body col-lg-6 mx-auto">
-    <div style="text-align:center">
-        <button ng-class="preferences && favStores.length ? 'btn btn-outline-info collapsed' : 'btn btn-primary collapsed'" type="button" data-toggle="collapse" data-target="#favStores"
-                aria-expanded="false"
-                aria-controls="favStores">
-            <span class="if-collapsed ">Select</span><span class="if-not-collapsed">Hide</span> your preferred NB Liquor stores
-        </button>
-    </div>
-    <div id="favStores" class="panel-collapse collapse in card card-body">
-        <div class="text-center">
-            <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-info'" ng-click="captureUserLocation()">
-                <span ng-show="!busyLoc">Find nearby stores</span>
-                <h6 ng-show="busyLoc">Looking around...</h6>
-            </button>
-        </div>
-        <div class="row">
-            <ul class="col-6" ng-repeat="(city, stores) in allStores | orderBy:'city' | groupBy: 'city'">
-                <b>{{city}}</b>
-                <li ng-repeat="s in stores">
-                    <input type="checkbox"
-                           name="selectedStores"
-                           value="{{s.address}}"
-                           ng-checked="favStores.indexOf(s) >= 0"
-                           ng-click="toggleStoreSelection(s)"
-                    >
-                    {{s.address}}
-                </li>
-                <h6 ng-hide="allStores.length > 0">--- no data ---</h6>
-            </ul>
-        </div>
-    </div>
-    <div ng-if="preferences && favStores.length" class="card card-body" style="text-align: center">
-        <span>{{favStores.length}} store(s) selected in <span ng-bind-html="favStoresCities"></span>, only their inventory will
-            be considered.</span>
-    </div>
-    <div ng-if="preferences && !favStores.length" class="card card-body" style="text-align: center">
-        No preferred stores selected, all available inventory will be considered.
-    </div>
-    </div>
-</div>
-
 <br/>
 
 <div ng-show="!busy" id="selFavWhisky" class="align-items-center">
@@ -202,6 +160,50 @@
         </button>
     </div>
     <!--<h4 style="text-align: center" ng-if="!similarWhiskies.length && favWhisky">Nothing tastes similar :-(</h4>-->
+</div>
+
+<br/>
+
+<div ng-show="!busy" id="selFavStores" class="align-items-center">
+    <div class="card card-body col-lg-6 mx-auto">
+        <div style="text-align:center">
+            <button ng-class="preferences && favStores.length ? 'btn btn-outline-info collapsed' : 'btn btn-primary collapsed'" type="button" data-toggle="collapse" data-target="#favStores"
+                    aria-expanded="false"
+                    aria-controls="favStores">
+                <span class="if-collapsed ">Select</span><span class="if-not-collapsed">Hide</span> your preferred NB Liquor stores
+            </button>
+        </div>
+        <div id="favStores" class="panel-collapse collapse in card card-body">
+            <div class="text-center">
+                <button ng-class="preferences && favStores.length ? 'btn btn-outline-info' : 'btn btn-info'" ng-click="captureUserLocation()">
+                    <span ng-show="!busyLoc">Find nearby stores</span>
+                    <h6 ng-show="busyLoc">Looking around...</h6>
+                </button>
+            </div>
+            <div class="row">
+                <ul class="col-6" ng-repeat="(city, stores) in allStores | orderBy:'city' | groupBy: 'city'">
+                    <b>{{city}}</b>
+                    <li ng-repeat="s in stores">
+                        <input type="checkbox"
+                               name="selectedStores"
+                               value="{{s.address}}"
+                               ng-checked="favStores.indexOf(s) >= 0"
+                               ng-click="toggleStoreSelection(s)"
+                        >
+                        {{s.address}}
+                    </li>
+                    <h6 ng-hide="allStores.length > 0">--- no data ---</h6>
+                </ul>
+            </div>
+        </div>
+        <div ng-if="preferences && favStores.length" class="card card-body" style="text-align: center">
+        <span>{{favStores.length}} store(s) selected in <span ng-bind-html="favStoresCities"></span>, only their inventory will
+            be considered.</span>
+        </div>
+        <div ng-if="preferences && !favStores.length" class="card card-body" style="text-align: center">
+            No preferred stores selected, all available inventory will be considered.
+        </div>
+    </div>
 </div>
 
 <!-- Modal -->

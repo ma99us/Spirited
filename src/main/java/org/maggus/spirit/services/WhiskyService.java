@@ -3,7 +3,7 @@ package org.maggus.spirit.services;
 import lombok.extern.java.Log;
 import org.maggus.spirit.api.QueryMetadata;
 import org.maggus.spirit.models.Whisky;
-import org.maggus.spirit.models.WhiskyDiff;
+import org.maggus.spirit.models.SpiritDiff;
 
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
@@ -15,7 +15,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Stateful
@@ -164,12 +163,12 @@ public class WhiskyService {
             throw new NoResultException("Name must be specified");
         }
         Map<Double, Whisky> candidates = whiskies.parallelStream().map(w -> {
-            WhiskyDiff diff = new WhiskyDiff(w);
+            SpiritDiff diff = new SpiritDiff(w);
             diff.setStdDeviation(AbstractParser.fuzzyMatchNames(w.getName(), name));
             return diff;
         })
                 .filter(diff -> diff.getStdDeviation() <= maxDeviation)
-                .collect(Collectors.toMap(WhiskyDiff::getStdDeviation, WhiskyDiff::getCandidate, (oldValue, newValue) -> oldValue, TreeMap::new));
+                .collect(Collectors.toMap(SpiritDiff::getStdDeviation, SpiritDiff::getCandidate, (oldValue, newValue) -> oldValue, TreeMap::new));
         return candidates.entrySet().stream().map(e -> {
             return e.getValue();
         }).collect(Collectors.toList());

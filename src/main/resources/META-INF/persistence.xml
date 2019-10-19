@@ -5,8 +5,6 @@
     <persistence-unit name="spirited"> <!-- PRODUCTION DATA -->
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>spiritedDatabase</jta-data-source>
-        <!--<non-jta-data-source>spiritedUnmanaged</non-jta-data-source>-->
-        <!--<class>org.maggus.spirit.models.Whisky</class>-->
         <properties>
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
@@ -17,7 +15,6 @@
     <persistence-unit name="spirited-test"> <!-- INTEGRATION TESTS DATA -->
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>spiritedTestDatabase</jta-data-source>
-        <!--<class>org.maggus.spirit.models.Whisky</class>-->
         <properties>
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
@@ -26,7 +23,9 @@
         </properties>
     </persistence-unit>
     <persistence-unit name="spirited-test-local" transaction-type="RESOURCE_LOCAL"> <!-- UNIT TESTS DATA -->
-        <!--<class>org.maggus.spirit.models.Whisky</class>-->
+        <class>org.maggus.spirit.models.Whisky</class>
+        <class>org.maggus.spirit.models.WarehouseQuantity</class>
+        <class>org.maggus.spirit.models.FlavorProfile</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url"    value="jdbc:mysql://localhost/spirited_test" />
