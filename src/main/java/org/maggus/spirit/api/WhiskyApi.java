@@ -47,7 +47,7 @@ public class WhiskyApi {
         }
     }
 
-    @Deprecated
+    @Deprecated // use general getWhiskies() instead
     @Path("/like/{name}")
     @GET
     public Response findWhiskiesLike(@PathParam("name") String name,
@@ -57,7 +57,7 @@ public class WhiskyApi {
             meta.setSortBy("name");
             meta.setPageNumber(1);
             meta.setResultsPerPage(maxCandidates);
-            List<Whisky> whiskies = cacheService.getWhiskyService().getWhiskies(name, null, meta);
+            List<Whisky> whiskies = cacheService.getWhiskyService().getWhiskies(name, null, null, meta);
             for (Whisky w : whiskies) {
                 w.setCacheExternalUrl(null);        // from CacheItem
                 w.setCacheSpentMs(null);            // from CacheItem
@@ -106,6 +106,7 @@ public class WhiskyApi {
 
     @GET
     public Response getWhiskies(@QueryParam("name") @DefaultValue("") String name,
+                                @QueryParam("last") @DefaultValue("") String last,
                                 @QueryParam("type") @DefaultValue("") String type,
                                 @QueryParam("resultsPerPage") @DefaultValue("10") int resultsPerPage,
                                 @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
@@ -113,7 +114,7 @@ public class WhiskyApi {
                                 @QueryParam("format") @DefaultValue("short") String format) {
         try {
             QueryMetadata meta = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(name, type, meta);
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(name, last, type, meta);
             if (!"long".equalsIgnoreCase(format)) { // strip some additional info to make response smaller
                 for (Whisky w : allWhiskies) {
                     // medium format

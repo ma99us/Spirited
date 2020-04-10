@@ -15,7 +15,7 @@ import java.util.List;
 @Log
 public class WarehouseService {
 
-    @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
+    @PersistenceContext(unitName = "spirited", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
     public List<Warehouse> getAllWarehouses() throws Exception {

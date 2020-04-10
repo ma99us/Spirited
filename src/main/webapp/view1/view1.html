@@ -2,10 +2,12 @@
 <h2 style="text-align: center"><img src="img/top_logo.png" border="0" alt="Spirit Search"></h2>
 <h5 ng-show="!busy" style="text-align: center" class="contrast">The Maritimes Liquor Database.</h5>
 <h3 id="busy" ng-show="busy" style="text-align: center" class="text-warning contrast">Initializing. Please wait...</h3>
-<p id="message" style="text-align: center; font-weight:bold;" class="text-danger">{{message}}</p>
+
+<div class="card text-white bg-danger col-lg-10 mx-auto" ng-show="message"><p id="message" style="text-align: center; font-weight:bold;">{{message}}</p></div>
+
 <br/>
 
-<div ng-show="!busy" id="selFavWhisky" class="align-items-center">
+<div ng-show="!busy && !message" id="selFavWhisky" class="align-items-center">
     <div class="card card-body col-lg-6 mx-auto">
         <h3 style="text-align: center;">Find your spirit:</h3>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -17,6 +19,10 @@
                 <a class="nav-link" id="bytype-tab" data-toggle="tab" data-target="#bytype" href="" role="tab"
                    aria-controls="bytype" aria-selected="false">Search by Type</a>
             </li>
+            <!--<li class="nav-item">-->
+                <!--<a class="nav-link" id="latest-tab" data-toggle="tab" data-target="#latest" href="" role="tab"-->
+                   <!--aria-controls="latest" aria-selected="false">Latest Additions</a>-->
+            <!--</li>-->
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="byname" role="tabpanel" aria-labelledby="byname-tab">
@@ -102,6 +108,49 @@
                     </div>
                 </div>
             </div>
+            <div class="tab-pane fade" id="latest" role="tabpanel" aria-labelledby="latest-tab">
+                <!--<div class="input-group mb-3">-->
+                    <!--<input style="font-size: x-large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"-->
+                           <!--ng-model="favWhiskyType"-->
+                           <!--ng-model-options="{debounce: 800}"-->
+                           <!--ng-change="onFavTypeChange(favWhiskyType)"-->
+                           <!--placeholder="liquor type or feature..."-->
+                           <!--autofocus/>-->
+                    <!--<div class="input-group-append">-->
+                        <!--<button class="btn btn-outline-secondary" type="button"-->
+                                <!--ng-click="onFavTypeChange(favWhiskyType)">-->
+                            <!--&gt;-->
+                        <!--</button>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="card" style="border: 0">
+                    <button ng-show="last && (busyC || latestWhiskies.whiskies.length)" id="latestViewBtn"
+                            class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse"
+                            data-target="#latestView"
+                            aria-expanded="false"
+                            aria-controls="latestView">
+                        <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
+                    </button>
+                    <div ng-show="last" id="latestView" class="list-group align-items-center collapse">
+                        <div ng-show="busyC || latestWhiskies.whiskies.length" style="width: 100%" class="text-right">
+                            <sort-by sort-by="latestWhiskies.sortBy" on-sort="onLatestSortBy(sortBy)"></sort-by>
+                        </div>
+                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                           ng-repeat="w in latestWhiskies.whiskies">
+                            <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
+                        </a>
+                        <h6 ng-show="busyC">Looking...</h6>
+                        <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
+                                type="button"
+                                ng-show="latestWhiskies.whiskies.length < latestWhiskies.totalResults"
+                                ng-click="latestMoreWhiskies()">({{latestWhiskies.whiskies.length}} out of
+                            {{latestWhiskies.totalResults}}) Show more...
+                        </button>
+                        <h4 style="text-align: center" ng-show="!busyC && !latestWhiskies.whiskies.length">--- no
+                            matches ---</h4>
+                    </div>
+                </div>
+            </div>
         </div>
         <div ng-if="recentWhiskies.length">
             <div class="card" style="border: 0">
@@ -122,7 +171,7 @@
 
 <br/>
 
-<div ng-show="!busy" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
+<div ng-show="!busy && !message" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
     <div class="card card-body col-lg-6 mx-auto">
         <div class="list-group align-items-center">
             <a href="" ng-click="showWhisky(favWhisky)" class="btn btn-outline-primary" style="width: 100%">
@@ -141,7 +190,7 @@
     </div>
 </div>
 
-<div ng-show="!busy" id="similarWhiskies" class="align-items-center">
+<div ng-show="!busy && !message" id="similarWhiskies" class="align-items-center">
     <div class="card card-body col-lg-6 mx-auto" ng-if="similarWhiskies.length && favWhisky">
     <h3 style="text-align: center" ng-show="similarWhiskies.length && favWhisky">
         You may also like:
@@ -164,7 +213,7 @@
 
 <br/>
 
-<div ng-show="!busy" id="selFavStores" class="align-items-center">
+<div ng-show="!busy && !message" id="selFavStores" class="align-items-center">
     <div class="card card-body col-lg-6 mx-auto">
         <div style="text-align:center">
             <button ng-class="preferences && favStores.length ? 'btn btn-outline-info collapsed' : 'btn btn-primary collapsed'" type="button" data-toggle="collapse" data-target="#favStores"
@@ -304,7 +353,7 @@
 
 <br/>
 
-<div ng-show="!busy || paramFooter" class="card card-body col-lg-6 mx-auto">
+<div ng-show="(!busy || paramFooter) && !message" class="card card-body col-lg-6 mx-auto">
     <div class="row" style="padding: 0.05rem;">
         <div class="align-items-lg-start">
             <button class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse" data-target="#infoDiv"

@@ -24,13 +24,18 @@ public class CacheApi {
     @GET
     public Response getCacheStatus() {
         try {
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(null, null, new QueryMetadata());
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(null, null, null, new QueryMetadata());
             int wCount = allWhiskies != null ? allWhiskies.size() : 0;
             int fpCount = allWhiskies != null ? (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count() : 0;
             int fpPerc = wCount > 0 ? (int) ((double) fpCount / wCount * 100) : 0;
             WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(cacheService.CACHE_UPDATE);
-            if(wc == null){
-                throw new NullPointerException("Bad Cache Status");
+            if (wc == null) {
+                String status = "Bad DB status";
+                Long rebuildStarted = cacheService.getRebuildStarted();
+                if (rebuildStarted != null) {
+                    status += "; data re-build in progress, started " + (System.currentTimeMillis() - rebuildStarted) / 1000 + " seconds ago.";
+                }
+                throw new IllegalStateException(status);
             }
             wc.setCountry(String.format("%d", wCount));     // hack; use "country" to send total number of whiskies
             wc.setRegion(String.format("%d%%", fpPerc));    // hack; use "region" to send percentage of whiskies with Flavour Profiles

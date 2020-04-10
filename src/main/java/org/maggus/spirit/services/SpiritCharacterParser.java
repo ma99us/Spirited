@@ -179,6 +179,8 @@ public class SpiritCharacterParser {
             characters.add(new SpiritCharacters.Character(5, "Bananas", "Banana"));
             characters.add(new SpiritCharacters.Character(5, "Barbecue", "Barbecued"));
             characters.add(new SpiritCharacters.Character(5, "Wheat", "Weiss"));
+            characters.add(new SpiritCharacters.Character(5, "Litchi", "Litchiness"));
+            characters.add(new SpiritCharacters.Character(5, "Resin"));
             characters.add(new SpiritCharacters.Character(5, "Sour", "Sourness"));
             characters.add(new SpiritCharacters.Character(5, "Spicy", "Spice", "Spiced", "Spices", "Spiciness", "Pepper", "Peppery", "Peppermint"));
             characters.add(new SpiritCharacters.Character(5, "Sweet", "Sweetness", "Sugar"));
@@ -187,15 +189,15 @@ public class SpiritCharacterParser {
     };
 
     private SpiritCharacters selectSpiritCharactersForType(Locators.SpiritType type) {
-        if (type == Locators.SpiritType.BEER) {
+        if (type == Locators.SpiritType.BEER) {     // currently only works for beers
             return beerCharacters;
         }
         // add more SpiritCharacters templates for other spirit types here
         else if (type != null) {
-            log.warning("Unsupported spirit type:" + type);
+            //log.warning("Unsupported spirit type: " + type);      // #DEBUG
             return null;
         } else {
-            log.warning("Type is empty");
+            //log.warning("Type is empty");
             return null;
         }
     }

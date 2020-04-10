@@ -17,20 +17,26 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.maggus.spirit.services.CacheService.getDayTimestamp;
+
 @Stateful
 @Log
 public class WhiskyService {
 
-    @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
+    @PersistenceContext(unitName = "spirited", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
     private List<Whisky> cachedSpirits;
 
     //@Transactional(value=Transactional.TxType.REQUIRES_NEW)
-    public List<Whisky> getWhiskies(String name, String type, QueryMetadata metaData) throws Exception {
+    public List<Whisky> getWhiskies(String name, String last, String type, QueryMetadata metaData) throws Exception {
         List<Whisky> whiskies = getCache();
 
         if(name != null && !name.isEmpty()){
             whiskies = filterByFuzzyNameMatch(whiskies, name, 0.75);
+        }
+
+        if(last != null && !last.isEmpty()) {
+            whiskies = filterByAppearedPeriod(whiskies, last);
         }
 
         if(type != null && !type.isEmpty()) {
@@ -182,6 +188,30 @@ public class WhiskyService {
             String types = w.getType();
             types = types != null ? types.toUpperCase() : types;
             return types != null && types.contains(type.toUpperCase());
+        }).collect((Collectors.toList()));
+    }
+
+    private List<Whisky> filterByAppearedPeriod(List<Whisky> whiskies, String last) throws Exception {
+        if (last == null || last.isEmpty()) {
+            throw new NoResultException("Last period must be specified");
+        }
+        long lastTs = -1;
+        if ("day".equalsIgnoreCase(last) || "today".equalsIgnoreCase(last)) {
+            lastTs = getDayTimestamp(0);
+        } else if ("yesterday".equalsIgnoreCase(last)) {
+            lastTs = getDayTimestamp(-1);
+        } else if ("week".equalsIgnoreCase(last)) {
+            lastTs = getDayTimestamp(-7);
+        } else if ("month".equalsIgnoreCase(last)) {
+            lastTs = getDayTimestamp(-30);
+        }
+        if(lastTs < 0){
+            throw new NoResultException("unexpected Last period: " + last);
+        }
+        final long from = lastTs;
+        return whiskies.parallelStream().filter(w -> {
+            Long appeared = w.getFirstAppearedDate();
+            return appeared != null && appeared > from;
         }).collect((Collectors.toList()));
     }
 

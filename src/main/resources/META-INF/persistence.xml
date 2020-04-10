@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
     <persistence-unit name="spirited"> <!-- PRODUCTION DATA -->
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>spiritedDatabase</jta-data-source>
+        <jta-data-source>SpiritedDatabase</jta-data-source>
         <properties>
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
@@ -12,16 +12,16 @@
             <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="spirited-test"> <!-- INTEGRATION TESTS DATA -->
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>spiritedTestDatabase</jta-data-source>
-        <properties>
-            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-            <property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />
-        </properties>
-    </persistence-unit>
+    <!--<persistence-unit name="spirited-test"> &lt;!&ndash; INTEGRATION TESTS DATA &ndash;&gt;-->
+        <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
+        <!--<jta-data-source>spiritedTestDatabase</jta-data-source>-->
+        <!--<properties>-->
+            <!--<property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>-->
+            <!--<property name="eclipselink.ddl-generation.output-mode" value="database"/>-->
+            <!--<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>-->
+            <!--<property name="eclipselink.persistence-context.flush-mode" value="COMMIT" />-->
+        <!--</properties>-->
+    <!--</persistence-unit>-->
     <persistence-unit name="spirited-test-local" transaction-type="RESOURCE_LOCAL"> <!-- UNIT TESTS DATA -->
         <class>org.maggus.spirit.models.Whisky</class>
         <class>org.maggus.spirit.models.WarehouseQuantity</class>
@@ -29,7 +29,7 @@
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url"    value="jdbc:mysql://localhost/spirited_test" />
-            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.user" value="tomcat" />
             <property name="javax.persistence.jdbc.password" value="qwe" />
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>

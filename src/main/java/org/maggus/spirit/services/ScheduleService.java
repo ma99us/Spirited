@@ -2,6 +2,7 @@ package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
 import org.maggus.spirit.models.Locators;
+import org.maggus.spirit.models.WhiskyCategory;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
@@ -59,7 +60,15 @@ public class ScheduleService {
     public synchronized void dbKeepAlive() {
         try {
             log.warning("=== Scheduled DB keep-alive run at " + sdf.format(new Date()) + " ===");
-            cacheService.getWhiskyCategoryService().getWhiskyCategoryById(1);
+            //cacheService.getWhiskyCategoryService().getWhiskyCategoryById(1);
+            WhiskyCategory wc = cacheService.getWhiskyCategoryService().getWhiskyCategoryByName(cacheService.CACHE_UPDATE);
+            if(wc == null){
+                // DB is in bad state or no data. Schedule a full DB re-build.
+                log.warning("!!! DB cache is in a bad state, or no data. Attempting full data re-build  !!!");
+                reBuildWhiskyCache();
+                reBuildBeerCache();
+                reBuildOtherSpiritsCache();
+            }
             //log.warning("=== Scheduled job done at " + sdf.format(new Date()) + " ===");
             // we do not care about results
         } catch (Exception e) {

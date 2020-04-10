@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Log
 public class WhiskyCategoryService {
 
-    @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
+    @PersistenceContext(unitName = "spirited", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
     public WhiskyCategory getWhiskyCategoryById(long id) throws Exception {

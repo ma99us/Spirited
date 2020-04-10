@@ -139,7 +139,7 @@ angular.module('myApp.view2', ['ngRoute', 'chart.js'])
 
         $scope.getAllWhiskies = function (resultsPerPage, pageNumber, sortBy) {
             let ts0 = new Date().getTime();
-            $api.getWhiskies(null, null,
+            $api.getWhiskies(null, null, null,
                 resultsPerPage || $scope.resultsPerPage,
                 pageNumber || $scope.pageNumber,
                 sortBy || $scope.sortBy,

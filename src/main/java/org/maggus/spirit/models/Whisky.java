@@ -16,7 +16,7 @@ public class Whisky extends CacheItem implements Cloneable {
     @Id
     @GeneratedValue(generator="WhiskyGen", strategy = GenerationType.AUTO)
     private long id;
-    private Boolean inactive;       // if 'true' then it should be excluded from all queries
+    private Boolean inactive;       // if 'true' then it should be excluded from all queries    //TODO: not used for now
     //// basic info
     @CacheIndex
     private String name;
@@ -38,6 +38,7 @@ public class Whisky extends CacheItem implements Cloneable {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private FlavorProfile flavorProfile;
     private String spiritCharacter;
+    private Long firstAppearedDate;
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         super();
@@ -98,8 +99,8 @@ public class Whisky extends CacheItem implements Cloneable {
         //
         if(w.getQuantities() != null) {setQuantities(w.getQuantities());};
         if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
-        if(w.getSpiritCharacter() != null) {
-            setSpiritCharacter(w.getSpiritCharacter());};
+        if(w.getSpiritCharacter() != null) {setSpiritCharacter(w.getSpiritCharacter());};
+        if(w.getFirstAppearedDate() != null) {setFirstAppearedDate(w.getFirstAppearedDate());}
     }
 
     @Override

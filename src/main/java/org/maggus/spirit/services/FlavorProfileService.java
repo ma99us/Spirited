@@ -14,7 +14,7 @@ import java.util.List;
 @Log
 public class FlavorProfileService {
 
-    @PersistenceContext(unitName = "spirited-test", type = PersistenceContextType.EXTENDED)
+    @PersistenceContext(unitName = "spirited", type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
     public List<FlavorProfile> getAllFlavorProfile() throws Exception {
