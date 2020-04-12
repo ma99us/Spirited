@@ -24,7 +24,7 @@ public class CacheApi {
     @GET
     public Response getCacheStatus() {
         try {
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(null, null, null, new QueryMetadata());
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(null, null, null, null, false, new QueryMetadata());
             int wCount = allWhiskies != null ? allWhiskies.size() : 0;
             int fpCount = allWhiskies != null ? (int) allWhiskies.stream().filter(w -> w.getFlavorProfile() != null).count() : 0;
             int fpPerc = wCount > 0 ? (int) ((double) fpCount / wCount * 100) : 0;

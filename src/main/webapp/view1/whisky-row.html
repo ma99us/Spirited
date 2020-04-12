@@ -8,6 +8,7 @@
         <span ng-if="!onClick"><b>{{whisky.name}}</b></span>
         <span ng-if="whisky.unitVolumeMl && toShow.includes('volume')"><i><span ng-if="whisky.qtyPerContainer > 1">{{whisky.qtyPerContainer}}X</span>{{whisky.unitVolumeMl}}ml</i></span>
         <span ng-if="whisky.unitPrice && toShow.includes('price')"> - {{whisky.unitPrice | currency}}</span>
+        <span ng-if="whisky.beforeDiscountPrice && toShow.includes('price')" class="discount"> - {{whisky.beforeDiscountPrice | currency}}</span>
         <span ng-if="available && toShow.includes('available')" class="text-info"> - available</span>
     </div>
 </div>

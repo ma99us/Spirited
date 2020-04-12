@@ -39,6 +39,7 @@ public class Whisky extends CacheItem implements Cloneable {
     private FlavorProfile flavorProfile;
     private String spiritCharacter;
     private Long firstAppearedDate;
+    private BigDecimal beforeDiscountPrice;
 
     public Whisky(String name, Integer volumeMl, BigDecimal price) {
         super();
@@ -101,6 +102,7 @@ public class Whisky extends CacheItem implements Cloneable {
         if(w.getFlavorProfile() != null) {setFlavorProfile(w.getFlavorProfile());};
         if(w.getSpiritCharacter() != null) {setSpiritCharacter(w.getSpiritCharacter());};
         if(w.getFirstAppearedDate() != null) {setFirstAppearedDate(w.getFirstAppearedDate());}
+        setBeforeDiscountPrice(w.getBeforeDiscountPrice()); // update always
     }
 
     @Override

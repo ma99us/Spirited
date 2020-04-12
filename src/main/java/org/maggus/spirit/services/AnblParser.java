@@ -329,7 +329,9 @@ public class AnblParser extends AbstractParser {
         Integer volume = fixVolume(fullName);
         String detailsUrl = fixDetailsUrl(el.select("li.product-title > a").first().attr("href"));
         BigDecimal price = fixPrice(getSafeElementText(el.select("span.price")));
+        BigDecimal beforeDiscountPrice = fixPrice(getSafeElementText(el.select("span.price-before-discount")));
         Whisky whisky = new Whisky(name, volume, price);
+        whisky.setBeforeDiscountPrice(beforeDiscountPrice);
         whisky.setThumbnailUrl(thumbnailUrl);
         whisky.setCacheExternalUrl(detailsUrl);
         //log.info("* " + whisky.toString());

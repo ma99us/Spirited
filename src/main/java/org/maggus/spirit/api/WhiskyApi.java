@@ -1,8 +1,8 @@
 package org.maggus.spirit.api;
 
 import lombok.extern.java.Log;
-import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.SpiritDiff;
+import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.services.CacheService;
 import org.maggus.spirit.services.SuggestionsService;
 
@@ -47,36 +47,36 @@ public class WhiskyApi {
         }
     }
 
-    @Deprecated // use general getWhiskies() instead
-    @Path("/like/{name}")
-    @GET
-    public Response findWhiskiesLike(@PathParam("name") String name,
-                                     @QueryParam("maxCandidates") @DefaultValue("10") int maxCandidates) {
-        try {
-            QueryMetadata meta = new QueryMetadata();
-            meta.setSortBy("name");
-            meta.setPageNumber(1);
-            meta.setResultsPerPage(maxCandidates);
-            List<Whisky> whiskies = cacheService.getWhiskyService().getWhiskies(name, null, null, meta);
-            for (Whisky w : whiskies) {
-                w.setCacheExternalUrl(null);        // from CacheItem
-                w.setCacheSpentMs(null);            // from CacheItem
-                w.setCacheLastUpdatedMs(null);      // from CacheItem
-                w.setFlavorProfile(null);
-                w.setQuantities(null);
-                w.setCountry(null);
-                w.setRegion(null);
-                //w.setType(null);
-                w.setAlcoholContent(null);
-                w.setDescription(null);
-            }
-            Response resp = Response.ok(whiskies);
-            resp.setMetaData(meta);
-            return resp;
-        } catch (Exception e) {
-            return Response.fail(e);
-        }
-    }
+//    @Deprecated // use general getWhiskies() instead
+//    @Path("/like/{name}")
+//    @GET
+//    public Response findWhiskiesLike(@PathParam("name") String name,
+//                                     @QueryParam("maxCandidates") @DefaultValue("10") int maxCandidates) {
+//        try {
+//            QueryMetadata meta = new QueryMetadata();
+//            meta.setSortBy("name");
+//            meta.setPageNumber(1);
+//            meta.setResultsPerPage(maxCandidates);
+//            List<Whisky> whiskies = cacheService.getWhiskyService().getWhiskies(name, null, null, null, meta);
+//            for (Whisky w : whiskies) {
+//                w.setCacheExternalUrl(null);        // from CacheItem
+//                w.setCacheSpentMs(null);            // from CacheItem
+//                w.setCacheLastUpdatedMs(null);      // from CacheItem
+//                w.setFlavorProfile(null);
+//                w.setQuantities(null);
+//                w.setCountry(null);
+//                w.setRegion(null);
+//                //w.setType(null);
+//                w.setAlcoholContent(null);
+//                w.setDescription(null);
+//            }
+//            Response resp = Response.ok(whiskies);
+//            resp.setMetaData(meta);
+//            return resp;
+//        } catch (Exception e) {
+//            return Response.fail(e);
+//        }
+//    }
 
     @Path("/similar/{id}")
     @GET
@@ -105,16 +105,22 @@ public class WhiskyApi {
     }
 
     @GET
-    public Response getWhiskies(@QueryParam("name") @DefaultValue("") String name,
-                                @QueryParam("last") @DefaultValue("") String last,
-                                @QueryParam("type") @DefaultValue("") String type,
+    public Response getWhiskies(@QueryParam("name") String name,
+                                @QueryParam("type") String type,
+                                @QueryParam("last") String last,
+                                @QueryParam("stores") List<Long> stores,
+                                @QueryParam("onsale")  @DefaultValue("false") boolean onSale,
                                 @QueryParam("resultsPerPage") @DefaultValue("10") int resultsPerPage,
                                 @QueryParam("pageNumber") @DefaultValue("1") int pageNumber,
                                 @QueryParam("sortBy") @DefaultValue("name") String sortBy,
                                 @QueryParam("format") @DefaultValue("short") String format) {
         try {
             QueryMetadata meta = new QueryMetadata(resultsPerPage, pageNumber, sortBy, null);
-            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(name, last, type, meta);
+            List<String> storeNames = null;
+            if(stores != null && !stores.isEmpty()){
+                storeNames = cacheService.getWarehouseService().getWarehousesNamesByIds(stores);
+            }
+            List<Whisky> allWhiskies = cacheService.getWhiskyService().getWhiskies(name, type, last, storeNames, onSale, meta);
             if (!"long".equalsIgnoreCase(format)) { // strip some additional info to make response smaller
                 for (Whisky w : allWhiskies) {
                     // medium format

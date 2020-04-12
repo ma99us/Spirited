@@ -29,7 +29,7 @@ public class SuggestionsService {
             long t0 = System.currentTimeMillis();
             final Set<SpiritCharacterParser.SpiritCharacters.Character> spiritCharacters = spiritCharacterParser.getSpiritCharacters(
                     whisky.getSpiritCharacter(), Locators.SpiritType.getType(whisky.getType()));
-            List<Whisky> allWhisky = cacheService.getWhiskyService().getWhiskies(null, null, null, new QueryMetadata());
+            List<Whisky> allWhisky = cacheService.getWhiskyService().getWhiskies(null, null, null, null, false, new QueryMetadata());
             //log.info("allWhisky size " + allWhisky.size());     // #DEBUG
             Map<Double, SpiritDiff> candidates = allWhisky.parallelStream()
                     .map(w -> {

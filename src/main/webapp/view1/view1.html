@@ -9,7 +9,7 @@
 
 <div ng-show="!busy && !message" id="selFavWhisky" class="align-items-center">
     <div class="card card-body col-lg-6 mx-auto">
-        <h3 style="text-align: center;">Find your spirit:</h3>
+        <!--<h3 style="text-align: center;">Find your spirit:</h3>-->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="byname-tab" data-toggle="tab" data-target="#byname" href="" role="tab"
@@ -19,14 +19,18 @@
                 <a class="nav-link" id="bytype-tab" data-toggle="tab" data-target="#bytype" href="" role="tab"
                    aria-controls="bytype" aria-selected="false">Search by Type</a>
             </li>
-            <!--<li class="nav-item">-->
-                <!--<a class="nav-link" id="latest-tab" data-toggle="tab" data-target="#latest" href="" role="tab"-->
-                   <!--aria-controls="latest" aria-selected="false">Latest Additions</a>-->
-            <!--</li>-->
+            <li class="nav-item">
+                <a class="nav-link" id="latest-tab" data-toggle="tab" data-target="#latest" href="" role="tab"
+                   aria-controls="latest" aria-selected="false">Latest Additions</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="discounted-tab" data-toggle="tab" data-target="#discounted" href="" role="tab"
+                   aria-controls="discounted" aria-selected="false">Hot Deals</a>
+            </li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="byname" role="tabpanel" aria-labelledby="byname-tab">
-                <div class="input-group mb-3">
+                <div class="card-header input-group mb-3">
                     <input style="font-size: x-large; font-weight: bolder" id="spiritNameCtrl" type="search" class="form-control" aria-label="spirit name" aria-describedby="basic-addon2"
                            ng-model="favWhiskyName"
                            ng-model-options="{debounce: 800}"
@@ -60,13 +64,12 @@
                                 ng-click="showMoreWhiskies()">({{allWhiskies.whiskies.length}} out of
                             {{allWhiskies.totalResults}}) Show more...
                         </button>
-                        <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches
-                            ---</h4>
+                        <h4 style="text-align: center" ng-show="!busyC && !allWhiskies.whiskies.length">--- no matches ---</h4>
                     </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="bytype" role="tabpanel" aria-labelledby="bytype-tab">
-                <div class="input-group mb-3">
+                <div class="card-header input-group mb-3">
                     <input style="font-size: x-large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"
                            ng-model="favWhiskyType"
                            ng-model-options="{debounce: 800}"
@@ -103,35 +106,35 @@
                                 ng-click="browseMoreWhiskies()">({{browseWhiskies.whiskies.length}} out of
                             {{browseWhiskies.totalResults}}) Show more...
                         </button>
-                        <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no
-                            matches ---</h4>
+                        <h4 style="text-align: center" ng-show="!busyC && !browseWhiskies.whiskies.length">--- no matches ---</h4>
                     </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="latest" role="tabpanel" aria-labelledby="latest-tab">
-                <!--<div class="input-group mb-3">-->
-                    <!--<input style="font-size: x-large; font-weight: bolder" id="spiritTypeCtrl" type="search" class="form-control" aria-label="spirit type" aria-describedby="basic-addon2"-->
-                           <!--ng-model="favWhiskyType"-->
-                           <!--ng-model-options="{debounce: 800}"-->
-                           <!--ng-change="onFavTypeChange(favWhiskyType)"-->
-                           <!--placeholder="liquor type or feature..."-->
-                           <!--autofocus/>-->
-                    <!--<div class="input-group-append">-->
-                        <!--<button class="btn btn-outline-secondary" type="button"-->
-                                <!--ng-click="onFavTypeChange(favWhiskyType)">-->
-                            <!--&gt;-->
-                        <!--</button>-->
-                    <!--</div>-->
-                <!--</div>-->
+                <div class="card-header align-items-center text-center" style="border: 0">
+                    <h6>New products appeared
+                        <button type="button"
+                                ng-class="latestWhiskies.last === 'week' ? 'btn btn-dark slim' : 'btn btn-outline-dark slim'"
+                                ng-click="onLatestChange('week')">
+                            last week
+                        </button>
+                        /
+                        <button type="button"
+                                ng-class="latestWhiskies.last === 'month' ? 'btn btn-dark slim' : 'btn btn-outline-dark slim'"
+                                ng-click="onLatestChange('month')">
+                            last month
+                        </button>
+                         in selected stores</h6>
+                </div>
                 <div class="card" style="border: 0">
-                    <button ng-show="last && (busyC || latestWhiskies.whiskies.length)" id="latestViewBtn"
+                    <button ng-show="latestWhiskies.last && (busyC || latestWhiskies.whiskies.length)" id="latestViewBtn"
                             class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse"
                             data-target="#latestView"
                             aria-expanded="false"
                             aria-controls="latestView">
                         <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
                     </button>
-                    <div ng-show="last" id="latestView" class="list-group align-items-center collapse">
+                    <div ng-show="latestWhiskies.last" id="latestView" class="list-group align-items-center collapse">
                         <div ng-show="busyC || latestWhiskies.whiskies.length" style="width: 100%" class="text-right">
                             <sort-by sort-by="latestWhiskies.sortBy" on-sort="onLatestSortBy(sortBy)"></sort-by>
                         </div>
@@ -146,8 +149,35 @@
                                 ng-click="latestMoreWhiskies()">({{latestWhiskies.whiskies.length}} out of
                             {{latestWhiskies.totalResults}}) Show more...
                         </button>
-                        <h4 style="text-align: center" ng-show="!busyC && !latestWhiskies.whiskies.length">--- no
-                            matches ---</h4>
+                        <h4 style="text-align: center" ng-show="!busyC && !latestWhiskies.whiskies.length">--- nothing here ---</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="discounted" role="tabpanel" aria-labelledby="discounted-tab">
+                <div class="card-header align-items-center text-center" style="border: 0">
+                    <h6>Currently On Sale in selected stores</h6>
+                </div>
+                <div class="card" style="border: 0">
+                    <button ng-show="discountedWhiskies.onSale && (busyC || discountedWhiskies.whiskies.length)" id="discountedViewBtn"
+                            class="btn btn-outline-dark slim collapsed" type="button" data-toggle="collapse"
+                            data-target="#discountedView"
+                            aria-expanded="false"
+                            aria-controls="discountedView">
+                        <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
+                    </button>
+                    <div ng-show="discountedWhiskies.onSale" id="discountedView" class="list-group align-items-center collapse">
+                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
+                           ng-repeat="w in discountedWhiskies.whiskies">
+                            <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
+                        </a>
+                        <h6 ng-show="busyC">Looking...</h6>
+                        <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
+                                type="button"
+                                ng-show="discountedWhiskies.whiskies.length < discountedWhiskies.totalResults"
+                                ng-click="discountedMoreWhiskies()">({{discountedWhiskies.whiskies.length}} out of
+                            {{discountedWhiskies.totalResults}}) Show more...
+                        </button>
+                        <h4 style="text-align: center" ng-show="!busyC && !discountedWhiskies.whiskies.length">--- nothing here ---</h4>
                     </div>
                 </div>
             </div>
@@ -284,8 +314,10 @@
                             <span ng-if="selectedWhisky.qtyPerContainer > 1">{{selectedWhisky.qtyPerContainer}}X</span>
                             {{selectedWhisky.unitVolumeMl}}ml
                         </p>
-                        <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>{{selectedWhisky.unitPrice
-                            | currency}}</strong></p>
+                        <p class="text-center lead" ng-show="selectedWhisky.unitPrice"><strong>
+                            {{selectedWhisky.unitPrice | currency}}</strong>
+                        <small ng-show="selectedWhisky.beforeDiscountPrice" class="discount">
+                            {{selectedWhisky.beforeDiscountPrice | currency}}</small></p>
                     </div>
                     <div class="col-7" style="padding-left: 0.25rem; padding-right: 0.25rem">
                         {{selectedWhisky.description}}

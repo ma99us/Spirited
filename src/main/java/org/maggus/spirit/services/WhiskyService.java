@@ -2,8 +2,9 @@ package org.maggus.spirit.services;
 
 import lombok.extern.java.Log;
 import org.maggus.spirit.api.QueryMetadata;
-import org.maggus.spirit.models.Whisky;
 import org.maggus.spirit.models.SpiritDiff;
+import org.maggus.spirit.models.WarehouseQuantity;
+import org.maggus.spirit.models.Whisky;
 
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
@@ -27,23 +28,40 @@ public class WhiskyService {
     private EntityManager em;
     private List<Whisky> cachedSpirits;
 
-    //@Transactional(value=Transactional.TxType.REQUIRES_NEW)
-    public List<Whisky> getWhiskies(String name, String last, String type, QueryMetadata metaData) throws Exception {
+    /**
+     * Finds Whiskies subset matching given parameters
+     * @param name  // fuzzy match whisky name
+     * @param last  // only whiskies added during given time period (optional)
+     * @param type  // only whiskies with type containing given string (optional)
+     * @param stores    // only whiskies with quantities in the given stores list (optional)
+     * @param metaData  // subset of the results and sorting field (for pagination and display purposes)
+     * @return list of whiskies
+     * @throws Exception
+     */
+    public List<Whisky> getWhiskies(String name, String type, String last, List<String> stores, boolean onSale, QueryMetadata metaData) throws Exception {
         List<Whisky> whiskies = getCache();
 
         if(name != null && !name.isEmpty()){
             whiskies = filterByFuzzyNameMatch(whiskies, name, 0.75);
         }
 
-        if(last != null && !last.isEmpty()) {
-            whiskies = filterByAppearedPeriod(whiskies, last);
-        }
-
         if(type != null && !type.isEmpty()) {
             whiskies = filterByTypeMatch(whiskies, type);
         }
 
-        if (name == null || name.isEmpty()) {
+        if(last != null && !last.isEmpty()) {
+            whiskies = filterByAppearedPeriod(whiskies, last);
+        }
+
+        if(stores != null && !stores.isEmpty()){
+            whiskies = filterByStoresAvailability(whiskies, stores);
+        }
+
+        if(onSale){
+            // filter and sort by biggest discount first
+            whiskies = filterByDiscount(whiskies);
+        }
+        else if (name == null || name.isEmpty()) {
             // sort only if name likeness is not specified. Otherwise name likeness is the sorting order
             if (metaData.getSortBy() != null && !metaData.getSortBy().isEmpty()) {
                 whiskies = sortByField(whiskies, metaData.getSortBy());
@@ -189,6 +207,31 @@ public class WhiskyService {
             types = types != null ? types.toUpperCase() : types;
             return types != null && types.contains(type.toUpperCase());
         }).collect((Collectors.toList()));
+    }
+
+    private List<Whisky> filterByStoresAvailability(List<Whisky> whiskies, List<String> stores) throws Exception {
+        if (stores == null || stores.isEmpty()) {
+            throw new NoResultException("Stores must be specified");
+        }
+
+        return whiskies.parallelStream().filter(w -> {
+            Set<WarehouseQuantity> quantities = w.getQuantities();
+            // get store Names from given whisky quantity
+            List<String> qNames = quantities != null ? quantities.stream().map(WarehouseQuantity::getName).collect(Collectors.toList()) : null;
+            // check that stores paramer has any of the whisky quantity names
+            return qNames != null && !Collections.disjoint(qNames, stores);
+        }).collect((Collectors.toList()));
+    }
+
+    private List<Whisky> filterByDiscount(List<Whisky> whiskies) throws Exception {
+        Comparator<Whisky> discountComparator = Comparator.comparing((w) -> {
+                    return w.getBeforeDiscountPrice() != null ? w.getBeforeDiscountPrice().subtract(w.getUnitPrice()) : BigDecimal.ZERO;
+                },
+                Comparator.reverseOrder());
+
+        return whiskies.parallelStream().filter(w -> {
+            return w.getBeforeDiscountPrice() != null;
+        }).sorted(discountComparator).collect((Collectors.toList()));
     }
 
     private List<Whisky> filterByAppearedPeriod(List<Whisky> whiskies, String last) throws Exception {

@@ -78,13 +78,15 @@ angular.module('api', [])
                 return deferred.promise;
             },
 
-            getWhiskies: function (name, last, type, resultsPerPage, pageNumber, sortBy, format) {
+            getWhiskies: function (name, type, last, stores, onSale, resultsPerPage, pageNumber, sortBy, format) {
                 var deferred = $q.defer();
                 busy = true;
                 let params = {
                     name: name,
-                    last: last,
                     type: type,
+                    last: last,
+                    stores: stores,
+                    onsale : onSale || false,
                     resultsPerPage: resultsPerPage,
                     pageNumber: pageNumber,
                     sortBy: sortBy,

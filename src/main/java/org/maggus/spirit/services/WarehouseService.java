@@ -9,6 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.*;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateful
@@ -58,5 +59,13 @@ public class WarehouseService {
         Query q = em.createQuery("DELETE FROM Warehouse");
         q.executeUpdate();
         em.flush();
+    }
+
+    public List<String> getWarehousesNamesByIds(List<Long> storeIds) throws Exception {
+        ArrayList<String> stores = new ArrayList<>();
+        for (Long id : storeIds) {
+            stores.add(getWarehouseById(id).getName());
+        }
+        return stores;
     }
 }
