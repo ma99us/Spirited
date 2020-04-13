@@ -134,14 +134,22 @@
                             aria-controls="latestView">
                         <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
                     </button>
-                    <div ng-show="latestWhiskies.last" id="latestView" class="list-group align-items-center collapse">
+                    <div ng-show="latestWhiskies.last" id="latestView" class="collapse">
                         <div ng-show="busyC || latestWhiskies.whiskies.length" style="width: 100%" class="text-right">
                             <sort-by sort-by="latestWhiskies.sortBy" on-sort="onLatestSortBy(sortBy)"></sort-by>
                         </div>
-                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
-                           ng-repeat="w in latestWhiskies.whiskies">
-                            <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
-                        </a>
+                        <ul class="list-unstyled row">
+                            <whisky-row
+                                    style="padding: 5px 15px 5px 15px"
+                                    ng-repeat="w in latestWhiskies.whiskies"
+                                    class="col-lg-6"
+                                    ng-class="favWhisky.id === w.id ? 'list-group-item list-group-item-info' : 'list-group-item'"
+                                    whisky="w" sel-whisky="favWhisky"
+                                    on-click="selectFavWhisky(w)"
+                                    to-show="volume,price,type"
+                                    large="true">
+                            </whisky-row>
+                        </ul>
                         <h6 ng-show="busyC">Looking...</h6>
                         <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
                                 type="button"
@@ -165,11 +173,19 @@
                             aria-controls="discountedView">
                         <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> search results</span>
                     </button>
-                    <div ng-show="discountedWhiskies.onSale" id="discountedView" class="list-group align-items-center collapse">
-                        <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%"
-                           ng-repeat="w in discountedWhiskies.whiskies">
-                            <whisky-row whisky="w" sel-whisky="favWhisky" to-show="volume,price,type"></whisky-row>
-                        </a>
+                    <div ng-show="discountedWhiskies.onSale" id="discountedView" class="collapse">
+                        <ul class="list-unstyled row">
+                            <whisky-row
+                                    style="padding: 5px 15px 5px 15px"
+                                    ng-repeat="w in discountedWhiskies.whiskies"
+                                    class="col-lg-6"
+                                    ng-class="favWhisky.id === w.id ? 'list-group-item list-group-item-info' : 'list-group-item'"
+                                    whisky="w" sel-whisky="favWhisky"
+                                    on-click="selectFavWhisky(w)"
+                                    to-show="volume,price,type"
+                                    large="true">
+                            </whisky-row>
+                        </ul>
                         <h6 ng-show="busyC">Looking...</h6>
                         <button ng-disabled="busyC" class="btn btn-outline-info more-btn" style="width: 100%"
                                 type="button"
@@ -190,9 +206,16 @@
                     <span class="text-left"><span class="if-collapsed">Show</span><span class="if-not-collapsed">Hide</span> recent picks</span>
                 </button>
                 <div id="recentViews" class="panel-collapse collapse in list-group align-items-center">
-                    <a href="" ng-click="selectFavWhisky(w)" class="list-group-item" style="width: 100%" ng-repeat="w in recentWhiskies">
-                        <whisky-row whisky="w" sel-whisky="favWhisky"></whisky-row>
-                    </a>
+                    <ul class="list-unstyled row">
+                        <whisky-row
+                                ng-repeat="w in recentWhiskies"
+                                class="col-12"
+                                ng-class="favWhisky.id === w.id ? 'list-group-item list-group-item-info' : 'list-group-item'"
+                                whisky="w" sel-whisky="favWhisky"
+                                on-click="selectFavWhisky(w)"
+                                to-show="volume,price,type">
+                        </whisky-row>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -204,9 +227,14 @@
 <div ng-show="!busy && !message" id="favWhiskyInfo" class="align-items-center" ng-if="favWhisky">
     <div class="card card-body col-lg-6 mx-auto">
         <div class="list-group align-items-center">
-            <a href="" ng-click="showWhisky(favWhisky)" class="btn btn-outline-primary" style="width: 100%">
-                    <span class="justify-content-start"><whisky-row whisky="favWhisky" available="favWhisky.available"></whisky-row></span>
-            </a>
+            <whisky-row
+                    class="col-12 list-group-item btn btn-outline-primary justify-content-start"
+                    whisky="favWhisky"
+                    available="favWhisky.available"
+                    on-click="showWhisky(favWhisky)"
+                    to-show="volume,price,type"
+                    large="true">
+            </whisky-row>
         </div>
         <p>{{favWhisky.description}}</p>
         <div id="barDiv">

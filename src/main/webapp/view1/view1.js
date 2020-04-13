@@ -693,14 +693,15 @@ angular.module('myApp.view1', ['ngRoute', 'localstorage', 'chart.js'])
         onClick: '&?',
         selWhisky: '<?',
         available: '<',
-        toShow: '@'
+        toShow: '@',
+        large: '='
       },
       templateUrl: 'view1/whisky-row.html',
       controller: ['$scope', function ($scope) {
         $scope.$watch('selWhisky', function (newValue, oldValue) {
           $scope.isSelected = $scope.selWhisky && ($scope.whisky.id === $scope.selWhisky.id);
           if ($scope.isSelected) {
-            $scope.rowStyle = {'background-color': 'CornFlowerBlue', 'color': 'black'};
+            //$scope.rowStyle = {'color': 'white'};
           }
           else {
             $scope.rowStyle = {}
